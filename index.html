@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>深分智能相机案例库</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,"Microsoft YaHei","Segoe UI",sans-serif;background:#f0f2f5;color:#333;line-height:1.6}
+.hero{background:linear-gradient(135deg,#1a73e8 0%,#0d47a1 50%,#01579b 100%);color:#fff;padding:48px 20px;text-align:center}
+.hero h1{font-size:2.2em;margin-bottom:8px;letter-spacing:1px}
+.hero p{opacity:.9;font-size:1.1em}
+.hero-stats{display:flex;justify-content:center;gap:48px;margin-top:24px;flex-wrap:wrap}
+.hero-stats .num{font-size:2.4em;font-weight:800}
+.hero-stats .label{font-size:.9em;opacity:.8}
+/* CSS-only tabs */
+.tabs{display:flex;background:#fff;border-bottom:2px solid #e0e0e0;position:sticky;top:0;z-index:100}
+.tab-label{flex:1;text-align:center;padding:14px 8px;cursor:pointer;font-size:.95em;color:#666;border-bottom:3px solid transparent;transition:.2s;user-select:none}
+.tab-label:hover{color:#1a73e8;background:#f8f9ff}
+input[name=tab]{display:none}
+#t1:checked~.tabs label[for=t1],
+#t2:checked~.tabs label[for=t2],
+#t3:checked~.tabs label[for=t3],
+#t4:checked~.tabs label[for=t4]{color:#1a73e8;border-bottom-color:#1a73e8;font-weight:600}
+.panel{display:none;max-width:1100px;margin:0 auto;padding:20px}
+#t1:checked~.content #p1{display:block}
+#t2:checked~.content #p2{display:block}
+#t3:checked~.content #p3{display:block}
+#t4:checked~.content #p4{display:block}
+/* cards */
+.card{background:#fff;border-radius:12px;padding:24px;margin-bottom:20px;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.card h2{font-size:1.25em;margin-bottom:14px;color:#1a73e8;display:flex;align-items:center;gap:8px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+@media(max-width:768px){.grid2,.grid3{grid-template-columns:1fr}.hero-stats{gap:20px}.tabs{flex-wrap:wrap}.tab-label{min-width:48%}}
+.cap-card{background:#fff;border-radius:10px;padding:18px;text-align:center;border:1px solid #e8eaed;transition:.2s}
+.cap-card:hover{border-color:#1a73e8;box-shadow:0 4px 16px rgba(26,115,232,.12)}
+.cap-card .icon{font-size:2em;margin-bottom:6px}
+.cap-card h3{color:#1a73e8;margin-bottom:4px;font-size:1.05em}
+.cap-card p{font-size:.88em;color:#555}
+/* industry */
+.ind{background:#fff;border-radius:12px;margin-bottom:20px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.ind-head{padding:18px 24px;background:linear-gradient(90deg,#e8f0fe,#fff);cursor:pointer;display:flex;align-items:center;justify-content:space-between;user-select:none}
+.ind-head h2{font-size:1.2em;color:#1a73e8}
+.ind-head .cnt{background:#1a73e8;color:#fff;padding:2px 12px;border-radius:20px;font-size:.8em}
+.ind-head .arrow{font-size:1.2em;color:#999;transition:.3s}
+.ind.open .arrow{transform:rotate(90deg)}
+.ind-body{display:none;padding:0 24px 20px}
+.ind.open .ind-body{display:block}
+.case{border:1px solid #e8eaed;border-radius:8px;padding:14px;margin-bottom:10px;transition:.2s}
+.case:hover{border-color:#1a73e8;background:#f8f9ff}
+.case h4{font-size:.98em;margin-bottom:6px;color:#333}
+.case .meta{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:4px}
+.tag{padding:2px 10px;border-radius:20px;font-size:.78em;font-weight:500}
+.tag-t{background:#e8f0fe;color:#1a73e8}
+.tag-c{background:#fce8e6;color:#d93025}
+.tag-i{background:#e6f4ea;color:#137333}
+.tag-m{background:#fef7e0;color:#b06000}
+.case .detail{font-size:.88em;color:#555;margin-top:6px;padding-top:6px;border-top:1px solid #f0f0f0}
+.hl{background:#fffde7;padding:1px 6px;border-radius:4px;font-weight:600;color:#b06000}
+/* type */
+.type-card{background:#fff;border-radius:12px;margin-bottom:20px;box-shadow:0 2px 12px rgba(0,0,0,.06);overflow:hidden}
+.type-head{padding:18px 24px;background:linear-gradient(90deg,#e6f4ea,#fff);cursor:pointer;display:flex;align-items:center;justify-content:space-between;user-select:none}
+.type-head h2{font-size:1.2em;color:#137333}
+.type-head .cnt{background:#137333;color:#fff;padding:2px 12px;border-radius:20px;font-size:.8em}
+.type-body{display:none;padding:0 24px 20px}
+.type-card.open .type-body{display:block}
+.type-card.open .arrow{transform:rotate(90deg)}
+/* sales */
+.tip{background:linear-gradient(135deg,#e8f0fe,#fef7e0);border-radius:12px;padding:20px;margin-bottom:20px}
+.tip h3{color:#1a73e8;margin-bottom:10px}
+.step{display:flex;gap:12px;align-items:flex-start;margin-bottom:10px}
+.step-num{background:#1a73e8;color:#fff;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.85em;font-weight:700;flex-shrink:0}
+.obj{background:#fff3e0;border-left:4px solid #ff9800;padding:12px 16px;border-radius:0 8px 8px 0;margin-bottom:10px;font-size:.92em}
+.obj strong{color:#e65100}
+.top3{display:flex;gap:6px;align-items:center;margin-bottom:4px;font-size:.95em}
+.top3 .tip-text{font-size:.85em;color:#555;margin-left:34px;margin-bottom:8px}
+.footer{text-align:center;padding:32px 20px;color:#aaa;font-size:.82em}
+/* search */
+.search{width:100%;padding:12px 16px;border:2px solid #e0e0e0;border-radius:8px;font-size:1em;margin-bottom:20px;outline:none}
+.search:focus{border-color:#1a73e8}
+</style>
+</head>
+<body>
+<div class="hero">
+<h1>🏭 深分智能相机案例库</h1>
+<p>一站式案例查询 · 快速匹配需求 · 专业方案支撑</p>
+<div class="hero-stats">
+<div><div class="num">102</div><div class="label">实战案例</div></div>
+<div><div class="num">12</div><div class="label">覆盖行业</div></div>
+<div><div class="num">6</div><div class="label">检测类型</div></div>
+<div><div class="num">99%+</div><div class="label">检测准确率</div></div>
+</div>
+</div>
+
+<input type="radio" name="tab" id="t1" checked>
+<input type="radio" name="tab" id="t2">
+<input type="radio" name="tab" id="t3">
+<input type="radio" name="tab" id="t4">
+<div class="tabs">
+<label class="tab-label" for="t1">🎯 我们能做什么</label>
+<label class="tab-label" for="t2">🏭 按行业查</label>
+<label class="tab-label" for="t3">🏷️ 按检测类型</label>
+<label class="tab-label" for="t4">⚡ 销售速查</label>
+</div>
+
+<div class="content">
+<!-- ==================== TAB 1: 能力总览 ==================== -->
+<div id="p1" class="panel">
+<div class="card" style="text-align:center;padding:32px;">
+<h2 style="justify-content:center;font-size:1.5em;">一台相机 = 眼睛 + 大脑</h2>
+<p style="color:#555;font-size:1.1em;margin-top:8px;">替代人工目检，7×24小时不停歇</p>
+</div>
+
+<div class="card">
+<h2>🔭 6大核心检测能力</h2>
+<div class="grid2">
+<div class="cap-card"><div class="icon">✅</div><h3>有无检测</h3><p>螺帽/胶水/标签/弹片/针头<br>判断目标物是否存在</p></div>
+<div class="cap-card"><div class="icon">📐</div><h3>尺寸测量</h3><p>角度/宽度/间距/偏位<br>替代卡尺，非接触测量</p></div>
+<div class="cap-card"><div class="icon">🔤</div><h3>OCR/读码</h3><p>生产日期/追溯码/二维码/条码<br>99.9%识别准确率</p></div>
+<div class="cap-card"><div class="icon">🏷️</div><h3>分类识别</h3><p>正反面/种类/颜色/方向<br>学习一次，永久使用</p></div>
+<div class="cap-card"><div class="icon">⚠️</div><h3>缺陷检测</h3><p>划伤/脏污/变形/凹坑/缺料<br>AI边缘学习，10张图教会</p></div>
+<div class="cap-card"><div class="icon">🎯</div><h3>定位引导</h3><p>坐标输出/抓取引导/机器人配合<br>0.1mm高精度定位</p></div>
+</div>
+</div>
+
+<div class="card">
+<h2>💡 核心优势</h2>
+<div class="grid2">
+<div class="cap-card"><div class="icon">🔌</div><h3>一体化设计</h3><p>相机+光源+算法一体<br>无需工控机，降低成本</p></div>
+<div class="cap-card"><div class="icon">🧠</div><h3>AI边缘学习</h3><p>无需编程，注册即用<br>产线人员也能操作</p></div>
+<div class="cap-card"><div class="icon">⚡</div><h3>毫秒级响应</h3><p>最快50ms完成检测<br>满足高速产线需求</p></div>
+<div class="cap-card"><div class="icon">📏</div><h3>全系列覆盖</h3><p>100万~2500万像素<br>5大系列按需选型</p></div>
+</div>
+</div>
+
+<div class="card">
+<h2>📷 产品线速览</h2>
+<div class="grid2">
+<div class="cap-card" style="border-top:4px solid #4caf50"><div class="icon">💰</div><h3>SC1000 经济入门</h3><p>100-200万像素<br>简单有无/分类检测</p></div>
+<div class="cap-card" style="border-top:4px solid #2196f3"><div class="icon">💰💰</div><h3>SC2000 基础主力</h3><p>200-500万像素<br>通用检测/OCR/颜色识别</p></div>
+<div class="cap-card" style="border-top:4px solid #ff9800"><div class="icon">💰💰💰</div><h3>SC3000 多功能型</h3><p>300-500万像素<br>复杂检测/AI/多算法</p></div>
+<div class="cap-card" style="border-top:4px solid #9c27b0"><div class="icon">💰💰💰💰</div><h3>SC5000 高分辨率</h3><p>500-1200万像素<br>大视野/深度学习</p></div>
+<div class="cap-card" style="border-top:4px solid #f44336"><div class="icon">💰💰💰💰💰</div><h3>SC6000 旗舰型</h3><p>600-2500万像素<br>超大视野/多码批量</p></div>
+</div>
+</div>
+
+<div class="card">
+<h2>🎬 一句话看懂能做什么</h2>
+<div class="case"><h4>🔩 螺丝有没有打胶</h4><div class="meta"><span class="tag tag-t">有无检测</span><span class="tag tag-c">SC2000</span></div><div class="detail">颜色面积算法，0.1秒判断</div></div>
+<div class="case"><h4>🔋 电池正反面别装反</h4><div class="meta"><span class="tag tag-t">分类识别</span><span class="tag tag-c">SC2000</span></div><div class="detail">注册分类，学习一次永久用</div></div>
+<div class="case"><h4>📱 二维码追溯</h4><div class="meta"><span class="tag tag-t">OCR/读码</span><span class="tag tag-c">SC3000/SC5000</span></div><div class="detail">99.9%准确率</div></div>
+<div class="case"><h4>💻 PCB板上小字符</h4><div class="meta"><span class="tag tag-t">OCR/读码</span><span class="tag tag-c">SC5000/SC6000</span></div><div class="detail">深度学习OCR，2500万像素</div></div>
+<div class="case"><h4>⚙️ 零件尺寸合不合格</h4><div class="meta"><span class="tag tag-t">尺寸测量</span><span class="tag tag-c">SC3000</span></div><div class="detail">多点测量，替代卡尺</div></div>
+<div class="case"><h4>🤖 机器人往哪抓</h4><div class="meta"><span class="tag tag-t">定位引导</span><span class="tag tag-c">SC3000/SC6000</span></div><div class="detail">输出坐标，引导机械臂，0.1mm精度</div></div>
+<div class="case"><h4>🔍 外观有没有缺陷</h4><div class="meta"><span class="tag tag-t">缺陷检测</span><span class="tag tag-c">SC3000/SC5000</span></div><div class="detail">AI边缘学习，10张图教会</div></div>
+<div class="case"><h4>📊 30个码一次扫完</h4><div class="meta"><span class="tag tag-t">OCR/读码</span><span class="tag tag-c">SC6000</span></div><div class="detail">旗舰相机批量识别</div></div>
+</div>
+</div>
+
+<!-- ==================== TAB 2: 按行业查 ==================== -->
+<div id="p2" class="panel">
+<input class="search" type="text" placeholder="🔍 搜索行业、案例名称、相机型号..." id="searchIndustry">
+
+<!-- 五金行业 -->
+<div class="ind open" data-ind="wujin">
+<div class="ind-head" onclick="toggleInd(this)"><h2>🔩 五金行业 <span class="cnt">13例</span></h2><span class="arrow">▶</span></div>
+<div class="ind-body">
+<div class="case"><h4>金属板螺帽冲压有无检测</h4><div class="meta"><span class="tag tag-t">有无检测</span><span class="tag tag-c">SC2016EM-08S</span><span class="tag tag-m">成熟应用</span></div><div class="detail"><strong>算法：</strong>轮廓有无+位置修正+直径测量<br><strong>亮点：</strong><span class="hl">16孔位同时检测</span></div></div>
+<div class="case"><h4>控制零件角度及尺寸检测</h4><div class="meta"><span class="tag tag-t">尺寸测量</span><span class="tag tag-c">SC3050M-16M</span><span class="tag tag-m">成熟应用</span></div><div class="detail"><strong>算法：</strong>轮廓有无、分支控制、直线有无、圆有无、点线检测、线线角度<br><strong>亮点：</strong><span class="hl">三工位覆盖正反侧面，偏振成像</span></div></div>
+<div class="case"><h4>物料方向区分</h4><div class="meta"><span class="tag tag-t">分类识别</span><span class="tag tag-c">SC2016EM-12S</span><span class="tag tag-m">成熟应用</span></div><div class="detail"><strong>算法：</strong>直径测量<br><strong>亮点：</strong><span class="hl">自带光源，通过圆孔大小区分方向</span></div></div>
+<div class="case"><h4>连接器盖子有无盖好检测</h4><div class="meta"><span class="tag tag-t">有无检测</span><span class="tag tag-c">SC3016C</span><span class="tag tag-m">成熟应用</span></div><div class="detail"><strong>算法：</strong>异常判断（AI边缘学习）<br><strong>亮点：</strong><span class="hl">AI边缘学习，稳定性好</span></div></div>
+<div class="case"><h4>pin针孔识别与定位</h4><div class="meta"><span class="tag tag-t">定位引导</span><span class="tag tag-c">SC3050M</span><span class="tag tag-m">成熟应用</span></div><div class="detail"><strong>算法：</strong>目标检测+标定转换<br><strong>亮点：</strong><span class="hl">输出物理坐标给运动控制</span></div></div>
+<div class="case"><h4>攻牙有无检测</h4><div class="meta"><span class="tag tag-t">有无检测</span><span class="tag tag-c">SC2016EM-12S</span><span class="tag tag-m">成熟应用</span></div><div class="detail"><strong>算法：</strong>图案计数<br><strong>亮点：</strong><span class="hl">成熟应用，简单可靠</span></div></div>
+<div class="case"><h4>螺丝胶水有无检测</h4><div class="meta"><span class="tag tag-t">有无检测</span><span class="tag tag-c">SC2016EC-08S</span><span class="tag tag-m">成熟应用</span></div><div class="detail"><strong>算法：</strong>颜色面积<br><strong>亮点：</strong><span class="hl">颜色判断，操作简单</span></div></div>
+<div class="case"><h4>螺柱大小区分</h4><div class="meta"><span class="tag tag-t">分类识别</span><span class="tag tag-c">SC3016M-06M</span><span class="tag tag-m">成熟应用</span></div><div class="detail"><strong>算法：</strong>位置修正+宽度测量<br><strong>亮点：</strong><span class="hl">宽度数值判断大小头</span></div></div>
+<div class="case"><h4>铁片变形检测</h4><div class="meta"><span class="tag tag-t">缺陷检测</span><span class="tag tag-c">SC3050XC-16M</span><span class="tag tag-m">成熟应用</span></div><div class="detail"><strong>算法：</strong>线线角度<br><strong>亮点：</strong><span class="hl">角度判断变形</span></div></div>
+<div class="case"><h4>金属零件圆环OCR检测</h4><div class="meta"><span class="tag tag-t">OCR/读码</span><span class="tag tag-c">SC5050XM</span><span class="tag tag-m">成熟应用</span></div><div class="detail"><strong>算法：</strong>圆环展开+OCR<br><strong>亮点：</strong><span class="hl">圆柱型零件字符识别</span></div></div>
+<div class="case"><h4>铝板OCR检测</h4><div class="meta"><span class="tag tag-t">OCR/读码</span><span class="tag tag-c">SC2016EM-08S</span><span class="tag tag-m">成熟应用</span></div><div class="detail"><strong>算法：</strong>字符检测、EIP通信<br><strong>亮点：</strong><span class="hl">解决反光+划痕干扰</span></div></div>
+<div class="case"><h4>卷料间距测量</h4><div class="meta"><span class="tag tag-t">尺寸测量</span><span class="tag tag-c">SC6250M-00C</span><span class="tag tag-m">成熟应用</span></div><div class="detail"><strong>算法：</strong>轮廓匹配/位置修正/间距测量<br><strong>亮点：</strong><span class="hl">TCP发送物理宽度至PLC</span></div></div>
+<div class="case"><h4>铰链工件识别</h4><div class="meta"><span class="tag tag-t">有无检测</span><span class="tag tag-c">SC3050XM</span><span class="tag tag-m">成熟应用</span></div><div class="detail"><strong>算法：</strong>异常判断<br><strong>亮点：</strong><span class="hl">兼容多方案切换</span></div></div>
+</div>
+</div>
+
+<!-- 锂电行业 -->
+<div class="ind" data-ind="lidian">
+<div class="ind-head" onclick="toggleInd(this)"><h2>🔋 锂电行业 <span class="cnt">17例</span></h2><span class="arrow">▶</span></div>
+<div class="ind-body">
+<div class="case"><h4>壳体正负极组装检测</h4><div class="meta"><span class="tag tag-t">有无检测</span><span class="tag tag-c">SC3013XC-08M</span><span class="tag tag-m">成熟应用</span></div><div class="detail"><strong>算法：</strong>异常检测+灰度面积<br><strong>亮点：</strong><span class="hl">偏振光源消除反光</span></div></div>
+<div class="case"><h4>料筒电极边缘检测</h4><div class="meta"><span class="tag tag-t">尺寸测量</span><span class="tag tag-c">SC2016E-08S</span><span class="tag tag-m">成熟应用</span></div><div class="detail"><strong>算法：</strong>直线有无<br><strong>亮点：</strong><span class="hl">10/min速度，99%准确率</span></div></div>
+<div class="case"><h4>极耳位置有无贴胶</h4><div class="meta"><span class="tag tag-t">有无检测</span><span class="tag tag-c">SC2016C-08S</span><span class="tag tag-m">成熟应用</span></div><div class="detail"><strong>算法：</strong>位置修正+异常判断<br><strong>亮点：</strong><span class="hl">兼容黑/蓝/金三种颜色</span></div></div>
+<div class="case"><h4>电池正负极铝片铜片检测</h4><div class="meta"><span class="tag tag-t">分类识别</span><span class="tag tag-c">SC2016EC-12S</span><span class="tag tag-m">成熟应用</span></div><div class="detail"><strong>算法：</strong>颜色比较<br><strong>亮点：</strong><span class="hl">IO触发+结果反馈</span></div></div>
+<div class="case"><h4>壳体底部蓝膜检测</h4><div class="meta"><span class="tag tag-t">有无检测</span><span class="tag tag-c">SC3050XC-08M</span><span class="tag tag-m">成熟应用</span></div><div class="detail"><strong>算法：</strong>颜色面积+线线测量<br><strong>亮点：</strong><span class="hl">检测蓝膜有无/重张/偏位</span></div></div>
+<div class="case"><h4>防爆阀正反检测</h4><div class="meta"><span class="tag tag-t">分类识别</span><span class="tag tag-c">SC3050XC-08M</span><span class="tag tag-m">成熟应用</span></div><div class="detail"><strong>算法：</strong>异常判断<br><strong>亮点：</strong><span class="hl">安全关键件，防反向安装</span></div></div>
+<div class="case"><h4>电池方向检测</h4><div class="meta"><span class="tag tag-t">分类识别</span><span class="tag tag-c">SC2016EC</span><span class="tag tag-m">成熟应用</span></div><div class="detail"><strong>算法：</strong>直线角度<br><strong>亮点：</strong><span class="hl">输出角度给PLC调整</span></div></div>
+<div class="case"><h4>极耳正反检测</h4><div class="meta"><span class="tag tag-t">分类识别</span><span class="tag tag-c">SC1003C-03S</span><span class="tag tag-m">成熟应用</span></div><div class="detail"><strong>算法：</strong>注册分类<br><strong>亮点：</strong><span class="hl">替换色标传感器</span></div></div>
+<div class="case"><h4>软包电池正反检测与读码</h4><div class="meta"><span class="tag tag-t">分类识别+OCR</span><span class="tag tag-c">SC3050M-16M</span><span class="tag tag-m">成熟应用</span></div><div class="detail"><strong>算法：</strong>异常判断、码识别<br><strong>亮点：</strong><span class="hl">正反+二维码同时检测</span></div></div>
+<div class="case"><h4>软包电芯点胶有无</h4><div class="meta"><span class="tag tag-t">有无检测</span><span class="tag tag-c">SC1008M-05S</span><span class="tag tag-m">已成单</span></div><div class="detail"><strong>算法：</strong>灰度面积<br><strong>亮点：</strong><span class="hl">已成单</span></div></div>
+<div class="case"><h4>电池胶纸有无检测</h4><div class="meta"><span class="tag tag-t">有无检测</span><span class="tag tag-c">SC3050XC-08M</span><span class="tag tag-m">成熟应用</span></div><div class="detail"><strong>算法：</strong>异常判断<br><strong>亮点：</strong><span class="hl">黑色胶纸vs黑色电池</span></div></div>
+<div class="case"><h4>PCM有无检测</h4><div class="meta"><span class="tag tag-t">有无检测</span><span class="tag tag-c">SC2016EC-12S</span><span class="tag tag-m">成熟应用</span></div><div class="detail"><strong>算法：</strong>注册分类<br><strong>亮点：</strong><span class="hl">检测漏焊缺焊</span></div></div>
+<div class="case"><h4>电池正反检测</h4><div class="meta"><span class="tag tag-t">分类识别</span><span class="tag tag-c">SC2016EC-16S</span><span class="tag tag-m">成熟应用</span></div><div class="detail"><strong>算法：</strong>注册分类<br><strong>亮点：</strong><span class="hl">丝印正反区分</span></div></div>
+<div class="case"><h4>PCM位置检测</h4><div class="meta"><span class="tag tag-t">有无检测</span><span class="tag tag-c">SC3050XC-08M</span><span class="tag tag-m">成熟应用</span></div><div class="detail"><strong>算法：</strong>异常判断<br><strong>亮点：</strong><span class="hl">位置对应+放歪检测</span></div></div>
+<div class="case"><h4>电芯丝印正反检测</h4><div class="meta"><span class="tag tag-t">分类识别</span><span class="tag tag-c">SC2016EC-16S</span><span class="tag tag-m">成熟应用</span></div><div class="detail"><strong>算法：</strong>注册分类<br><strong>亮点：</strong><span class="hl">存图溯源</span></div></div>
+<div class="case"><h4>电池凹坑、漏板检测</h4><div class="meta"><span class="tag tag-t">缺陷检测</span><span class="tag tag-c">SC6050M-08M</span><span class="tag tag-m">成熟应用</span></div><div class="detail"><strong>算法：</strong>深度学习图像分割<br><strong>亮点：</strong><span class="hl">不同曝光值切换</span></div></div>
+<div class="case"><h4>厚膜加热器发热板OCR识别</h4><div class="meta"><span class="tag tag-t">OCR/读码</span><span class="tag tag-c">SC2016EM-06S</span><span class="tag tag-m">成熟应用</span></div><div class="detail"><strong>算法：</strong>字符识别<br><strong>亮点：</strong><span class="hl">新能源汽车追溯</span></div></div>
+</div>
+</div>
+</div>
+
+<!-- ==================== TAB 3: 按检测类型 ==================== -->
+<div id="p3" class="panel">
+<input class="search" type="text" placeholder="🔍 搜索检测类型、案例名称..." id="searchType">
+
+<div class="type-card open">
+<div class="type-head" onclick="this.parentElement.classList.toggle('open')"><h2>✅ 有无检测 <span class="cnt">~35例</span></h2><span class="arrow">▶</span></div>
+<div class="type-body">
+<p style="color:#555;margin-bottom:12px;">推荐起步：SC2016EM/EC + 轮廓有无/异常判断</p>
+<div class="case"><h4>金属板螺帽冲压有无检测</h4><div class="meta"><span class="tag tag-i">五金</span><span class="tag tag-c">SC2016EM-08S</span></div><div class="detail"><span class="hl">16孔位同时检测</span></div></div>
+<div class="case"><h4>连接器盖子有无盖好</h4><div class="meta"><span class="tag tag-i">五金</span><span class="tag tag-c">SC3016C</span></div><div class="detail"><span class="hl">AI边缘学习，稳定性好</span></div></div>
+<div class="case"><h4>端子pin针有无检测</h4><div class="meta"><span class="tag tag-i">汽车</span><span class="tag tag-c">SC3050XC</span></div><div class="detail"><span class="hl">飞拍模式，10mm微型端子</span></div></div>
+<div class="case"><h4>壳体蓝膜检测</h4><div class="meta"><span class="tag tag-i">锂电</span><span class="tag tag-c">SC3050XC-08M</span></div><div class="detail"><span class="hl">一次检测3种异常（有无/重张/偏位）</span></div></div>
+<div class="case"><h4>弹簧有无检测</h4><div class="meta"><span class="tag tag-i">3C</span><span class="tag tag-c">SC1008M-05S</span></div><div class="detail"><span class="hl">笔记本风扇组装</span></div></div>
+<div class="case"><h4>导管针头有无检测</h4><div class="meta"><span class="tag tag-i">医疗</span><span class="tag tag-c">SC3050XC-08M</span></div><div class="detail"><span class="hl">装袋前最后工序</span></div></div>
+</div>
+</div>
+
+<div class="type-card">
+<div class="type-head" onclick="this.parentElement.classList.toggle('open')"><h2>🔤 OCR/读码 <span class="cnt">~25例</span></h2><span class="arrow">▶</span></div>
+<div class="type-body">
+<p style="color:#555;margin-bottom:12px;">推荐起步：SC2023XM/SC3050M + 字符识别</p>
+<div class="case"><h4>面包生产日期OCR识别</h4><div class="meta"><span class="tag tag-i">食品</span><span class="tag tag-c">SC3050M-08M</span></div><div class="detail"><span class="hl">99.5%准确率</span></div></div>
+<div class="case"><h4>二维码码识别（手机屏）</h4><div class="meta"><span class="tag tag-i">3C</span><span class="tag tag-c">SC3050M-08M</span></div><div class="detail"><span class="hl">细小二维码也能读</span></div></div>
+<div class="case"><h4>FPC整版读码+胶检测</h4><div class="meta"><span class="tag tag-i">PCB</span><span class="tag tag-c">SC6250M-00M</span></div><div class="detail"><span class="hl">30个码一次识别</span></div></div>
+<div class="case"><h4>标签读码OCR识别</h4><div class="meta"><span class="tag tag-i">医疗</span><span class="tag tag-c">SC3050XM-08M</span></div><div class="detail"><span class="hl">7个条码同时识别</span></div></div>
+<div class="case"><h4>矿泉水OCR字符识别</h4><div class="meta"><span class="tag tag-i">食品</span><span class="tag tag-c">SC2023XM-12M</span></div><div class="detail"><span class="hl">99.9%识别率</span></div></div>
+<div class="case"><h4>晶圆OCR识别</h4><div class="meta"><span class="tag tag-i">半导体</span><span class="tag tag-c">SC3050XM-12M</span></div><div class="detail"><span class="hl">非SEMI标准字体</span></div></div>
+</div>
+</div>
+
+<div class="type-card">
+<div class="type-head" onclick="this.parentElement.classList.toggle('open')"><h2>🏷️ 分类识别 <span class="cnt">~20例</span></h2><span class="arrow">▶</span></div>
+<div class="type-body">
+<p style="color:#555;margin-bottom:12px;">推荐起步：SC2016EC + 注册分类</p>
+<div class="case"><h4>电池正反检测</h4><div class="meta"><span class="tag tag-i">锂电</span><span class="tag tag-c">SC2016EC-16S</span></div><div class="detail"><span class="hl">注册分类，学习一次永久用</span></div></div>
+<div class="case"><h4>电线颜色识别检测</h4><div class="meta"><span class="tag tag-i">3C</span><span class="tag tag-c">SC3013XC-12S</span></div><div class="detail"><span class="hl">颜色面积算法，防止上料错</span></div></div>
+<div class="case"><h4>防爆阀正反检测</h4><div class="meta"><span class="tag tag-i">锂电</span><span class="tag tag-c">SC3050XC-08M</span></div><div class="detail"><span class="hl">安全关键件，防反向安装</span></div></div>
+<div class="case"><h4>继电器正反检测</h4><div class="meta"><span class="tag tag-i">家电</span><span class="tag tag-c">SC1008M-05S</span></div><div class="detail"><span class="hl">A/B相接线差异</span></div></div>
+<div class="case"><h4>化妆品种类识别</h4><div class="meta"><span class="tag tag-i">日用品</span><span class="tag tag-c">SC3016M-15M</span></div><div class="detail"><span class="hl">AI打标训练</span></div></div>
+</div>
+</div>
+
+<div class="type-card">
+<div class="type-head" onclick="this.parentElement.classList.toggle('open')"><h2>⚠️ 缺陷检测 <span class="cnt">~12例</span></h2><span class="arrow">▶</span></div>
+<div class="type-body">
+<p style="color:#555;margin-bottom:12px;">推荐起步：SC3050XC + 异常判断（AI边缘学习）</p>
+<div class="case"><h4>电池凹坑、漏板检测</h4><div class="meta"><span class="tag tag-i">锂电</span><span class="tag tag-c">SC6050M-08M</span></div><div class="detail"><span class="hl">深度学习图像分割，不同曝光自动切换</span></div></div>
+<div class="case"><h4>螺母焊接状态检测</h4><div class="meta"><span class="tag tag-i">汽车</span><span class="tag tag-c">SC3050XC</span></div><div class="detail"><span class="hl">4位置螺母方向+数量，一次全检</span></div></div>
+<div class="case"><h4>包覆膜脏污&异物检测</h4><div class="meta"><span class="tag tag-i">医疗</span><span class="tag tag-c">SC3030XC-05M</span></div><div class="detail"><span class="hl">白色脏污vs白色背景，专用算法搞定</span></div></div>
+<div class="case"><h4>医疗药盒印刷检测</h4><div class="meta"><span class="tag tag-i">医疗</span><span class="tag tag-c">SC5120XM-00C</span></div><div class="detail"><span class="hl">双条光消除反光，深度学习检出率高</span></div></div>
+</div>
+</div>
+
+<div class="type-card">
+<div class="type-head" onclick="this.parentElement.classList.toggle('open')"><h2>📐 尺寸测量 <span class="cnt">~8例</span></h2><span class="arrow">▶</span></div>
+<div class="type-body">
+<p style="color:#555;margin-bottom:12px;">推荐起步：SC3050M + 线线角度/宽度测量</p>
+<div class="case"><h4>控制零件角度及尺寸检测</h4><div class="meta"><span class="tag tag-i">五金</span><span class="tag tag-c">SC3050M-16M</span></div><div class="detail"><span class="hl">三工位+偏振成像</span></div></div>
+<div class="case"><h4>pin针偏位检测</h4><div class="meta"><span class="tag tag-i">汽车</span><span class="tag tag-c">SC3016C</span></div><div class="detail"><span class="hl">0.01mm精度</span></div></div>
+<div class="case"><h4>卷料间距测量</h4><div class="meta"><span class="tag tag-i">五金</span><span class="tag tag-c">SC6250M-00C</span></div><div class="detail"><span class="hl">TCP发PLC闭环控制</span></div></div>
+</div>
+</div>
+
+<div class="type-card">
+<div class="type-head" onclick="this.parentElement.classList.toggle('open')"><h2>🎯 定位引导 <span class="cnt">~5例</span></h2><span class="arrow">▶</span></div>
+<div class="type-body">
+<p style="color:#555;margin-bottom:12px;">推荐起步：SC3050M + 目标检测+标定转换</p>
+<div class="case"><h4>PCB抓取引导</h4><div class="meta"><span class="tag tag-i">PCB</span><span class="tag tag-c">SC3050M-08M</span></div><div class="detail"><span class="hl">0.1mm精度，图案定位+坐标转换</span></div></div>
+<div class="case"><h4>NFC卡定位抓取自动上下料</h4><div class="meta"><span class="tag tag-i">3C</span><span class="tag tag-c">SC6250M-00C</span></div><div class="detail"><span class="hl">初定位+高精度匹配，引导协作机器人</span></div></div>
+<div class="case"><h4>血糖仪振动盘组装检测</h4><div class="meta"><span class="tag tag-i">医疗</span><span class="tag tag-c">CY-SC6080XM</span></div><div class="detail"><span class="hl">上下双相机方案</span></div></div>
+</div>
+</div>
+</div>
+
+<!-- ==================== TAB 4: 销售速查 ==================== -->
+<div id="p4" class="panel">
+<div class="tip">
+<h3>⚡ 30秒推案例流程</h3>
+<div class="step"><div class="step-num">1</div><div><strong>客户开口</strong> → 判断是说了行业还是检测需求</div></div>
+<div class="step"><div class="step-num">2</div><div><strong>快速追问</strong> → "您具体要检测什么？" + "精度和速度要求？"</div></div>
+<div class="step"><div class="step-num">3</div><div><strong>匹配案例</strong> → 从下方精选中找到对应案例，直接推荐</div></div>
+</div>
+
+<div class="card">
+<h2>🏭 各行业 Top 3 精选</h2>
+<h3 style="margin:12px 0 8px">🔋 锂电行业</h3>
+<div class="top3">🥇 <strong>电池正反检测</strong> <span class="tag tag-c">SC2016EC</span></div><div class="tip-text">"注册分类算法，学习一次永久用，丝印正反一拍就知"</div>
+<div class="top3">🥈 <strong>壳体蓝膜检测</strong> <span class="tag tag-c">SC3050XC</span></div><div class="tip-text">"有无+重张+偏位，一台相机全搞定"</div>
+<div class="top3">🥉 <strong>电池凹坑检测</strong> <span class="tag tag-c">SC6050M</span></div><div class="tip-text">"深度学习图像分割，不同曝光自动切换"</div>
+
+<h3 style="margin:16px 0 8px">🚗 汽车行业</h3>
+<div class="top3">🥇 <strong>端子pin针有无</strong> <span class="tag tag-c">SC3050XC</span></div><div class="tip-text">"10mm微型端子，飞拍模式高速检测"</div>
+<div class="top3">🥈 <strong>螺母焊接状态</strong> <span class="tag tag-c">SC3050XC</span></div><div class="tip-text">"4个螺母方向+数量，一次全检"</div>
+<div class="top3">🥉 <strong>重型卸扣OCR</strong> <span class="tag tag-c">SC3050XM</span></div><div class="tip-text">"深度学习算法，复杂表面字符也能识别"</div>
+
+<h3 style="margin:16px 0 8px">📱 3C电子行业</h3>
+<div class="top3">🥇 <strong>NFC卡定位抓取</strong> <span class="tag tag-c">SC6250M</span></div><div class="tip-text">"初定位+高精度匹配，引导协作机器人"</div>
+<div class="top3">🥈 <strong>面板二维码&OCR</strong> <span class="tag tag-c">SC3050XM</span></div><div class="tip-text">"二维码+OCR一次完成，兼容多个物料"</div>
+<div class="top3">🥉 <strong>SIM卡托读码等级</strong> <span class="tag tag-c">SC6050C</span></div><div class="tip-text">"ISO标准评分，质量可量化"</div>
+
+<h3 style="margin:16px 0 8px">🏥 医疗行业</h3>
+<div class="top3">🥇 <strong>标签读码OCR</strong> <span class="tag tag-c">SC3050XM</span></div><div class="tip-text">"一次拍摄识别7个条码，效率极高"</div>
+<div class="top3">🥈 <strong>包覆膜脏污检测</strong> <span class="tag tag-c">SC3030XC</span></div><div class="tip-text">"白色脏污vs白色背景，专用算法搞定"</div>
+<div class="top3">🥉 <strong>医疗药盒印刷</strong> <span class="tag tag-c">SC5120XM</span></div><div class="tip-text">"双条光消除反光，深度学习检出率高"</div>
+
+<h3 style="margin:16px 0 8px">🔩 五金行业</h3>
+<div class="top3">🥇 <strong>螺帽冲压有无</strong> <span class="tag tag-c">SC2016EM</span></div><div class="tip-text">"16孔位同时检测"</div>
+<div class="top3">🥈 <strong>零件角度尺寸</strong> <span class="tag tag-c">SC3050M</span></div><div class="tip-text">"正反侧面三工位，偏振消除反光"</div>
+<div class="top3">🥉 <strong>圆环OCR</strong> <span class="tag tag-c">SC5050XM</span></div><div class="tip-text">"圆环展开算法，曲面字符也能读"</div>
+
+<h3 style="margin:16px 0 8px">💻 PCB行业</h3>
+<div class="top3">🥇 <strong>FPC整版读码</strong> <span class="tag tag-c">SC6250M</span></div><div class="tip-text">"30个码一次识别"</div>
+<div class="top3">🥈 <strong>PCB抓取引导</strong> <span class="tag tag-c">SC3050M</span></div><div class="tip-text">"图案定位+坐标转换，0.1mm精度"</div>
+<div class="top3">🥉 <strong>PCB字符识别</strong> <span class="tag tag-c">SC5120XC</span></div><div class="tip-text">"2500万像素，机台号+轮次追溯"</div>
+</div>
+
+<div class="card">
+<h2>🚫 常见客户异议应对</h2>
+<div class="obj"><strong>客户："你们有做过我们行业的吗？"</strong><br>→ "我们覆盖12个行业100+案例，检测原理是通用的。您寄个样品，我们免费帮您测。"</div>
+<div class="obj"><strong>客户："精度能达标吗？"</strong><br>→ "我们有100万到2500万像素全系列，精度从0.1mm到0.01mm都能覆盖。您告诉我精度要求，我帮您选型。"</div>
+<div class="obj"><strong>客户："速度跟得上吗？"</strong><br>→ "最快50ms响应，飞拍模式支持高速产线。您产线节拍是多少？我帮您评估。"</div>
+<div class="obj"><strong>客户："能不能先试用？"</strong><br>→ "完全可以！您寄样品过来，我们免费帮您做测试出效果报告。一般3-5个工作日出结果。"</div>
+<div class="obj"><strong>客户："价格怎么样？"</strong><br>→ "我们有5大系列从经济到旗舰，一定有适合您预算的。先确认方案，我给您报个精准价格。"</div>
+</div>
+</div>
+</div>
+
+<div class="footer">深分智能相机案例库 · 共102个实战案例 · 覆盖12个行业 · 6大检测类型 · 持续更新中</div>
+
+<script>
+function toggleInd(el){el.parentElement.classList.toggle('open')}
+document.getElementById('searchIndustry').addEventListener('input',function(){
+var q=this.value.toLowerCase();
+document.querySelectorAll('#p2 .case').forEach(function(c){
+c.style.display=c.textContent.toLowerCase().includes(q)?'':'none';
+});
+document.querySelectorAll('#p2 .ind').forEach(function(ind){
+var has=[...ind.querySelectorAll('.case')].some(function(c){return c.style.display!=='none'});
+ind.style.display=has?'':'none';
+if(q)ind.classList.add('open');
+});
+});
+document.getElementById('searchType').addEventListener('input',function(){
+var q=this.value.toLowerCase();
+document.querySelectorAll('#p3 .case').forEach(function(c){
+c.style.display=c.textContent.toLowerCase().includes(q)?'':'none';
+});
+document.querySelectorAll('#p3 .type-card').forEach(function(tc){
+var has=[...tc.querySelectorAll('.case')].some(function(c){return c.style.display!=='none'});
+tc.style.display=has?'':'none';
+if(q)tc.classList.add('open');
+});
+});
+</script>
+</body>
+</html>
