@@ -91,14 +91,45 @@ background:var(--cd);color:var(--ts);border:1.5px solid var(--bd);transition:.15
 
 .flabel{font-size:.9em;font-weight:700;color:var(--tp);margin-right:3px}
 
-@media(max-width:768px){
-body{padding:0}.wrap{border-radius:0;box-shadow:none}
-.bar{height:44px;padding:0 14px}.bar h1{font-size:.92em}.bar .st{display:none}
+@media(max-width:900px){
+body{padding:0;font-size:18px}.wrap{border-radius:0;box-shadow:none;max-width:100%}
+.bar{height:48px;padding:0 12px}.bar h1{font-size:1em}.bar .st{font-size:.7em;gap:10px}
 .abody{flex-direction:column}
-.nav{width:100%;display:flex;padding:0;border-right:none;border-bottom:1px solid rgba(255,255,255,.06)}
-.nav-item{flex-direction:row;gap:5px;padding:10px 14px;border-left:none;border-bottom:3px solid transparent;font-size:.85em}
+.nav{width:100%;display:flex;padding:4px 0;border-right:none;border-bottom:1px solid rgba(255,255,255,.06);overflow-x:auto;flex-shrink:0}
+.nav-item{flex-direction:row;gap:4px;padding:8px 12px;border-left:none;border-bottom:3px solid transparent;font-size:.78em;white-space:nowrap}
 .nav-item.on{border-left:none;border-bottom-color:var(--br)}
-.carea{padding:10px}.cgrid{grid-template-columns:1fr}.footer{border-radius:0}
+.nav-item .ni{font-size:1.1em}
+.carea{padding:12px 10px;overflow-y:auto}
+.tp{overflow-y:auto}
+.sbox{padding-bottom:8px}
+.sinput{font-size:16px;padding:10px 12px 10px 36px}
+.ftags{gap:4px;margin-top:6px}
+.ftag{padding:4px 8px;font-size:.75em}
+.cgrid{grid-template-columns:1fr;gap:10px}
+.ccard-body{padding:10px 12px}
+.cname{font-size:1em}
+.case-algo{font-size:.82em}
+.ind-title{padding:10px 12px;font-size:.95em}
+.ind-cases{padding:8px}
+.supplement{margin-top:12px;padding:12px !important}
+.supplement>div{grid-template-columns:1fr !important;gap:10px !important}
+.footer{padding:12px 10px}
+.footer>div:first-child{flex-direction:column;gap:10px !important;text-align:center !important}
+.footer>div:first-child>div{text-align:center !important}
+.footer img{width:100px;height:100px}
+.lb img{max-width:95vw;max-height:70vh}
+}
+@media(max-width:480px){
+.bar{height:44px;padding:0 10px}.bar h1{font-size:.9em}.bar .bd{font-size:.6em}
+.nav-item{padding:6px 8px;font-size:.72em}
+.carea{padding:8px 6px}
+.sinput{font-size:15px;padding:8px 10px 8px 32px}
+.ftag{padding:3px 6px;font-size:.7em}
+.ccard-top{gap:4px;margin-bottom:4px}
+.cid{font-size:.65em;padding:2px 6px}
+.cname{font-size:.9em}
+.ct{font-size:.68em;padding:2px 6px}
+.ind-title{padding:8px 10px;font-size:.9em}
 }
 </style>
 </head>
