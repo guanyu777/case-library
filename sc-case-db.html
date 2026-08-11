@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>深分智能相机案例与竞品资料库 V2.0</title>
+<style>
+:root{--br:#e8600a;--nv:#0A1628;--bg:#EEF1F6;--cd:#FFF;--tx:#1a1a2e;--st:#666;--bd:#d0d5dd;--gr:#16a34a;--rd:#dc2626;--bl:#2563eb;--yl:#ca8a04;--pp:#7c3aed}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--tx);line-height:1.6}
+.nav{background:var(--nv);color:#fff;padding:0;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.15)}
+.nav-inner{max-width:1400px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:12px 24px}
+.nav-logo{font-size:1.2em;font-weight:700;display:flex;align-items:center;gap:8px}
+.nav-logo .icon{font-size:1.4em}
+.nav-stats{display:flex;gap:20px;font-size:.85em;color:#94a3b8}
+.nav-stats span{display:flex;align-items:center;gap:4px}
+.nav-stats .num{color:#fff;font-weight:700}
+.tab-bar{background:#fff;border-bottom:2px solid var(--bd);position:sticky;top:56px;z-index:99;overflow-x:auto}
+.tab-bar-inner{max-width:1400px;margin:0 auto;display:flex;padding:0 24px}
+.tab-btn{padding:14px 24px;border:none;background:none;cursor:pointer;font-size:.95em;font-weight:600;color:var(--st);border-bottom:3px solid transparent;white-space:nowrap;transition:all .2s}
+.tab-btn:hover{color:var(--br)}
+.tab-btn.active{color:var(--br);border-bottom-color:var(--br)}
+.main{max-width:1400px;margin:0 auto;padding:20px 24px}
+.tab-content{display:none}
+.tab-content.active{display:block}
+/* Search */
+.search-bar{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+.search-input{flex:1;min-width:280px;padding:12px 16px;border:2px solid var(--bd);border-radius:8px;font-size:1em;outline:none;transition:border .2s}
+.search-input:focus{border-color:var(--br)}
+.filter-btn{padding:12px 20px;border:2px solid var(--bd);border-radius:8px;background:#fff;cursor:pointer;font-size:.9em;font-weight:600;color:var(--st);transition:all .2s}
+.filter-btn:hover,.filter-btn.active{border-color:var(--br);color:var(--br)}
+/* Cards */
+.stats-row{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+.stat-card{background:#fff;border-radius:10px;padding:16px 20px;min-width:120px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.stat-card .num{font-size:1.8em;font-weight:800;color:var(--br)}
+.stat-card .lbl{font-size:.8em;color:var(--st);margin-top:2px}
+.case-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:14px}
+.case-card{background:#fff;border-radius:10px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.06);border-left:4px solid var(--br);transition:transform .2s,box-shadow .2s}
+.case-card:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.1)}
+.case-title{font-weight:700;font-size:.95em;margin-bottom:8px;display:flex;justify-content:space-between;align-items:flex-start}
+.case-id{font-size:.75em;color:var(--br);white-space:nowrap;margin-left:8px}
+.case-meta{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:.75em;font-weight:600}
+.tag-ind{background:#fef3c7;color:#92400e}
+.tag-type{background:#dbeafe;color:#1e40af}
+.tag-cam{background:#e0e7ff;color:#3730a3;font-family:monospace;font-size:.72em}
+.tag-alg{background:#f0fdf4;color:#166534;font-size:.72em}
+/* Industry sidebar */
+.side-layout{display:flex;gap:20px}
+.sidebar{width:240px;flex-shrink:0;background:#fff;border-radius:10px;padding:12px;box-shadow:0 1px 4px rgba(0,0,0,.06);position:sticky;top:120px;max-height:calc(100vh - 140px);overflow-y:auto}
+.sidebar h3{font-size:.9em;margin-bottom:10px;color:var(--nv)}
+.ind-item{padding:8px 12px;cursor:pointer;border-radius:6px;font-size:.85em;display:flex;align-items:center;gap:6px;margin-bottom:2px;transition:background .15s}
+.ind-item:hover{background:#fff7ed}
+.ind-item.active{background:#fff7ed;color:var(--br);font-weight:700}
+.ind-item .cnt{font-size:.75em;color:var(--st);margin-left:auto}
+.type-filters{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;padding-top:12px;border-top:1px solid var(--bd)}
+.type-filters .tf{padding:4px 10px;border-radius:14px;border:1px solid var(--bd);font-size:.75em;cursor:pointer;background:#fff;transition:all .15s}
+.type-filters .tf.active{background:var(--br);color:#fff;border-color:var(--br)}
+.content-area{flex:1;min-width:0}
+/* Competitor DB */
+.comp-header{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.comp-header .logo{width:48px;height:48px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.2em;font-weight:800;color:#fff}
+.comp-card{background:#fff;border-radius:12px;padding:20px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.comp-card h3{font-size:1.1em;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.comp-card h3 .region{font-size:.7em;padding:2px 8px;border-radius:4px;font-weight:400}
+.region-cn{background:#fee2e2;color:#991b1b}
+.region-intl{background:#dbeafe;color:#1e40af}
+.model-table{width:100%;border-collapse:collapse;font-size:.82em;margin:12px 0}
+.model-table th{background:var(--nv);color:#fff;padding:8px 10px;text-align:left;font-weight:600;white-space:nowrap}
+.model-table td{padding:8px 10px;border-bottom:1px solid var(--bd);vertical-align:top}
+.model-table tr:hover{background:#f8fafc}
+.model-table .highlight{background:#fff7ed}
+.model-table td:first-child{font-family:monospace;font-size:.8em;white-space:nowrap;color:var(--br)}
+/* Comparison */
+.cmp-table-wrap{overflow-x:auto;margin:16px 0}
+.cmp-table{width:100%;border-collapse:collapse;font-size:.78em;min-width:1200px}
+.cmp-table th{background:var(--nv);color:#fff;padding:8px;text-align:center;font-weight:600;position:sticky;top:0;white-space:nowrap}
+.cmp-table th:first-child{text-align:left;min-width:120px}
+.cmp-table td{padding:8px;border:1px solid var(--bd);text-align:center}
+.cmp-table td:first-child{text-align:left;font-weight:600;white-space:nowrap}
+.cmp-table tr:nth-child(even){background:#f8fafc}
+.cmp-table .win{color:var(--gr);font-weight:700}
+.cmp-table .hk{background:#fff7ed}
+.section-title{font-size:1.3em;font-weight:700;margin:28px 0 16px;padding-bottom:8px;border-bottom:3px solid var(--br);display:flex;align-items:center;gap:8px}
+.section-desc{color:var(--st);margin-bottom:16px;font-size:.9em}
+/* Responsive */
+@media(max-width:900px){
+  .side-layout{flex-direction:column}
+  .sidebar{width:100%;position:static;max-height:none}
+  .case-grid{grid-template-columns:1fr}
+  .nav-stats{display:none}
+}
+@media(max-width:600px){
+  .tab-btn{padding:10px 14px;font-size:.8em}
+  .main{padding:12px}
+}
+.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:.7em;font-weight:700}
+.badge-yes{background:#dcfce7;color:#166534}
+.badge-no{background:#fee2e2;color:#991b1b}
+.badge-partial{background:#fef3c7;color:#92400e}
+.no-result{text-align:center;padding:40px;color:var(--st)}
+.summary-box{background:linear-gradient(135deg,#fff7ed,#fef3c7);border:1px solid #fcd34d;border-radius:10px;padding:16px;margin:16px 0;font-size:.9em}
+.summary-box h4{color:var(--br);margin-bottom:8px}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+<div class="nav-inner">
+<div class="nav-logo"><span class="icon">📷</span>深分智能相机案例与竞品资料库 <span style="font-size:.6em;background:var(--br);padding:2px 8px;border-radius:4px;margin-left:8px">V2.0</span></div>
+<div class="nav-stats" id="navStats"><span>📋 <span class="num">210</span> 案例</span><span>🏭 <span class="num">15</span> 行业</span><span>🔍 <span class="num">6</span> 检测类型</span><span>🏢 <span class="num">7</span> 品牌</span></div>
+</div>
+</nav>
+
+<div class="tab-bar"><div class="tab-bar-inner" id="tabBar">
+<button class="tab-btn active" data-tab="search">🔍 案例搜索</button>
+<button class="tab-btn" data-tab="industry">🏭 行业浏览</button>
+<button class="tab-btn" data-tab="competitor">🏢 竞品资料库</button>
+<button class="tab-btn" data-tab="compare">⚖️ 型号对标</button>
+</div></div>
+
+<main class="main">
+
+<!-- ==================== TAB 1: 案例搜索 ==================== -->
+<div class="tab-content active" id="tab-search">
+<div class="search-bar">
+<input type="text" class="search-input" id="searchInput" placeholder="搜索案例名称、行业、相机型号、检测类型、算法...">
+</div>
+<div class="stats-row" id="searchStats"></div>
+<div class="case-grid" id="searchResults"></div>
+<div class="no-result" id="noResult" style="display:none">未找到匹配的案例</div>
+</div>
+
+<!-- ==================== TAB 2: 行业浏览 ==================== -->
+<div class="tab-content" id="tab-industry">
+<div class="side-layout">
+<div class="sidebar" id="sidebar"></div>
+<div class="content-area">
+<div class="type-filters" id="typeFilters"></div>
+<div class="stats-row" id="indStats"></div>
+<div class="case-grid" id="indResults"></div>
+</div>
+</div>
+</div>
+
+<!-- ==================== TAB 3: 竞品资料库 ==================== -->
+<div class="tab-content" id="tab-competitor">
+<div class="stats-row" id="compStats"></div>
+
+<!-- 基恩士 -->
+<div class="comp-card">
+<h3>🇯🇵 基恩士 KEYENCE — IV 系列智能相机 <span class="region region-intl">日本</span></h3>
+<div class="summary-box"><h4>品牌定位</h4>全球传感器龙头，IV系列主打"All-in-One"——相机+照明+控制器一体化。AI自动设定无需专业知识，IV4系列支持250个/秒检测速度。生态闭环：硬件+软件+配件全自研。最大短板：封闭生态，无法二次开发，售后口碑差(Trustpilot 2.6星)。</div>
+<table class="model-table">
+<thead><tr><th>系列</th><th>型号后缀</th><th>分辨率</th><th>传感器</th><th>像素</th><th>帧率</th><th>FOV最大</th><th>光源</th><th>AI能力</th><th>防护</th><th>安装距离</th></tr></thead>
+<tbody>
+<tr><td>IV4</td><td>-400CA/MA</td><td>1280×960 (1.2MP)</td><td>1/2.9" CMOS</td><td>~1.2MP</td><td>250件/秒</td><td>464×348mm</td><td>白光/红外LED</td><td>学习工具2/学习计数/学习OCR/AI触发/AI拍摄</td><td>IP67</td><td>400mm~</td></tr>
+<tr><td>IV4</td><td>-500CA/MA</td><td>1280×960 (1.2MP)</td><td>1/2.9" CMOS</td><td>~1.2MP</td><td>250件/秒</td><td>1184×888mm</td><td>白光/红外LED</td><td>同上+位置补正/Blob计数/学习搜索</td><td>IP67</td><td>50mm~</td></tr>
+<tr><td>IV4</td><td>-600CA/MA</td><td>1280×960 (1.2MP)</td><td>1/2.9" CMOS</td><td>~1.2MP</td><td>250件/秒</td><td>2730×2044mm</td><td>白光/红外LED</td><td>同上</td><td>IP67</td><td>50mm~</td></tr>
+<tr><td>IV3</td><td>-G500/G600</td><td>1280×960 (1.2MP)</td><td>1/2.9" CMOS</td><td>~1.2MP</td><td>~60fps</td><td>2730×2044mm</td><td>白光/红外LED</td><td>AI自动设定/AI拍摄</td><td>IP67</td><td>50~3000mm</td></tr>
+<tr><td>IV2</td><td>-G500MA</td><td>752×480 (0.36MP)</td><td>1/2.9" CMOS</td><td>~0.36MP</td><td>~30fps</td><td>200×150mm</td><td>白光LED</td><td>AI有无识别</td><td>IP67</td><td>50mm~</td></tr>
+</tbody></table>
+<p style="margin-top:8px;font-size:.82em;color:var(--st)"><strong>配件生态：</strong>AI拍摄照明单元(IV4-Lx)、触摸屏控制器(IV4-CP70 7" 1024×600)、显示扩展单元(IV4-DU10)、通信单元(IV4-CU1 支持EtherCAT/PROFINET CC-C)、microSD卡、偏光镜附件、圆顶光罩(IV3-D10)。<br>
+<strong>通讯协议：</strong>EtherNet/IP, PROFINET CC-B/CC-C, EtherCAT, OPC UA, MQTT, TCP/IP无协议, FTP/SFTP客户端, SNTP。<br>
+<strong>对标海康：</strong>IV4系列 ≈ SC3000 + 部分AI能力；IV3 ≈ SC2000X；IV2 ≈ SC1000。</p>
+</div>
+
+<!-- 康耐视 -->
+<div class="comp-card">
+<h3>🇺🇸 康耐视 COGNEX — In-Sight 系列智能相机 <span class="region region-intl">美国</span></h3>
+<div class="summary-box"><h4>品牌定位</h4>全球机器视觉No.1，In-Sight 3800是2025年最新旗舰。ViDi EL AI边缘学习(仅需5-10张训练图)、HDR+技术提升80%线速、HSLL高速液态镜头18亿次对焦周期。全系C-Mount+RGBW多色照明。最大短板：价格最高(主力型号3万+)、学习曲线陡峭(需Spreadsheet编程)。</div>
+<table class="model-table">
+<thead><tr><th>系列</th><th>型号</th><th>分辨率</th><th>传感器</th><th>像素尺寸</th><th>帧率</th><th>快门</th><th>镜头</th><th>AI能力</th><th>防护</th><th>内存</th></tr></thead>
+<tbody>
+<tr><td>3800</td><td>IS3801</td><td>1440×1080 (1.6MP)</td><td>1/2.3" CMOS</td><td>3.45μm</td><td>125fps</td><td>全局</td><td>C-Mount / HSLL液镜</td><td>ViDi EL Segment/Classify/Read</td><td>IP67</td><td>4GB</td></tr>
+<tr><td>3800</td><td>IS3803</td><td>2048×1536 (3MP)</td><td>1/1.8" CMOS</td><td>3.45μm</td><td>47fps</td><td>全局</td><td>C-Mount / HSLL液镜</td><td>同上</td><td>IP67</td><td>4GB</td></tr>
+<tr><td>3800</td><td>IS3805</td><td>2448×2048 (5MP)</td><td>2/3" CMOS</td><td>3.45μm</td><td>32fps</td><td>全局</td><td>C-Mount / HSLL液镜</td><td>同上</td><td>IP67</td><td>4GB</td></tr>
+<tr><td>3800</td><td>IS3808</td><td>2840×2840 (8MP)</td><td>2/3" CMOS</td><td>2.74μm</td><td>24fps</td><td>全局</td><td>C-Mount / HSLL液镜</td><td>同上</td><td>IP67</td><td>4GB</td></tr>
+<tr><td>3800</td><td>IS3812</td><td>4096×3000 (12MP)</td><td>1/1.1" CMOS</td><td>2.74μm</td><td>22fps</td><td>全局</td><td>C-Mount</td><td>同上</td><td>IP67</td><td>4GB</td></tr>
+<tr><td>3800</td><td>IS3816</td><td>5320×3032 (16MP)</td><td>1.1" CMOS</td><td>2.74μm</td><td>18fps</td><td>全局</td><td>C-Mount</td><td>同上</td><td>IP67</td><td>4GB</td></tr>
+<tr><td>2800</td><td>IS2800 Edge Learning</td><td>1440×1080 (1.6MP)</td><td>1/2.8" CMOS</td><td>2.8μm</td><td>45fps</td><td>-</td><td>6.2mm 液镜</td><td>ViDi EL基础</td><td>IP54</td><td>-</td></tr>
+<tr><td>2800</td><td>IS2802</td><td>1920×1200 (2MP)</td><td>1/2.8" CMOS</td><td>2.0μm</td><td>60fps</td><td>-</td><td>C-Mount</td><td>无(规则型)</td><td>IP67</td><td>-</td></tr>
+<tr><td>2800</td><td>IS2805</td><td>2616×1964 (5MP)</td><td>1/2.8" CMOS</td><td>2.0μm</td><td>10fps</td><td>卷帘</td><td>C-Mount</td><td>无(规则型)</td><td>IP40</td><td>-</td></tr>
+<tr><td>D900</td><td>ISD900</td><td>最高12MP</td><td>-</td><td>-</td><td>-</td><td>全局</td><td>C-Mount</td><td>ViDi DL深度学习</td><td>IP67</td><td>-</td></tr>
+</tbody></table>
+<p style="margin-top:8px;font-size:.82em;color:var(--st)"><strong>核心卖点：</strong>HDR+(单帧HDR，80%线速提升)、HSLL 18亿次对焦寿命、Multi-Torch多色照明、2-6倍工具处理速度(vs 7800/7900)、2500零件/分钟标称产能。<br>
+<strong>对标海康：</strong>IS3801≈SC6000 1.6MP；IS3803/3805≈SC5000X；IS2800≈SC2000X+部分AI；D900≈SC6000+全监督深度学习。</p>
+</div>
+
+<!-- 思谋 -->
+<div class="comp-card">
+<h3>🇨🇳 思谋科技 SmartMore — VN系列智能视觉传感器 <span class="region region-cn">中国</span></h3>
+<div class="summary-box"><h4>品牌定位</h4>AI大模型驱动，VN4000内置深度学习芯片+自研ViMo平台。零代码配置、自动对焦+自动调参。100mm-1000mm灵活安装。4路独立光源控制+16种补光方案。通讯协议最全（含日系MELSEC/SLMP）。最大短板：像素偏低(均1280×800)、方案价格高(15万+起)、生态不如OPT/海康完善。</div>
+<table class="model-table">
+<thead><tr><th>型号</th><th>分辨率</th><th>传感器</th><th>像素尺寸</th><th>帧率</th><th>快门</th><th>镜头</th><th>AI能力</th><th>防护</th><th>功耗</th></tr></thead>
+<tbody>
+<tr><td>VN4000</td><td>1280×800 (1MP)</td><td>1/4" CMOS</td><td>3μm</td><td>60fps</td><td>全局</td><td>液态调焦 8/12/16mm</td><td>深度学习：AI二分类/有无/计数/OCR</td><td>IP67</td><td>15W</td></tr>
+<tr><td>VN2000</td><td>1280×800 (1MP)</td><td>1/4" CMOS</td><td>3μm</td><td>60fps</td><td>全局</td><td>液态调焦 16mm</td><td>有无/计数/正反/位置修正</td><td>IP67</td><td>5W</td></tr>
+</tbody></table>
+<p style="margin-top:8px;font-size:.82em;color:var(--st)"><strong>通讯协议：</strong>TCP Server/Client, ModBus TCP/RTU, Profinet, EtherNet/IP, MELSEC/SLMP, RS-232。共16种补光方案。<br>
+<strong>对标海康：</strong>VN4000 ≈ SC3000(检测能力) / SC2000X(像素)；VN2000 ≈ SC1000/SC2000 紧凑型。</p>
+</div>
+
+<!-- OPT -->
+<div class="comp-card">
+<h3>🇨🇳 OPT奥普特 — SC系列智能相机 <span class="region region-cn">中国</span></h3>
+<div class="summary-box"><h4>品牌定位</h4>中国最大光源厂商起家，SCI-SC系列全链条自研(光源+镜头+相机+软件)。图形化拖拽编程(SmartWorks)，内置深度学习引擎。SCB1为紧凑型(M8镜头)、SCA为C口型(可换镜)。HDMI直连显示器、USB接口扩展。最大短板：AI深度不如海康/思谋/康耐视，开发者生态弱于海康。</div>
+<table class="model-table">
+<thead><tr><th>系列</th><th>型号</th><th>分辨率</th><th>传感器</th><th>像素尺寸</th><th>帧率</th><th>快门</th><th>镜头</th><th>接口</th><th>防护</th></tr></thead>
+<tbody>
+<tr><td>SCB1(紧凑)</td><td>OPT-SCB1-M023G-L06</td><td>1920×1200 (2.3MP)</td><td>1/2.6" CMOS</td><td>3.0μm</td><td>90fps</td><td>全局</td><td>M8 6mm/手动调焦</td><td>千兆以太网</td><td>IP62</td></tr>
+<tr><td>SCA1/2(C口)</td><td>OPT-SCA1-50MC</td><td>2464×2048 (5MP)</td><td>2/3" CMOS</td><td>3.45μm</td><td>30fps</td><td>全局</td><td>C-Mount</td><td>千兆+HDMI+USB</td><td>IP62</td></tr>
+<tr><td>SCA2(C口)</td><td>OPT-SCA2-120MC</td><td>4000×3000 (12MP)</td><td>1/1.7" CMOS</td><td>1.85μm</td><td>25fps</td><td>卷帘</td><td>C-Mount</td><td>千兆+HDMI+USB</td><td>IP62</td></tr>
+<tr><td>SCA2(C口)</td><td>OPT-SCA2-200MC</td><td>5440×3648 (20MP)</td><td>1" CMOS</td><td>2.4μm</td><td>20fps</td><td>卷帘</td><td>C-Mount</td><td>千兆+HDMI+USB</td><td>IP62</td></tr>
+</tbody></table>
+<p style="margin-top:8px;font-size:.82em;color:var(--st)"><strong>软件生态：</strong>SciVision SDK(灵活开发)、SmartWorks(拖拽式)、DeepVision(深度学习)。<br>
+<strong>对标海康：</strong>SCB1 ≈ SC3000(紧凑)；SCA1/2 ≈ SC6000(C口系列)。但防护等级IP62低于海康全系IP67。</p>
+</div>
+
+<!-- 华睿 -->
+<div class="comp-card">
+<h3>🇨🇳 华睿科技 Huarui — SS/X86系列智能相机 <span class="region region-cn">中国</span></h3>
+<div class="summary-box"><h4>品牌定位</h4>大华股份旗下，硬件全产品线丰富(SS视觉传感器+ X86智能相机+AMR移动机器人)，京东/顺丰/宁德供应链深度合作。SS5000 Pro为最新AI旗舰。X86系列支持Win10系统和二次开发。最大短板：视觉软件/算法深度不如海康和康耐视，整线方案不如海康VM平台体系完整。</div>
+<table class="model-table">
+<thead><tr><th>系列</th><th>型号</th><th>分辨率</th><th>传感器</th><th>像素尺寸</th><th>帧率</th><th>快门</th><th>镜头</th><th>AI能力</th><th>防护</th></tr></thead>
+<tbody>
+<tr><td>SS3000</td><td>SS3000(无型号)</td><td>~1.3MP</td><td>CMOS</td><td>-</td><td>60fps</td><td>-</td><td>M12 7/16mm</td><td>AI分类/深度学习</td><td>IP65</td></tr>
+<tr><td>SS4000</td><td>SS4013MG-07M</td><td>1280×1024 (1.3MP)</td><td>CMOS</td><td>-</td><td>60fps</td><td>全局</td><td>M12 7mm电动对焦</td><td>AI分类/定位/OCR/条码</td><td>IP65</td></tr>
+<tr><td>SS5000</td><td>SS5050MG-08M</td><td>2368×1792 (4.2MP)</td><td>CMOS</td><td>-</td><td>45fps</td><td>全局</td><td>M12 8/16/25mm变焦</td><td>AI分类+OCR+颜色识别+深度学习</td><td>IP67</td></tr>
+<tr><td>X86</td><td>SI5600MG002</td><td>3072×2048 (6MP)</td><td>1/1.8" CMOS</td><td>2.4μm</td><td>30fps</td><td>卷帘</td><td>C-Mount</td><td>MVP算法平台</td><td>IP67</td></tr>
+</tbody></table>
+<p style="margin-top:8px;font-size:.82em;color:var(--st)"><strong>关键注意：</strong>X86系列为卷帘快门(运动场景有拖影风险)，SS系列为全局快门。SS5000 Pro最新旗舰，SS7000支持直连显示器。<br>
+<strong>对标海康：</strong>SS4000 ≈ SC2000X；SS5000 ≈ SC3000 / SC5000X；X86 ≈ SC6000(但卷帘快门是关键差异)。</p>
+</div>
+
+<!-- 德成 -->
+<div class="comp-card">
+<h3>🇨🇳 德成视觉 DeCheng — DC系列智能相机 <span class="region region-cn">中国</span></h3>
+<div class="summary-box"><h4>品牌定位</h4>东莞厂商，主打超高性价比(入门级¥899起)。DC-100/200/300/400/500五系列覆盖从视觉传感器到智能相机。全系ARM处理器+Linux系统。核心场景：模具监视器(自研专利)、有无检测、OCR、基础测量。最大短板：无AI深度学习能力、最高像素仅5MP、最大帧率偏低、生态几乎为零。</div>
+<table class="model-table">
+<thead><tr><th>系列</th><th>分辨率</th><th>传感器</th><th>像素尺寸</th><th>帧率</th><th>镜头</th><th>处理器</th><th>AI/算法</th><th>防护</th></tr></thead>
+<tbody>
+<tr><td>DC-100</td><td>30-130万</td><td>CMOS</td><td>-</td><td>~30fps</td><td>M12 手动对焦</td><td>ARM 四核</td><td>正反/有无/尺寸/颜色/位置识别</td><td>IP67</td></tr>
+<tr><td>DC-200</td><td>130万</td><td>CMOS</td><td>-</td><td>~30fps</td><td>M12 手动对焦</td><td>ARM 四核</td><td>同上+读码+OCR</td><td>IP67</td></tr>
+<tr><td>DC-300</td><td>130-240万</td><td>CMOS</td><td>-</td><td>~30fps</td><td>M12</td><td>ARM 四核</td><td>同上+定位引导</td><td>IP67</td></tr>
+<tr><td>DC-400</td><td>130-500万</td><td>CMOS</td><td>4.0/2.4μm</td><td>60-120fps</td><td>C-Mount / M12</td><td>ARM 八核 2.4GHz</td><td>缺陷检测/尺寸测量/定位/读码/OCR</td><td>IP67</td></tr>
+<tr><td>DC-500</td><td>最高500万</td><td>CMOS</td><td>-</td><td>-</td><td>C-Mount</td><td>-</td><td>Linux系统+模板匹配+OCR+读码+测量</td><td>IP67</td></tr>
+</tbody></table>
+<p style="margin-top:8px;font-size:.82em;color:var(--st)"><strong>DC-400 详细：</strong>4GB DDR4 / 32GB eMMC / 千兆以太网 / 4路GPI+8路GPO / HDMI+USB2.0 / RS232 / 单帧+多帧+连续触发 / 12W功耗 / 0-50°C。<br>
+<strong>对标海康：</strong>DC-100/200 ≈ SC1000(功能略强)；DC-300/400 ≈ SC2000/SC2000X(无AI)；DC-500 ≈ SC3000(功能弱)。</p>
+</div>
+
+</div>
+
+<!-- ==================== TAB 4: 型号对标 ==================== -->
+<div class="tab-content" id="tab-compare">
+<div class="section-title">⚖️ 入门级智能相机对标（视觉传感器级）</div>
+<div class="section-desc">对标维度：SC1000/SC2000/SC2000X vs 基恩士IV2/IV3 vs 康耐视IS2800 vs 思谋VN2000 vs 华睿SS4000 vs 德成DC-200/400</div>
+<div class="cmp-table-wrap">
+<table class="cmp-table">
+<thead><tr><th>对比维度</th><th class="hk">海康 SC1000</th><th class="hk">海康 SC2000X</th><th>基恩士 IV2</th><th>基恩士 IV3</th><th>康耐视 IS2800</th><th>思谋 VN2000</th><th>华睿 SS4000</th><th>德成 DC-400</th></tr></thead>
+<tbody>
+<tr><td>最高分辨率</td><td class="hk">640×480 (0.3MP)</td><td class="hk">1920×1280 (2.4MP)</td><td>752×480 (0.36MP)</td><td>1280×960 (1.2MP)</td><td>1440×1080 (1.6MP)</td><td>1280×800 (1MP)</td><td>1280×1024 (1.3MP)</td><td>2592×1944 (5MP)</td></tr>
+<tr><td>最高像素</td><td class="hk win">0.8MP(80万)</td><td class="hk">2.4MP(240万)</td><td>0.36MP</td><td>1.2MP</td><td>1.6MP</td><td>1MP</td><td>1.3MP</td><td class="win">5MP(500万)</td></tr>
+<tr><td>传感器类型</td><td class="hk">1/6" CMOS 全局</td><td class="hk">1/3.52" CMOS 全局</td><td>1/2.9" CMOS</td><td>1/2.9" CMOS</td><td>1/2.8" CMOS</td><td>1/4" CMOS 全局</td><td>CMOS 全局</td><td>CMOS</td></tr>
+<tr><td>像元尺寸</td><td class="hk">3.74μm</td><td class="hk">2.2μm</td><td>-</td><td>-</td><td>2.8μm</td><td>3μm</td><td>-</td><td>2.4/4.0μm</td></tr>
+<tr><td>最大帧率</td><td class="hk">15fps</td><td class="hk win">75fps</td><td>~30fps</td><td>~60fps</td><td>45fps</td><td>60fps</td><td>60fps</td><td>120fps</td></tr>
+<tr><td>快门类型</td><td class="hk win">全局快门</td><td class="hk win">全局快门</td><td>-</td><td>-</td><td>-</td><td>全局快门</td><td>全局快门</td><td>-</td></tr>
+<tr><td>镜头接口</td><td class="hk">M5.5-mount</td><td class="hk">M12 电动调焦</td><td>一体式</td><td>一体式</td><td>液镜/C-Mount</td><td>液态调焦 16mm</td><td>M12 电动对焦</td><td>C-Mount/M12</td></tr>
+<tr><td>光源配置</td><td class="hk win">白光(标配)</td><td class="hk win">白/红/蓝/红外+偏振+漫射+全透三合一罩</td><td>白光/红外LED</td><td>白光/红外LED</td><td>偏光广角白光</td><td>白/红光源+偏振</td><td>白/红/蓝/红外</td><td>内置光源</td></tr>
+<tr><td>AI能力</td><td class="hk">无</td><td class="hk win">边缘学习：异常判断+种类识别+DL OCR+学习计数</td><td>AI有无识别</td><td>AI自动设定/拍摄</td><td>ViDi EL Edge Learning</td><td>有无/计数/正反</td><td>AI分类</td><td class="badge-no">无AI</td></tr>
+<tr><td>通讯协议数量</td><td class="hk win">9种(含FINS/KV/SLMP)</td><td class="hk win">11种(含FINS/KV/SLMP/EtherNet/IP)</td><td>EtherNet/IP,PROFINET</td><td>EtherNet/IP,PROFINET,FTP</td><td>PROFINET,EtherNet/IP,OPC UA</td><td>TCP,ModBus,MELSEC/SLMP,PROFINET</td><td>TCP,ModBus,PROFINET</td><td>基础TCP</td></tr>
+<tr><td>数据接口</td><td class="hk">百兆以太网</td><td class="hk">百兆以太网</td><td>千兆以太网</td><td>千兆以太网</td><td>千兆以太网</td><td>百兆以太网</td><td>百兆以太网</td><td>千兆以太网</td></tr>
+<tr><td>防护等级</td><td class="hk">IP54</td><td class="hk">IP65</td><td>IP67</td><td>IP67</td><td>IP54/IP67</td><td>IP67</td><td>IP65</td><td>IP67</td></tr>
+<tr><td>典型功耗</td><td class="hk win">3W</td><td class="hk win">5-12W</td><td>~9.3W</td><td>-</td><td>7.5W</td><td>5W</td><td>14W</td><td>12W</td></tr>
+<tr><td>重量</td><td class="hk win">40g</td><td class="hk win">118g</td><td>~370g</td><td>-</td><td>~290g</td><td>~100g</td><td>~180g</td><td>-</td></tr>
+<tr><td>HDMI显示</td><td class="hk">需外接VT平板</td><td class="hk">需外接SV显示盒</td><td>触摸屏(IV4-CP70)</td><td>小型放大器</td><td class="badge-no">无</td><td class="badge-no">无</td><td>Web访问</td><td>HDMI直出</td></tr>
+</tbody></table>
+</div>
+
+<div class="section-title">⚖️ 中高端智能相机对标（AI智能相机级）</div>
+<div class="section-desc">对标维度：SC3000/SC5000X/SC6000 vs 基恩士IV4 vs 康耐视IS3800/D900 vs 思谋VN4000 vs 华睿SS5000/X86 vs OPT SCA</div>
+<div class="cmp-table-wrap">
+<table class="cmp-table">
+<thead><tr><th>对比维度</th><th class="hk">海康 SC3000</th><th class="hk">海康 SC5000X</th><th class="hk">海康 SC6000</th><th>基恩士 IV4</th><th>康耐视 IS3805</th><th>康耐视 IS3816</th><th>思谋 VN4000</th><th>华睿 SS5000</th><th>华睿 X86系列</th><th>OPT SCA2-120MC</th></tr></thead>
+<tbody>
+<tr><td>最高分辨率</td><td class="hk">2432×2048 (5MP)</td><td class="hk">3200×1920 (6MP)</td><td class="hk">5120×5120 (25MP)</td><td>1280×960 (1.2MP)</td><td>2448×2048 (5MP)</td><td>5320×3032 (16MP)</td><td>1280×800 (1MP)</td><td>2368×1792 (4.2MP)</td><td>3072×2048 (6MP)</td><td>4000×3000 (12MP)</td></tr>
+<tr><td>传感器尺寸</td><td class="hk">1/2.9"~1/1.45" CMOS</td><td class="hk">CMOS</td><td class="hk win">COMS 全局</td><td>1/2.9" CMOS</td><td>2/3" CMOS</td><td>1.1" CMOS</td><td>1/4" CMOS</td><td>CMOS</td><td>1/1.8" CMOS</td><td>1/1.7" CMOS</td></tr>
+<tr><td>像元尺寸</td><td class="hk">3.2-3.45μm</td><td class="hk">-</td><td class="hk">2.5-3.45μm</td><td>-</td><td>3.45μm</td><td>2.74μm</td><td>3μm</td><td>-</td><td>2.4μm</td><td>1.85μm</td></tr>
+<tr><td>最大帧率</td><td class="hk">60fps@1.6MP / 30fps@5MP</td><td class="hk">100fps@2MP / 60fps@5MP</td><td class="hk win">120fps@1.6MP / 80fps@5MP</td><td>250件/秒</td><td>32fps@5MP</td><td>18fps@16MP</td><td>60fps</td><td>45fps</td><td>30fps</td><td>25fps</td></tr>
+<tr><td>快门</td><td class="hk win">全局快门</td><td class="hk win">全局快门</td><td class="hk win">全局快门</td><td>-</td><td>全局快门</td><td>全局快门</td><td>全局快门</td><td>全局快门</td><td class="badge-no">卷帘</td><td class="badge-no">卷帘</td></tr>
+<tr><td>镜头接口</td><td class="hk">M12 机械调焦</td><td class="hk">M12 机械调焦</td><td class="hk win">C-Mount</td><td>一体式(自动)</td><td>C-Mount / HSLL液镜</td><td>C-Mount</td><td>液态调焦 8/12/16mm</td><td>M12 变焦镜头</td><td>C-Mount</td><td>C-Mount</td></tr>
+<tr><td>光源配置</td><td class="hk win">RGBW四色+偏振/扩散/全透三合一</td><td class="hk win">模块化照明+爆闪+多色</td><td class="hk win">RGBW四色+C口+Lens罩</td><td>白光/红外LED</td><td>RGBW + IR 多色照明</td><td>RGBW 多色照明</td><td>红/白双色 4路独立 16种补光</td><td>白/红/蓝/红外 高功率</td><td>外置光源</td><td>可选红光/白光/蓝光</td></tr>
+<tr><td>AI深度算法</td><td class="hk win">30+检测算法 + DL字符识别/解码 + AI边缘学习</td><td class="hk win">160+VM算法 + AI深度学习 + 零样本学习</td><td class="hk win">140+VM算法 + AI全监督/半监督/异常检测</td><td>学习工具2/学习计数/学习OCR/AI触发/AI拍摄</td><td>ViDi EL Segment/Classify/Read (5-10图)</td><td>ViDi EL Segment/Classify/Read</td><td>AI二分类/有无/计数/OCR</td><td>AI分类+OCR+颜色+深度学习</td><td>MVP算法平台</td><td>SmartWorks拖拽+DeepVision深度</td></tr>
+<tr><td>AI训练方式</td><td class="hk win">相机内训练(1-5张样本)</td><td class="hk win">相机内+PC端 VM/VisionTrain</td><td class="hk win">相机内+PC端 VM</td><td>1-2张直接注册</td><td>5-10张样本</td><td>5-10张样本</td><td>少量样本训练</td><td>Web端训练</td><td>PC端二次开发</td><td>PC端训练</td></tr>
+<tr><td>AI边缘学习模块</td><td class="hk win">异常判断、种类识别、学习计数、DL OCR</td><td class="hk win">160+算法工具含全监督检测、异常分类</td><td class="hk win">全监督检测、异常检测、注册学习</td><td>学习计数、学习OCR、分类模式</td><td>Segment/Classify/Read</td><td>Segment/Classify/Read</td><td>二分类</td><td>分类+识别</td><td>基础AI</td><td>OCR+分类</td></tr>
+<tr><td>通讯协议</td><td class="hk win">11种:FINS/KV/SLMP/EtherNet/IP/PROFINET等</td><td class="hk win">30+种</td><td class="hk win">30+种</td><td>EtherNet/IP,PROFINET,EtherCAT,OPC UA,MQTT</td><td>PROFINET,EtherNet/IP,OPC UA</td><td>同上</td><td>8种含MELSEC/SLMP</td><td>TCP/串口/Modbus/PROFINET</td><td>SDK/TCP/串口/PROFINET/Modbus</td><td>TCP/UDP/Serial/EtherNet/IP/Modbus/PROFINET/FTP</td></tr>
+<tr><td>数据接口</td><td class="hk">百兆以太网</td><td class="hk">千兆以太网</td><td class="hk win">千兆以太网(10GigE可选)</td><td>千兆以太网+PoE</td><td>双千兆以太网</td><td>双千兆以太网</td><td>百兆以太网</td><td>千兆以太网</td><td>千兆以太网</td><td>千兆以太网</td></tr>
+<tr><td>内存/存储</td><td class="hk">-</td><td class="hk">-</td><td class="hk win">8GB/64GB</td><td>microSD卡</td><td>4GB</td><td>4GB</td><td>-</td><td>-</td><td>4GB/64GB SSD</td><td>2-32GB/16-256GB</td></tr>
+<tr><td>防护等级</td><td class="hk win">IP67</td><td class="hk win">IP67</td><td class="hk win">IP67</td><td>IP67</td><td>IP67</td><td>IP67</td><td>IP67</td><td>IP67</td><td>IP67</td><td>IP62</td></tr>
+<tr><td>典型功耗</td><td class="hk win">7-48W</td><td class="hk">~20W</td><td class="hk">12-42W</td><td>9.3-12.8W</td><td>-</td><td>-</td><td>15W</td><td>-</td><td>30W</td><td>16W</td></tr>
+<tr><td>重量</td><td class="hk win">~280g</td><td class="hk">-</td><td class="hk">~530g</td><td>370-560g</td><td>-</td><td>-</td><td>~220g</td><td>~350g</td><td>~600g</td><td>382g</td></tr>
+<tr><td>HDMI显示</td><td class="hk">需外接SV显示盒</td><td class="hk">需外接显示</td><td class="hk win">VGA+USB Host</td><td>触摸屏(IV4-CP70)</td><td class="badge-no">无</td><td class="badge-no">无</td><td class="badge-no">无</td><td>Web访问</td><td>VGA+USB</td><td>HDMI+USB</td></tr>
+<tr><td>特殊优势</td><td class="hk win">自动对焦按键+一鍵调焦</td><td class="hk win">模块化设计+爆闪光源+180°旋转出线</td><td class="hk win">最高25MP+C口镜+主动散热</td><td>65个工具/128程序</td><td>HDR+ / HSLL液镜18亿次 / 2500件/分钟</td><td>16MP+ViDi EL</td><td>16种补光方案</td><td>内置变焦镜头</td><td>Win10系统+二次开发</td><td>C口+12MP+拖拽式</td></tr>
+</tbody></table>
+</div>
+
+<div class="section-title">⚖️ 海康智能相机全系列内部对照</div>
+<div class="section-desc">一目了然：从SC1000入门到SC6000旗舰，海康全系列技术路线</div>
+<div class="cmp-table-wrap">
+<table class="cmp-table">
+<thead><tr><th>参数</th><th>SC1000</th><th>SC2000</th><th>SC2000X</th><th>SC3000</th><th>SC5000X</th><th>SC6000</th></tr></thead>
+<tbody>
+<tr><td>定位</td><td>入门级视觉传感器</td><td>进阶型视觉传感器</td><td>AI入门传感器</td><td>高性能视觉传感器</td><td>AI智能相机</td><td>旗舰AI智能相机</td></tr>
+<tr><td>最高像素</td><td>80万</td><td>160万</td><td>240万</td><td>500万</td><td>600万</td><td>2500万</td></tr>
+<tr><td>分辨率范围</td><td>640×480 ~ 1024×768</td><td>704×540 ~ 1408×1024</td><td>1280×1024 ~ 1920×1280</td><td>1216×1024 ~ 2432×2048</td><td>1600×1216 ~ 3200×1920</td><td>1408×1024 ~ 5120×5120</td></tr>
+<tr><td>传感器</td><td>1/6" CMOS</td><td>CMOS</td><td>1/3.52" CMOS</td><td>1/2.9"~1/1.45" CMOS</td><td>CMOS</td><td>1/2.53"~CMOS</td></tr>
+<tr><td>像元尺寸</td><td>3.74μm</td><td>-</td><td>2.2μm</td><td>3.2~3.45μm</td><td>-</td><td>2.5~3.45μm</td></tr>
+<tr><td>最大帧率</td><td>15fps</td><td>60fps</td><td>75fps</td><td>100fps/60fps</td><td>100fps/60fps</td><td>120fps/80fps</td></tr>
+<tr><td>快门</td><td>全局</td><td>全局</td><td>全局</td><td>全局</td><td>全局</td><td>全局</td></tr>
+<tr><td>镜头接口</td><td>M5.5</td><td>M12 手动</td><td>M12 电动</td><td>M12 机械</td><td>M12 机械</td><td>C-Mount</td></tr>
+<tr><td>光源</td><td>白光</td><td>红/蓝/白/红外+偏振</td><td>红/蓝/白/红外+偏/漫/全透+4路分控</td><td>RGBW四色+偏/漫/全透三合一罩+180°出线</td><td>模块化+爆闪+多色+多镜头罩</td><td>RGBW四色+C口+多种镜头罩</td></tr>
+<tr><td>AI能力</td><td>无</td><td>基础(注册分类/OCR)</td><td>边缘学习:异常判断+种类识别+学习计数+DL OCR</td><td>30+算法+DL OCR/解码+AI边缘学习</td><td>160+VM算法+深度学习+零样本学习</td><td>140+VM算法+全监督/半监督/异常检测</td></tr>
+<tr><td>算法工具数</td><td>20+</td><td>20+</td><td>30+</td><td>30+</td><td>160+</td><td>140+</td></tr>
+<tr><td>方案存储</td><td>8方案/40模块</td><td>8方案/40模块</td><td>16方案/40模块</td><td>32方案/40模块</td><td>多方案</td><td>多方案</td></tr>
+<tr><td>通讯协议</td><td>9种</td><td>9种</td><td>11种</td><td>11种</td><td>30+种</td><td>30+种</td></tr>
+<tr><td>日系PLC协议</td><td>FINS/KV/SLMP</td><td>FINS/KV/SLMP</td><td>FINS/KV/SLMP</td><td>FINS/KV/SLMP</td><td>全覆盖</td><td>全覆盖</td></tr>
+<tr><td>数据接口</td><td>百兆</td><td>百兆</td><td>百兆</td><td>百兆</td><td>千兆</td><td>千兆/10GigE可选</td></tr>
+<tr><td>防护等级</td><td>IP54</td><td>IP65</td><td>IP65</td><td>IP67</td><td>IP67</td><td>IP67</td></tr>
+<tr><td>内存/存储</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>8GB/64GB</td></tr>
+<tr><td>软件客户端</td><td>SCMVS</td><td>SCMVS</td><td>SCMVS</td><td>SCMVS</td><td>SC_VisionMaster</td><td>SC_VisionMaster</td></tr>
+<tr><td>典型功耗</td><td>3W</td><td>-</td><td>5-12W</td><td>7-48W</td><td>~20W</td><td>12-42W</td></tr>
+<tr><td>重量</td><td>~40g</td><td>-</td><td>~118g</td><td>~280g</td><td>-</td><td>~530g</td></tr>
+</tbody></table>
+</div>
+</div>
+
+</main>
+
+<script>
+// ========== 案例数据 ==========
+const cases = [
+{id:"043",name:"光纤插头正反检测",ind:"3C电子",type:"分类识别",cam:"SC3050XC-12M",alg:"异常判断+颜色面积",icon:"📱"},
+{id:"044",name:"弹簧有无检测",ind:"3C电子",type:"有无检测",cam:"SC1008M-05S",alg:"轮廓有无+位置修正+注册分类",icon:"📱"},
+{id:"045",name:"电容字符有无检测",ind:"3C电子",type:"有无检测",cam:"SC2023XM-12M",alg:"异常判断",icon:"📱"},
+{id:"046",name:"散热片歪斜及针脚长度检测",ind:"3C电子",type:"尺寸测量",cam:"SC2023XM-16M",alg:"直线角度+点线测量",icon:"📱"},
+{id:"047",name:"适配器接头检测",ind:"3C电子",type:"缺陷检测",cam:"SC2023XC",alg:"异常判断",icon:"📱"},
+{id:"048",name:"橡胶件正反角度检测",ind:"3C电子",type:"分类识别",cam:"SC2016EM-12S",alg:"轮廓匹配",icon:"📱"},
+{id:"049",name:"移动电源纸箱标签字符比对",ind:"3C电子",type:"OCR/读码",cam:"SC3050XM-16M",alg:"码识别+字符识别+字符比较",icon:"📱"},
+{id:"050",name:"二维码码识别",ind:"3C电子",type:"OCR/读码",cam:"SC3050M-08M",alg:"条码识别",icon:"📱"},
+{id:"051",name:"二维码识别检测",ind:"3C电子",type:"OCR/读码",cam:"SC3050M-16M",alg:"二维码识别",icon:"📱"},
+{id:"052",name:"IC收费卡字符识别",ind:"3C电子",type:"OCR/读码",cam:"SC2004EM-06S",alg:"字符定位+字符识别",icon:"📱"},
+{id:"053",name:"耳机仓字符识别",ind:"3C电子",type:"OCR/读码",cam:"SC3050M-16M",alg:"字符识别",icon:"📱"},
+{id:"054",name:"齿缺失检测",ind:"3C电子",type:"有无检测",cam:"SC2016EM-08S",alg:"轮廓有无+位置修正+斑点计数",icon:"📱"},
+{id:"055",name:"字符重叠有无检测",ind:"3C电子",type:"有无检测",cam:"SC2016EM-08S",alg:"轮廓有无+位置修正+字符识别",icon:"📱"},
+{id:"056",name:"芯片正反检测",ind:"3C电子",type:"分类识别",cam:"SC2016EM-08S",alg:"轮廓有无+位置修正+轮廓有无",icon:"📱"},
+{id:"057",name:"电线颜色识别检测",ind:"3C电子",type:"分类识别",cam:"SC3013XC-12S",alg:"颜色面积",icon:"📱"},
+{id:"058",name:"线圈检测",ind:"3C电子",type:"缺陷检测",cam:"SC3050XC-15M",alg:"异常判断",icon:"📱"},
+{id:"059",name:"电容方向检测",ind:"3C电子",type:"分类识别",cam:"SC1003M-03S",alg:"轮廓有无+条件检测",icon:"📱"},
+{id:"060",name:"锡珠检测",ind:"3C电子",type:"尺寸测量",cam:"SC3030XM-16M",alg:"灰度面积+变量计算",icon:"📱"},
+{id:"061",name:"模切辅料检测",ind:"3C电子",type:"缺陷检测",cam:"SC3000X",alg:"异常检测",icon:"📱"},
+{id:"062",name:"面板二维码&OCR识别",ind:"3C电子",type:"OCR/读码",cam:"SC3050XM-08M",alg:"码识别&字符识别",icon:"📱"},
+{id:"063",name:"导光板正反检测",ind:"3C电子",type:"分类识别",cam:"SC3050XM",alg:"异常判断+线线角度",icon:"📱"},
+{id:"064",name:"塑胶件弹片位置检测",ind:"3C电子",type:"有无检测",cam:"SC1008M-05S",alg:"轮廓有无+位置修正+轮廓有无",icon:"📱"},
+{id:"065",name:"笔尖有无检测",ind:"3C电子",type:"有无检测",cam:"SC3050XC",alg:"目标检测",icon:"📱"},
+{id:"066",name:"牙刷logo有无检测",ind:"3C电子",type:"有无检测",cam:"SC3050XC",alg:"目标检测",icon:"📱"},
+{id:"067",name:"转子线束颜色检测",ind:"3C电子",type:"分类识别",cam:"SC2016EC-15S",alg:"轮廓有无+位置修正+颜色识别",icon:"📱"},
+{id:"068",name:"定子字符识别检测",ind:"3C电子",type:"OCR/读码",cam:"SC3030XM-08M",alg:"字符识别",icon:"📱"},
+{id:"069",name:"电容字符有无检测(2)",ind:"3C电子",type:"有无检测",cam:"SC2023XM-12M",alg:"轮廓有无/字符识别",icon:"📱"},
+{id:"070",name:"SIM卡托读码+字符识别",ind:"3C电子",type:"OCR/读码",cam:"SC6050C-16M",alg:"码识别+字符识别",icon:"📱"},
+{id:"071",name:"NFC卡定位抓取自动上下料",ind:"3C电子",type:"定位引导",cam:"SC6250M-00C",alg:"初定位+高精度匹配",icon:"📱"},
+{id:"111",name:"塑料件缺口分类检测",ind:"3C电子",type:"缺陷检测",cam:"SC3000X",alg:"位置修正+异常判断",icon:"📱"},
+{id:"113",name:"SC-3C电子行业案例介绍",ind:"3C电子",type:"有无检测",cam:"MV-SC2004EM-08S-WBN",alg:"灰度面积",icon:"📱"},
+{id:"114",name:"振动盘零件正反方向检测",ind:"3C电子",type:"分类识别",cam:"MV-SC2016EM-08S-WBN",alg:"图案有无工具",icon:"📱"},
+{id:"115",name:"USB数据线金手指有无检测",ind:"3C电子",type:"有无检测",cam:"MV-SC2016EM-08S-WBN",alg:"斑点计数",icon:"📱"},
+{id:"116",name:"3C工件多面检测(移动机构)",ind:"3C电子",type:"OCR/读码",cam:"MV-SC3050M-16M",alg:"读码/字符识别/分支",icon:"📱"},
+{id:"117",name:"压入套有无检测",ind:"3C电子",type:"有无检测",cam:"MV-SC3016",alg:"图案有无",icon:"📱"},
+{id:"118",name:"坐标转换-温度计定位引导",ind:"3C电子",type:"定位引导",cam:"MV-SC3050M",alg:"圆有无/N点标定/定位",icon:"📱"},
+{id:"119",name:"PCB板焊锡有无检测",ind:"3C电子",type:"有无检测",cam:"MV-SC3050M",alg:"图案有无+位置修正+图案计数",icon:"📱"},
+{id:"120",name:"无人机电池孔位定位",ind:"3C电子",type:"定位引导",cam:"MV-SC3016M-06M",alg:"直径测量",icon:"📱"},
+{id:"121",name:"塑胶小球有无/倾斜检测",ind:"3C电子",type:"有无检测",cam:"MV-SC3050M-12M-WBN",alg:"图案有无模块",icon:"📱"},
+{id:"122",name:"充电器壳子内部横线识别",ind:"3C电子",type:"有无检测",cam:"MV-SC3016M-06M",alg:"位置修正+直线有无模块",icon:"📱"},
+{id:"123",name:"磁芯铜线有无检测",ind:"3C电子",type:"分类识别",cam:"MV-SC3016C-06S",alg:"颜色面积",icon:"📱"},
+{id:"124",name:"芯片防错检测",ind:"3C电子",type:"分类识别",cam:"MV-SC3016C-06S",alg:"图案有无",icon:"📱"},
+{id:"125",name:"芯片标签防错检测",ind:"3C电子",type:"分类识别",cam:"MV-SC3016M",alg:"图案有无",icon:"📱"},
+{id:"127",name:"面板字符识别检测",ind:"3C电子",type:"OCR/读码",cam:"MV-SC3016M",alg:"字符识别",icon:"📱"},
+{id:"128",name:"手机屏幕定位引导",ind:"3C电子",type:"定位引导",cam:"MV-SC6120",alg:"特征匹配/标定/坐标转换",icon:"📱"},
+{id:"129",name:"工件尺寸测量",ind:"3C电子",type:"尺寸测量",cam:"MV-SC6050M-00C-NNN",alg:"目标检测",icon:"📱"},
+{id:"130",name:"丝杆圆环OCR识别",ind:"3C电子",type:"OCR/读码",cam:"MV-SC6016M",alg:"圆环展开/字符识别",icon:"📱"},
+{id:"164",name:"振动盘磁瓦工件缺陷检测",ind:"3C电子",type:"尺寸测量",cam:"MV-SC3013XC-25mm",alg:"DL图像分割/斑点计数",icon:"📱"},
+// 汽车
+{id:"031",name:"端子pin针有无检测(飞拍)",ind:"汽车",type:"有无检测",cam:"SC3050XC",alg:"异常判断(飞拍模式)",icon:"🚗"},
+{id:"032",name:"端子内部胶套有无检测",ind:"汽车",type:"有无检测",cam:"SC3050XC",alg:"颜色面积",icon:"🚗"},
+{id:"033",name:"端子卡扣有无到位检测",ind:"汽车",type:"有无检测",cam:"SC3050XC",alg:"颜色面积",icon:"🚗"},
+{id:"034",name:"端子内部胶套有无检测(连接器)",ind:"汽车",type:"有无检测",cam:"SC3050XC",alg:"异常判断",icon:"🚗"},
+{id:"035",name:"pin针偏位检测",ind:"汽车",type:"尺寸测量",cam:"SC3016C",alg:"宽度测量",icon:"🚗"},
+{id:"036",name:"编码器点胶有无",ind:"汽车",type:"有无检测",cam:"SC3016C",alg:"斑点有无",icon:"🚗"},
+{id:"037",name:"螺母焊接状态检测",ind:"汽车",type:"缺陷检测",cam:"SC3050XC",alg:"异常判断",icon:"🚗"},
+{id:"038",name:"标签有无及正反识别",ind:"汽车",type:"分类识别",cam:"SC3050XC-16M",alg:"图案有无",icon:"🚗"},
+{id:"039",name:"摩托车缸盖垫片有无与颜色识别",ind:"汽车",type:"分类识别",cam:"SC5050XC-16M",alg:"注册分类",icon:"🚗"},
+{id:"040",name:"焊点孔位检测",ind:"汽车",type:"缺陷检测",cam:"SC3050XC-16S",alg:"异常判断",icon:"🚗"},
+{id:"041",name:"重型卸扣OCR识别",ind:"汽车",type:"OCR/读码",cam:"SC3050XM",alg:"字符定位+字符检测(DL)",icon:"🚗"},
+{id:"042",name:"缸盖垫片有无与颜色识别(详细)",ind:"汽车",type:"分类识别",cam:"SC5050XC-16M",alg:"注册分类",icon:"🚗"},
+{id:"131",name:"汽配零件螺纹有无检测",ind:"汽车",type:"有无检测",cam:"MV-SC3016M-12M-WBN",alg:"图案有无工具",icon:"🚗"},
+{id:"132",name:"手柄档位数字位置有无检测",ind:"汽车",type:"尺寸测量",cam:"MV-SC3016M",alg:"轮廓有无+测量工具",icon:"🚗"},
+{id:"133",name:"齿轮连杆表面检测",ind:"汽车",type:"尺寸测量",cam:"MV-SC3016M",alg:"亮度测量",icon:"🚗"},
+{id:"134",name:"芯片激光刻印字符识别",ind:"汽车",type:"OCR/读码",cam:"MV-SC3050M-12S-WBN",alg:"DL字符识别",icon:"🚗"},
+{id:"135",name:"塑料零部件字符识别",ind:"汽车",type:"OCR/读码",cam:"MV-SC3050M",alg:"字符识别",icon:"🚗"},
+{id:"136",name:"密封圈泡棉有无检测",ind:"汽车",type:"OCR/读码",cam:"MV-SC3016M-12M-WBN",alg:"读码/字符识别/亮度/宽度测量",icon:"🚗"},
+{id:"137",name:"齿轮焊缝检测",ind:"汽车",type:"缺陷检测",cam:"MV-SC3050M-12M-WBN",alg:"协助检测零件是否焊接",icon:"🚗"},
+{id:"138",name:"焊接板有无焊接检测",ind:"汽车",type:"有无检测",cam:"MV-SC3050M",alg:"目标检测/直线有无",icon:"🚗"},
+{id:"139",name:"轴承零部件字符识别+读码",ind:"汽车",type:"OCR/读码",cam:"MV-SC3016C-06M",alg:"字符识别+码识别+字符比较",icon:"🚗"},
+{id:"140",name:"料盘堵盖法兰轴承有无检测",ind:"汽车",type:"有无检测",cam:"MV-SC3016PC",alg:"图案有无/亮度均值/对比度",icon:"🚗"},
+{id:"141",name:"速度计量器有无检测",ind:"汽车",type:"有无检测",cam:"MV-SC3016M",alg:"图案有无",icon:"🚗"},
+{id:"142",name:"轴承正反/有无检测",ind:"汽车",type:"尺寸测量",cam:"MV-SC3050M-12M-WBN",alg:"直径测量",icon:"🚗"},
+{id:"143",name:"部件批次字符识别",ind:"汽车",type:"OCR/读码",cam:"MV-SC3050M",alg:"DL字符识别",icon:"🚗"},
+{id:"144",name:"电机外壳颜色识别检测",ind:"汽车",type:"分类识别",cam:"MV-SC3016C-15M-WBN",alg:"图案计数/图案有无/颜色识别",icon:"🚗"},
+{id:"145",name:"电机接线线束颜色检测",ind:"汽车",type:"分类识别",cam:"MV-SC3016C-15M-WBN",alg:"颜色比较",icon:"🚗"},
+{id:"146",name:"接线盒装配检测",ind:"汽车",type:"分类识别",cam:"MV-SC3030XC-12M-WBN",alg:"颜色识别/注册分类",icon:"🚗"},
+{id:"147",name:"钥匙扣装配检测",ind:"汽车",type:"分类识别",cam:"MV-SC3050XC-12M-WBN",alg:"轮廓匹配/注册分类",icon:"🚗"},
+{id:"148",name:"焊接有无检测",ind:"汽车",type:"分类识别",cam:"MV-SC3050XC-12M-WBN",alg:"颜色面积/变量计算",icon:"🚗"},
+{id:"149",name:"工件装配检测",ind:"汽车",type:"分类识别",cam:"MV-SC3050XC-12M-WBN",alg:"注册分类",icon:"🚗"},
+{id:"150",name:"门把手装配检测",ind:"汽车",type:"OCR/读码",cam:"MV-SC3030XC-12M-WBN",alg:"亮度均值/码识别",icon:"🚗"},
+{id:"151",name:"座椅面料类别区分",ind:"汽车",type:"分类识别",cam:"MV-SC3030XC-15M-WBN",alg:"注册分类",icon:"🚗"},
+{id:"152",name:"零部件检测",ind:"汽车",type:"分类识别",cam:"MV-SC6050C",alg:"注册分类/特征匹配",icon:"🚗"},
+{id:"153",name:"框架批次字符识别",ind:"汽车",type:"OCR/读码",cam:"MV-SC6050M",alg:"DL字符识别",icon:"🚗"},
+// 食品
+{id:"090",name:"面包包装袋生产日期OCR识别(99.5%)",ind:"食品",type:"OCR/读码",cam:"SC3050M-08M",alg:"字符识别",icon:"🍞"},
+{id:"091",name:"字符重叠有无检测",ind:"食品",type:"有无检测",cam:"SC2016EC-12S",alg:"字符识别+条件判断",icon:"🍞"},
+{id:"092",name:"识别生产日期并检测液位",ind:"食品",type:"尺寸测量",cam:"SC5050M-08M",alg:"位置修正+字符识别+宽度测量",icon:"🍞"},
+{id:"093",name:"奇趣蛋标签有无",ind:"食品",type:"有无检测",cam:"SC2016EM-06S",alg:"注册分类",icon:"🍞"},
+{id:"094",name:"瓶盖正反检测",ind:"食品",type:"分类识别",cam:"SC2016EM",alg:"注册分类",icon:"🍞"},
+{id:"095",name:"OCR字符识别(矿泉水 99.9%)",ind:"食品",type:"OCR/读码",cam:"SC2023XM-12M",alg:"字符识别",icon:"🍞"},
+{id:"156",name:"产品字符识别",ind:"食品",type:"OCR/读码",cam:"MV-SC3016C-06M",alg:"字符识别",icon:"🍞"},
+{id:"157",name:"米袋字符识别检测",ind:"食品",type:"OCR/读码",cam:"MV-SC3016M-06M",alg:"字符识别",icon:"🍞"},
+{id:"158",name:"瓦楞箱喷码字符识别",ind:"食品",type:"OCR/读码",cam:"MV-SC3050M",alg:"字符识别+码识别+字符比较",icon:"🍞"},
+{id:"166",name:"瓶装饮料液位检测",ind:"食品",type:"尺寸测量",cam:"MV-SC3016M",alg:"直线查找+间距检测",icon:"🍞"},
+{id:"167",name:"瓶装饮料数量及外包装有无检测",ind:"食品",type:"有无检测",cam:"MV-SC3016C",alg:"图案计数+图案有无",icon:"🍞"},
+{id:"168",name:"外包装生产日期OCR识别",ind:"食品",type:"OCR/读码",cam:"MV-SC3016C",alg:"字符识别",icon:"🍞"},
+{id:"169",name:"瓶盖有无检测",ind:"食品",type:"有无检测",cam:"MV-SC3016C",alg:"灰度面积+图案有无",icon:"🍞"},
+{id:"170",name:"包装箱纸格检测",ind:"食品",type:"尺寸测量",cam:"MV-SC3016M-06M",alg:"宽度测量",icon:"🍞"},
+{id:"171",name:"牛奶箱数量检测",ind:"食品",type:"有无检测",cam:"MV-SC3016C",alg:"图案计数",icon:"🍞"},
+{id:"172",name:"酸奶装箱个数识别",ind:"食品",type:"有无检测",cam:"MV-SC3050",alg:"图案计数",icon:"🍞"},
+{id:"174",name:"奶盒日期+吸管有无检测",ind:"食品",type:"OCR/读码",cam:"MV-SC3050M",alg:"字符识别+斑点有无",icon:"🍞"},
+{id:"175",name:"瓶盖字符识别",ind:"食品",type:"OCR/读码",cam:"MV-SC3016C",alg:"字符识别",icon:"🍞"},
+{id:"176",name:"油桶拉环正反识别",ind:"食品",type:"分类识别",cam:"MV-SC3016C",alg:"图案有无",icon:"🍞"},
+{id:"177",name:"拉环颜色识别",ind:"食品",type:"分类识别",cam:"MV-SC3016C",alg:"颜色识别",icon:"🍞"},
+{id:"178",name:"饼干外包装及封口缺陷检测",ind:"食品",type:"缺陷检测",cam:"MV-SC6016C-12mm",alg:"目标检测",icon:"🍞"},
+{id:"179",name:"生鲜超市出入库统计",ind:"食品",type:"有无检测",cam:"MV-SC6250M-00C-NNN",alg:"目标检测",icon:"🍞"},
+// 锂电
+{id:"073",name:"锂电密封钉焊接检测",ind:"锂电",type:"缺陷检测",cam:"SC2000X",alg:"异常检测+DL OCR",icon:"🔋"},
+{id:"074",name:"锂电极片毛刺检测",ind:"锂电",type:"缺陷检测",cam:"SC5000X",alg:"全监督检测",icon:"🔋"},
+{id:"180",name:"电池盖板码识别",ind:"锂电",type:"OCR/读码",cam:"SC3000",alg:"码识别",icon:"🔋"},
+{id:"181",name:"方壳电池密封钉检测",ind:"锂电",type:"缺陷检测",cam:"SC2000X",alg:"异常检测+DL OCR",icon:"🔋"},
+{id:"182",name:"圆柱电池装配检测",ind:"锂电",type:"有无检测",cam:"SC3000",alg:"图案有无+位置修正",icon:"🔋"},
+{id:"183",name:"极耳焊接质量检测",ind:"锂电",type:"缺陷检测",cam:"SC5000X",alg:"全监督检测",icon:"🔋"},
+// 五金
+{id:"080",name:"螺丝规格分类检测",ind:"五金",type:"分类识别",cam:"SC2000X",alg:"注册分类",icon:"🔩"},
+{id:"081",name:"弹簧圈数计数",ind:"五金",type:"有无检测",cam:"SC2000",alg:"边缘计数",icon:"🔩"},
+{id:"082",name:"螺母有无+方向检测",ind:"五金",type:"分类识别",cam:"SC3000",alg:"异常判断+位置修正",icon:"🔩"},
+{id:"083",name:"振动盘五金件正反检测",ind:"五金",type:"分类识别",cam:"SC2000X",alg:"注册分类",icon:"🔩"},
+// 包装
+{id:"100",name:"包装盒标签OCR识别",ind:"包装",type:"OCR/读码",cam:"SC3000",alg:"DL字符识别",icon:"📦"},
+{id:"101",name:"纸箱喷码识别+计数",ind:"包装",type:"OCR/读码",cam:"SC3000",alg:"字符识别+图案计数",icon:"📦"},
+{id:"102",name:"封箱胶带有无检测",ind:"包装",type:"有无检测",cam:"SC2000",alg:"斑点有无",icon:"📦"},
+// 医药
+{id:"105",name:"药瓶液位分层检测",ind:"医药",type:"尺寸测量",cam:"SC3000",alg:"宽度测量",icon:"🏥"},
+{id:"106",name:"试管帽颜色分类",ind:"医药",type:"分类识别",cam:"SC2000X",alg:"种类识别",icon:"🏥"},
+{id:"107",name:"药盒批号OCR识别",ind:"医药",type:"OCR/读码",cam:"SC3000",alg:"DL字符识别",icon:"🏥"},
+// 光伏/半导体等
+{id:"162",name:"光伏接线盒O型圈有无检测",ind:"光伏",type:"有无检测",cam:"SC2000X",alg:"异常判断",icon:"☀️"},
+{id:"163",name:"晶圆缺陷检测",ind:"半导体",type:"缺陷检测",cam:"SC6000",alg:"全监督检测",icon:"🔬"},
+{id:"072",name:"PCB板定位对位检测",ind:"PCB",type:"定位引导",cam:"SC5000X",alg:"特征匹配+坐标转换",icon:"💻"},
+{id:"160",name:"PCB字符识别+读码",ind:"PCB",type:"OCR/读码",cam:"SC3000",alg:"DL字符识别+码识别",icon:"💻"},
+{id:"161",name:"PCB焊点缺陷检测",ind:"PCB",type:"缺陷检测",cam:"SC5000X",alg:"异常检测",icon:"💻"},
+// 物流
+{id:"154",name:"快递包裹分拣读码",ind:"物流AGV",type:"OCR/读码",cam:"SC3000",alg:"码识别",icon:"🚚"},
+{id:"155",name:"AGV托盘定位引导",ind:"物流AGV",type:"定位引导",cam:"SC3000",alg:"位置修正+坐标转换",icon:"🚚"},
+// 家电/日用品/印刷
+{id:"084",name:"洗衣机面板字符识别",ind:"家电",type:"OCR/读码",cam:"SC3000",alg:"字符识别",icon:"🏠"},
+{id:"085",name:"空调遥控器按键有无检测",ind:"家电",type:"有无检测",cam:"SC2000",alg:"图案有无",icon:"🏠"},
+{id:"108",name:"洗发水瓶盖方向检测",ind:"日用品",type:"分类识别",cam:"SC2000X",alg:"注册分类",icon:"🧴"},
+{id:"109",name:"牙膏管印刷缺陷检测",ind:"日用品",type:"缺陷检测",cam:"SC3000",alg:"异常判断",icon:"🧴"},
+{id:"110",name:"包装印刷品色差检测",ind:"印刷",type:"缺陷检测",cam:"SC3000",alg:"颜色比较",icon:"🖨️"},
+// 振动盘
+{id:"086",name:"振动盘五金件计数",ind:"振动盘",type:"有无检测",cam:"SC2000X",alg:"学习计数",icon:"📳"},
+{id:"087",name:"振动盘电子零件正反检测",ind:"振动盘",type:"分类识别",cam:"SC2000X",alg:"种类识别",icon:"📳"},
+{id:"088",name:"振动盘塑胶件方向检测",ind:"振动盘",type:"分类识别",cam:"SC2000",alg:"注册分类",icon:"📳"},
+{id:"089",name:"振动盘磁芯缺口检测",ind:"振动盘",type:"缺陷检测",cam:"SC3000",alg:"异常判断",icon:"📳"},
+];
+
+const industries=["3C电子","汽车","食品","锂电","五金","包装","医药","日用品","家电","PCB","振动盘","光伏","印刷","半导体","物流AGV"];
+const typeNames={"有无检测":"有无","OCR/读码":"OCR/读码","分类识别":"分类","缺陷检测":"缺陷","尺寸测量":"尺寸","定位引导":"定位"};
+const typeColors={"有无检测":"#16a34a","OCR/读码":"#2563eb","分类识别":"#7c3aed","缺陷检测":"#dc2626","尺寸测量":"#ca8a04","定位引导":"#0891b2"};
+
+// ========== TAB 切换 ==========
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+btn.addEventListener('click',()=>{
+document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+btn.classList.add('active');
+const tid=btn.dataset.tab;
+document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+document.getElementById('tab-'+tid).classList.add('active');
+if(tid==='search') renderSearch();
+if(tid==='industry') renderIndustry();
+if(tid==='competitor') renderCompetitor();
+});
+});
+
+// ========== 案例搜索 ==========
+function renderSearch(filter=''){
+const q=filter.toLowerCase();
+const filtered=cases.filter(c=>!q||c.name.includes(q)||c.ind.includes(q)||c.cam.includes(q)||c.type.includes(q)||c.alg.includes(q));
+document.getElementById('searchStats').innerHTML=`<div class="stat-card"><div class="num">${filtered.length}</div><div class="lbl">匹配案例</div></div>`+
+`<div class="stat-card"><div class="num">${new Set(filtered.map(c=>c.ind)).size}</div><div class="lbl">涉及行业</div></div>`+
+`<div class="stat-card"><div class="num">${new Set(filtered.map(c=>c.type)).size}</div><div class="lbl">检测类型</div></div>`+
+`<div class="stat-card"><div class="num">${new Set(filtered.map(c=>c.cam.split(' ')[0])).size}</div><div class="lbl">相机型号</div></div>`;
+document.getElementById('searchResults').innerHTML=filtered.map(c=>
+`<div class="case-card">
+<div class="case-title"><span>${c.icon} ${c.name}</span><span class="case-id">#${c.id}</span></div>
+<div class="case-meta">
+<span class="tag tag-ind">${c.ind}</span>
+<span class="tag tag-type" style="background:${typeColors[c.type]}20;color:${typeColors[c.type]}">${c.type}</span>
+<span class="tag tag-cam">${c.cam}</span>
+</div>
+<div style="font-size:.8em;color:var(--st)">🔧 算法：${c.alg}</div>
+</div>`).join('');
+document.getElementById('noResult').style.display=filtered.length?'none':'block';
+}
+document.getElementById('searchInput').addEventListener('input',e=>renderSearch(e.target.value));
+
+// ========== 行业浏览 ==========
+let selIndustry=null,selType=null;
+function renderIndustry(){
+const side=document.getElementById('sidebar');
+side.innerHTML='<h3>🏭 行业分类</h3>'+industries.map(ind=>{
+const cnt=cases.filter(c=>c.ind===ind).length;
+return `<div class="ind-item${selIndustry===ind?' active':''}" data-ind="${ind}">${ind} <span class="cnt">${cnt}</span></div>`;
+}).join('');
+side.querySelectorAll('.ind-item').forEach(el=>el.addEventListener('click',()=>{
+selIndustry=selIndustry===el.dataset.ind?null:el.dataset.ind;
+renderIndustry();
+}));
+document.getElementById('typeFilters').innerHTML='<span style="font-size:.8em;color:var(--st);margin-right:4px">筛选:</span>'+Object.entries(typeNames).map(([k,v])=>`<button class="tf${selType===k?' active':''}" data-type="${k}">${v}</button>`).join('')+'<button class="tf" data-type="" style="${!selType?'background:var(--br);color:#fff;border-color:var(--br)':''}">全部</button>';
+document.getElementById('typeFilters').querySelectorAll('.tf').forEach(b=>b.addEventListener('click',()=>{
+selType=b.dataset.type||null;
+renderIndustry();
+}));
+let filtered=cases;
+if(selIndustry) filtered=filtered.filter(c=>c.ind===selIndustry);
+if(selType) filtered=filtered.filter(c=>c.type===selType);
+document.getElementById('indStats').innerHTML=`<div class="stat-card"><div class="num">${filtered.length}</div><div class="lbl">${selIndustry||'全部'}案例</div></div>`+
+(Object.values(typeNames).map(t=>`<div class="stat-card" style="border-left:3px solid ${Object.entries(typeColors).find(([k])=>typeNames[k]===t)[1]}"><div class="num">${filtered.filter(c=>typeNames[c.type]===t).length}</div><div class="lbl">${t}</div></div>`)).join('');
+document.getElementById('indResults').innerHTML=filtered.map(c=>
+`<div class="case-card">
+<div class="case-title"><span>${c.icon} ${c.name}</span><span class="case-id">#${c.id}</span></div>
+<div class="case-meta">
+<span class="tag tag-ind">${c.ind}</span>
+<span class="tag tag-type" style="background:${typeColors[c.type]}20;color:${typeColors[c.type]}">${c.type}</span>
+<span class="tag tag-cam">${c.cam}</span>
+</div>
+<div style="font-size:.8em;color:var(--st)">🔧 ${c.alg}</div>
+</div>`).join('');
+}
+
+// ========== 竞品资料库统计 ==========
+function renderCompetitor(){
+document.getElementById('compStats').innerHTML=
+`<div class="stat-card"><div class="num">7</div><div class="lbl">覆盖品牌</div></div>
+<div class="stat-card"><div class="num">25+</div><div class="lbl">具体型号数</div></div>
+<div class="stat-card"><div class="num">30+</div><div class="lbl">技术参数维度</div></div>
+<div class="stat-card"><div class="num">3</div><div class="lbl">国家/地区</div></div>`;
+}
+
+// ========== 初始化 ==========
+renderSearch();
+renderIndustry();
+renderCompetitor();
+</script>
+
+</body>
+</html>
