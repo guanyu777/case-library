@@ -134,25 +134,37 @@ mark.search-mark{background:#fef08a;color:inherit;padding:0 2px;border-radius:2p
 /* RESPONSIVE */
 @media(max-width:900px){
   .compare-grid{grid-template-columns:1fr}
-  .header h1{font-size:.95em}
-  .page-tab{font-size:.82em;padding:10px 12px}
-  .page-content{padding:8px 10px}
-  .param-table{font-size:.66em}
-  .model-list-table{font-size:.64em}
+  .header{padding:6px 10px}
+  .header h1{font-size:.82em}
+  .header .sub{font-size:.6em}
+  .page-tab{font-size:.72em;padding:8px 8px}
+  .col-body{padding:6px !important}
+  .search-box input{font-size:.76em;padding:6px 8px}
+  .search-box button{padding:6px 10px;font-size:.7em}
+  .search-tip{font-size:.6em;margin-bottom:4px}
+  .series-tabs{gap:2px;margin-bottom:4px}
+  .series-tab{padding:4px 6px;font-size:.65em}
+  .param-table{font-size:.6em}
+  .model-list-table{font-size:.58em}
+  .links-row{gap:2px;margin-top:4px;padding-top:4px}
+  .links-row a{padding:3px 6px;font-size:.65em}
+  .comp-result-header{padding:6px 8px;font-size:.7em}
+  .card-title{padding:5px 8px;font-size:.7em}
+  .card-body{padding:6px 8px}
+  .vs-row{padding:4px 6px;font-size:.65em;margin-top:4px}
+  .empty-state{padding:20px 12px}
+  .empty-state .big{font-size:2em}
+  .empty-state p{font-size:.75em}
 }
 </style>
 </head>
 <body>
 <div class="header"><div class="header-inner">
-  <div><h1>🏢 竞品资料检索</h1><div class="sub">基恩士 · 康耐视 · 思谋 · OPT · 华睿 · 德成 — 对标海康型号</div></div>
+  <div><h1>🏢 竞品资料检索</h1><div class="sub">型号/品牌搜索 · 基恩士·康耐视·思谋·OPT·华睿·德成</div></div>
 </div></div>
 
-<div class="page-content">
-<!-- ===== PAGE 2: COMPETITOR SEARCH ===== -->
 <div class="page-panel active" id="page-comp">
-<div class="col-panel">
-<div class="col-header">🔍 竞品型号/品牌检索</div>
-<div class="col-body">
+<div class="col-body" style="padding:10px">
   <div class="search-box">
     <input type="text" id="comp-search" placeholder="输入竞品型号(如 IV4、VS、IS3805、VN4000、SS5016)..." onkeydown="suggestKeydown(event,'comp')" oninput="showSuggest('comp')" autocomplete="off">
     <button class="btn-search" onclick="doCompSearch()">🔍 搜索</button>
@@ -169,8 +181,7 @@ mark.search-mark{background:#fef08a;color:inherit;padding:0 2px;border-radius:2p
 
   <!-- Result Container -->
   <div id="comp-result"></div>
-</div></div></div></div>
-</div>
+</div></div>
 
 <script>
 // ==================== DATA ====================
