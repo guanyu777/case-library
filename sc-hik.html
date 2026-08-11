@@ -134,27 +134,34 @@ mark.search-mark{background:#fef08a;color:inherit;padding:0 2px;border-radius:2p
 /* RESPONSIVE */
 @media(max-width:900px){
   .compare-grid{grid-template-columns:1fr}
-  .header h1{font-size:.95em}
-  .page-tab{font-size:.82em;padding:10px 12px}
-  .page-content{padding:8px 10px}
-  .param-table{font-size:.66em}
-  .model-list-table{font-size:.64em}
+  .header{padding:6px 10px}
+  .header h1{font-size:.82em}
+  .header .sub{font-size:.6em}
+  .page-tab{font-size:.72em;padding:8px 8px}
+  .col-body{padding:6px !important}
+  .search-box input{font-size:.76em;padding:6px 8px}
+  .search-box button{padding:6px 10px;font-size:.7em}
+  .search-tip{font-size:.6em;margin-bottom:4px}
+  .series-tabs{gap:2px;margin-bottom:4px}
+  .series-tab{padding:4px 6px;font-size:.65em}
+  .param-table{font-size:.6em}
+  .model-list-table{font-size:.58em}
+  .links-row{gap:2px;margin-top:4px;padding-top:4px}
+  .links-row a{padding:3px 6px;font-size:.65em}
+  .comp-result-header{padding:6px 8px;font-size:.7em}
+  .card-title{padding:5px 8px;font-size:.7em}
+  .card-body{padding:6px 8px}
+  .vs-row{padding:4px 6px;font-size:.65em;margin-top:4px}
 }
 </style>
 </head>
 <body>
-
-<body>
 <div class="header"><div class="header-inner">
-  <div><h1>🔶 海康智能相机产品检索</h1><div class="sub">海康全系列智能相机型号 · 官网数据 2026</div></div>
+  <div><h1>🔶 海康产品检索</h1><div class="sub">型号/参数搜索 · 官网数据 2026</div></div>
 </div></div>
 
-<div class="page-content">
-<!-- ===== PAGE 1: HIKVISION SEARCH ===== -->
-<div class="page-content"><div class="page-panel active" id="page-hik">
-<div class="col-panel">
-<div class="col-header">🔍 海康智能相机型号/参数检索</div>
-<div class="col-body">
+<div class="page-panel active" id="page-hik">
+<div class="col-body" style="padding:10px">
   <div class="search-box">
     <input type="text" id="hik-search" placeholder="输入型号(如 SC3030、5020、6016) 或关键词(全局快门、边缘学习、FINS)..." onkeydown="suggestKeydown(event,'hik')" oninput="showSuggest('hik')" autocomplete="off">
     <button class="btn-search" onclick="doHikSearch()">🔍 搜索</button>
@@ -176,8 +183,7 @@ mark.search-mark{background:#fef08a;color:inherit;padding:0 2px;border-radius:2p
 
   <!-- Result Area -->
   <div id="hik-result"></div>
-</div></div></div></div>
-</div>
+</div></div>
 
 <script>
 // ==================== DATA ====================
