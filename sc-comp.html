@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>竞品资料检索 — 基恩士·康耐视·思谋·OPT·华睿·德成</title>
+<title>竞品资料检索 — 基恩士·康耐视等</title>
 <style>
 :root{
   --br:#e8600a;--nv:#0A1628;--bg:#f3f4f6;--card:#fff;
@@ -160,7 +160,7 @@ mark.search-mark{background:#fef08a;color:inherit;padding:0 2px;border-radius:2p
 </head>
 <body>
 <div class="header"><div class="header-inner">
-  <div><h1>🏢 竞品资料检索</h1><div class="sub">型号/品牌搜索 · 基恩士·康耐视·思谋·OPT·华睿·德成</div></div>
+  <div><h1>🏢 竞品资料检索</h1><div class="sub">型号/品牌搜索 · 基恩士·康耐视等</div></div>
 </div></div>
 
 <div class="page-panel active" id="page-comp">
@@ -176,7 +176,7 @@ mark.search-mark{background:#fef08a;color:inherit;padding:0 2px;border-radius:2p
   <!-- Empty State (before search) -->
   <div id="comp-empty" class="empty-state">
     <div class="big">🔍</div>
-    <p>输入竞品型号或品牌名称开始搜索<br>仅显示匹配的系列 + 海康对标型号</p>
+    <p>输入竞品型号或品牌名称开始搜索<br>仅显示匹配的系列 + 海康对标型号(参考)</p>
   </div>
 
   <!-- Result Container -->
@@ -924,7 +924,7 @@ function doCompSearch(){
 
       <span class="region ${c.region==='cn'?'region-cn':'region-intl'}" style="font-size:.6em;padding:1px 4px;border-radius:3px;${c.region==='cn'?'background:#fee2e2;color:#991b1b':'background:#dbeafe;color:#1e40af'}">${c.region==='cn'?'🇨🇳 国产':'🌐 国外'}</span>
 
-      <span class="badge badge-hik">🎯 海康对标: ${hikData[r.hikKey].name}</span>
+      <span class="badge badge-hik">🎯 海康对标(参考): ${hikData[r.hikKey].name}</span>
 
       <span class="badge badge-vs">📊 ${r.matchedSeries.length}个系列</span>
 
@@ -1026,7 +1026,7 @@ function doCompSearch(){
 
       html+=`<div class="compare-col">
 
-        <span class="col-label hik-label">🔶 海康对标: ${hikD.name}</span>
+        <span class="col-label hik-label">🔶 海康对标(参考): ${hikD.name}</span>
 
         <div class="hik-counter">
 
