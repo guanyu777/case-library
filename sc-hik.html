@@ -485,6 +485,8 @@ function showHikSeries(key){
 // FOV pixel size map (μm) — 部分为同分辨率推测值
 const FOV_PIXEL_MAP={'640×480':3.4,'1024×768':3.14,'704×540':3.0,'1280×1024':3.1,'1408×1024':3.45,'1920×1080':2.9,'1920×1280':3.0,'1216×1024':3.45,'1536×1264':3.45,'2048×1536':3.45,'2432×2048':3.45,'3200×1920':2.0,'1600×1216':3.45,'4096×2816':2.0,'4096×2944':2.0,'5120×5120':2.5,'1408×576':3.45};
 const FOV_WD=[50,100,150,200,300,500];
+// 仅保留 MV-SC1/2/3/5/6 主系列型号（剔除 MV-SCA/B/C/T/i、MV-XC、MV-TD、HY/HK/CY/YTH 等副线）
+const MAIN_RE=/^MV-SC[12356]/;
 
 function calcFOV(resStr,focal,wd){
   const rm=(resStr||'').match(/(\d+)[×x](\d+)/);if(!rm)return null;
@@ -495,15 +497,13 @@ function calcFOV(resStr,focal,wd){
   return {sw,sh,fw,fh,prec:fw/rw,px};
 }
 
-function renderModelDetail(key,idx,evt){
-  const d=hikData[key];if(!d)return;
-  const mvsc=d.models.filter(m=>m[0].startsWith('MV-SC'));
-  const m=mvsc[idx];if(!m)return;
+function buildModelDetailCard(key, m, lks){
+  const d=hikData[key]; if(!d||!m) return '';
   const model=m[0],res=m[1]||'-',focalStr=m[6]||'-';
   const colNames={1:'分辨率',2:'像元/传感器',3:'靶面/快门',4:'帧率(fps)',5:'黑白/彩色',6:'焦距',7:'调焦方式',8:'AI/能力'};
   let h=`<div class="model-detail-card"><div class="mdc-title">📷 ${model}</div><div class="mdc-body">`;
   h+=`<table class="param-table" style="min-width:300px"><thead><tr><th>参数</th><th>值</th></tr></thead><tbody>`;
-  for(let i=1;i<m.length;i++){h+=`<tr><td>${colNames[i]||'参数'+i}</td><td>${m[i]||'-'}</td></tr>`;}
+  for(let i=1;i<m.length;i++){h+=`<tr><td>${colNames[i]||('参数'+i)}</td><td>${m[i]||'-'}</td></tr>`;}
   h+=`</tbody></table>`;
   const fm=(focalStr||'').match(/([\d.]+)\s*mm/);
   if(fm){
@@ -519,31 +519,56 @@ function renderModelDetail(key,idx,evt){
   }else{
     h+=`<div class="fov-sensor">⚠️ ${focalStr}（无固定焦距），需自配镜头后按公式计算视野</div>`;
   }
-  const lks=hikLinks[key]||{};
+  const lk=lks||{};
   h+=`<div class="links-row" style="margin-top:8px">
-    <a class="link-site" href="${lks.site||d.url}" target="_blank">🏠 官网产品页</a>
-    <a class="link-spec" href="${lks.site||d.url}" target="_blank">📄 规格书</a>
-    <a class="link-doc" href="${lks.doc||'#'}" target="_blank">💻 软件下载</a>
+    <a class="link-site" href="${lk.site||d.url}" target="_blank">🏠 官网产品页</a>
+    <a class="link-spec" href="${lk.site||d.url}" target="_blank">📄 规格书下载</a>
+    <a class="link-doc" href="${lk.doc||'#'}" target="_blank">💻 软件下载+问题库</a>
   </div>`;
   h+=`</div></div>`;
+  return h;
+}
+
+function renderModelDetail(key,idx,evt){
+  const d=hikData[key];if(!d)return;
+  const mvsc=d.models.filter(m=>MAIN_RE.test(m[0]));
+  const m=mvsc[idx];if(!m)return;
+  const lks=hikLinks[key]||{};
   const el=document.getElementById('model-detail');
-  if(el){el.innerHTML=h;el.scrollIntoView({behavior:'smooth',block:'nearest'});}
+  if(el){el.innerHTML=buildModelDetailCard(key,m,lks);el.scrollIntoView({behavior:'smooth',block:'nearest'});}
   if(evt){document.querySelectorAll('.model-row').forEach(r=>r.classList.remove('selected'));evt.currentTarget.classList.add('selected');}
 }
 
-function renderHikSeries(key){
-  const d=hikData[key];if(!d)return;
-  const lks=hikLinks[key]||{};
-  // 系列规格表
+function buildSeriesSpecTable(key){
+  const d=hikData[key];if(!d)return '';
   let h=`<div class="table-scroll"><table class="param-table">
   <thead><tr><th>参数项</th><th>值</th></tr></thead><tbody>`;
   for(const [k,v] of Object.entries(d.specs)){
     h+=`<tr${k.includes('AI')?' class="key-row"':''}><td>${k}</td><td>${v}</td></tr>`;
   }
   h+=`</tbody></table></div>`;
-  // 过滤只保留 MV-SC 开头型号
-  const mvsc=d.models.filter(m=>m[0].startsWith('MV-SC'));
-  h+=`<div class="model-list-hint">📋 点击型号查看详细参数与物距视野（共 ${mvsc.length} 个 MV-SC 型号，已过滤非MV-SC物料）</div>`;
+  return h;
+}
+
+function setHikTabActive(key){
+  document.querySelectorAll('#hik-series-tabs .series-tab').forEach(t=>t.classList.remove('active','matched'));
+  const idx={'sc1000':0,'sc2000':1,'sc2000x':2,'sc3000':3,'sc5000x':4,'sc6000':5,'sc6500':6};
+  const tabs=document.querySelectorAll('#hik-series-tabs .series-tab');
+  if(tabs[idx[key]])tabs[idx[key]].classList.add('active','matched');
+}
+
+function renderHikSeriesFull(key, topIdx){
+  const d=hikData[key];if(!d)return;
+  const lks=hikLinks[key]||{};
+  const mvsc=d.models.filter(m=>MAIN_RE.test(m[0]));
+  let h='';
+  // 搜索命中具体型号时，参数详情置顶
+  if(topIdx!=null && mvsc[topIdx]){
+    h+=buildModelDetailCard(key, mvsc[topIdx], lks);
+    h+=`<div class="search-tip" style="margin-top:10px;font-size:.72em">📂 所属系列：<b>${d.name}</b>　·　下方为该系列完整规格与型号参考</div>`;
+  }
+  h+=buildSeriesSpecTable(key);
+  h+=`<div class="model-list-hint">📋 点击型号查看详细参数与物距视野（共 ${mvsc.length} 个 MV-SC 主系列型号）</div>`;
   h+=`<div class="table-scroll" style="margin-top:4px"><table class="model-list-table">
   <thead><tr><th>型号</th><th>分辨率</th><th>焦距</th><th>彩色</th><th>能力</th></tr></thead><tbody>`;
   mvsc.forEach((m,i)=>{
@@ -563,9 +588,43 @@ function renderHikSeries(key){
   document.getElementById('hik-result').innerHTML=h;
 }
 
+function renderHikSeries(key){ renderHikSeriesFull(key, null); }
+
+function renderHikResultWithDetail(key, idx){
+  renderHikSeriesFull(key, idx);
+  setHikTabActive(key);
+  currentHikSeries=key;
+  const d=hikData[key];
+  const mvsc=d.models.filter(m=>MAIN_RE.test(m[0]));
+  const m=mvsc[idx];
+  document.getElementById('hik-tip').textContent='🔍 已找到型号: '+(m?m[0]:'');
+}
+
+function findMainModel(qRaw){
+  const q=qRaw.trim().toLowerCase().replace(/[^a-z0-9]/g,'');
+  if(!q)return null;
+  let best=null,bestScore=0;
+  Object.keys(hikData).forEach(k=>{
+    const mvsc=hikData[k].models.filter(m=>MAIN_RE.test(m[0]));
+    mvsc.forEach((m,i)=>{
+      const ml=m[0].toLowerCase().replace(/[^a-z0-9]/g,'');
+      let score=0;
+      if(ml===q)score=200;
+      else if(ml.startsWith(q))score=150;
+      else if(ml.includes(q))score=100;
+      if(score>bestScore){bestScore=score;best={key:k,idx:i};}
+    });
+  });
+  return bestScore>=100?best:null;
+}
+
 function doHikSearch(){
   const q=document.getElementById('hik-search').value.trim().toLowerCase();
   if(!q){renderHikSeries(currentHikSeries);document.getElementById('hik-tip').textContent='💡 搜型号如 SC3030、SC5020、SC6016 或搜关键词如 "边缘学习""全局快门""FINS"';return;}
+
+  // 优先匹配具体型号 → 参数详情置顶显示
+  const fm=findMainModel(q);
+  if(fm){ renderHikResultWithDetail(fm.key, fm.idx); return; }
 
   // Try match series
   let bestKey=currentHikSeries,bestScore=0;
@@ -626,7 +685,7 @@ function buildSuggestIndex(){
     const d = hikData[k];
     const sks = d.searchKeys || [];
     (d.models||[]).forEach(row=>{
-      if(!row||!row[0]||!row[0].startsWith('MV-SC')) return;
+      if(!row||!row[0]||!MAIN_RE.test(row[0])) return;
       _suggestIndex.push({
         seriesKey:k, seriesName:d.name,
         searchKeys:sks,
@@ -695,16 +754,15 @@ function clickSuggest(idx){
   dd.classList.remove('show');
   dd.innerHTML = '';
   _suggestCurrentList = [];
-  showHikSeries(item.seriesKey);
-  document.getElementById('hik-tip').textContent = '🔍 已选择: '+item.model+' ('+item.seriesName+')';
-  // 在 MV-SC 列表中找到该型号并显示详情
-  setTimeout(()=>{
-    const d=hikData[item.seriesKey];
-    if(!d)return;
-    const mvsc=d.models.filter(m=>m[0].startsWith('MV-SC'));
+  // 选具体型号 → 参数详情置顶显示
+  const d=hikData[item.seriesKey];
+  if(d){
+    const mvsc=d.models.filter(m=>MAIN_RE.test(m[0]));
     const mi=mvsc.findIndex(m=>m[0]===item.model);
-    if(mi>=0)renderModelDetail(item.seriesKey,mi);
-  },80);
+    if(mi>=0){ renderHikResultWithDetail(item.seriesKey, mi); }
+    else { showHikSeries(item.seriesKey); }
+  }
+  document.getElementById('hik-tip').textContent = '🔍 已选择: '+item.model+' ('+item.seriesName+')';
 }
 
 function suggestKeydown(e){
