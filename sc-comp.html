@@ -14,9 +14,10 @@
 html{scroll-behavior:smooth}
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--tx);line-height:1.5;min-height:100vh}
 .header{background:var(--nv);color:#fff;padding:10px 20px;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.15)}
-.header-inner{max-width:1600px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
-.header h1{font-size:1.1em;font-weight:700}
-.header .sub{font-size:.72em;color:#94a3b8}
+.header-inner{max-width:1600px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px 10px}
+.header-inner > div{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;min-width:0}
+.header h1{font-size:1.0em;font-weight:700;white-space:nowrap}
+.header .sub{font-size:.7em;color:#94a3b8;white-space:nowrap}
 .page-tabs{display:flex;gap:0;background:#fff;border-bottom:2px solid var(--bd);position:sticky;top:64px;z-index:90}
 .page-tab{flex:1;max-width:500px;padding:12px 20px;text-align:center;cursor:pointer;font-size:.92em;font-weight:700;color:var(--st);border-bottom:3px solid transparent;transition:all .15s;background:#fafafa;user-select:none}
 .page-tab:hover{color:var(--br);background:#fff7ed}
