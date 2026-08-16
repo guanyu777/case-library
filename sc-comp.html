@@ -167,7 +167,7 @@ mark.search-mark{background:#fef08a;color:inherit;padding:0 2px;border-radius:2p
 <div class="page-panel active" id="page-comp">
 <div class="col-body" style="padding:10px">
   <div class="search-box">
-    <input type="text" id="comp-search" placeholder="输入竞品型号(如 IV4、VS、IS3805、VN4000、SS5016)..." onkeydown="suggestKeydown(event,'comp')" oninput="showSuggest('comp')" autocomplete="off">
+    <input type="text" id="comp-search" placeholder="输入竞品型号(如 IV4、VS、IS3805、VN4000、SS5016)..." onkeydown="suggestKeydown(event,'comp')" oninput="_debounceSuggest('comp')" autocomplete="off">
     <button class="btn-search" onclick="doCompSearch()">🔍 搜索</button>
     <button class="btn-clear" onclick="clearCompSearch()">✕ 清除</button>
     <div class="suggest-dropdown" id="comp-suggest"></div>
@@ -1146,6 +1146,12 @@ function buildSuggestIndex(){
 
 let _suggestActiveIdx = -1;
 let _suggestCurrentList = [];
+let _suggestTimer = null;
+
+function _debounceSuggest(type) {
+  clearTimeout(_suggestTimer);
+  _suggestTimer = setTimeout(() => showSuggest(type), 150);
+}
 
 function showSuggest(){
   const input = document.getElementById('comp-search');
