@@ -333,7 +333,7 @@ function cards(list){
       var oj=optImg.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
       var nj=c.name.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
       h+='<div class="case-img" onclick="openLB(\''+oj+'\',\''+nj+'\')">';
-      h+='<img src="'+thumbImg+'" alt="'+c.name+'" loading="lazy" onerror="this.src=\''+cdnImg+'\';this.onerror=function(){this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'}">';
+      h+='<img src="'+optImg+'" alt="'+c.name+'" loading="lazy" onerror="this.src=\''+thumbImg+'\';this.onerror=function(){this.src=\''+cdnImg+'\';this.onerror=function(){this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'}}">';
       h+='<div class="case-img-fb" style="display:none"><span>\u{1f4f7} '+cs+'</span></div>';
       h+='</div>';
     }
