@@ -561,7 +561,6 @@ function buildModelDetailCard(key, m, lks){
   const lk=lks||{};
   h+=`<div class="links-row" style="margin-top:8px">
     <a class="link-site" href="${lk.site||d.url}" target="_blank">🏠 官网产品页</a>
-    <a class="link-spec" href="${lk.site||d.url}" target="_blank">📄 规格书下载</a>
     <a class="link-doc" href="${lk.doc||'#'}" target="_blank">💻 软件下载+问题库</a>
   </div>`;
   h+=`</div></div>`;
@@ -619,9 +618,6 @@ function renderHikSeriesFull(key, topIdx){
   // 系列链接
   h+=`<div class="links-row">
     <a class="link-site" href="${lks.site||d.url}" target="_blank">🏠 官网产品页</a>
-    <a class="link-spec" href="${lks.site||d.url}" target="_blank">📄 规格书下载</a>
-    <a class="link-3d" href="${lks.site||d.url}" target="_blank">🧊 3D模型</a>
-    <a class="link-manual" href="${lks.site||d.url}" target="_blank">📖 用户手册</a>
     <a class="link-doc" href="${lks.doc||'#'}" target="_blank">💻 软件下载+问题库</a>
   </div>`;
   document.getElementById('hik-result').innerHTML=h;
