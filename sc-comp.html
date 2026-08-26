@@ -1,821 +1,1637 @@
 <!DOCTYPE html>
+
 <html lang="zh-CN">
+
 <head>
+
 <meta charset="UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>竞品资料检索 — 基恩士·康耐视等</title>
+
 <style>
+
 :root{
+
   --br:#e8600a;--nv:#0A1628;--bg:#f3f4f6;--card:#fff;
+
   --tx:#1a1a2e;--st:#6b7280;--bd:#d1d5db;
+
   --gr:#16a34a;--rd:#dc2626;--bl:#2563eb
+
 }
+
 *{margin:0;padding:0;box-sizing:border-box}
+
 html{scroll-behavior:smooth}
+
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--tx);line-height:1.5;min-height:100vh}
+
 .header{background:var(--nv);color:#fff;padding:10px 20px;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.15)}
+
 .header-inner{max-width:1600px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px 10px}
+
 .header-inner > div{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;min-width:0}
+
 .header h1{font-size:1.0em;font-weight:700;white-space:nowrap}
+
 .header .sub{font-size:.7em;color:#94a3b8;white-space:nowrap}
+
 .page-tabs{display:flex;gap:0;background:#fff;border-bottom:2px solid var(--bd);position:sticky;top:64px;z-index:90}
+
 .page-tab{flex:1;max-width:500px;padding:12px 20px;text-align:center;cursor:pointer;font-size:.92em;font-weight:700;color:var(--st);border-bottom:3px solid transparent;transition:all .15s;background:#fafafa;user-select:none}
+
 .page-tab:hover{color:var(--br);background:#fff7ed}
+
 .page-tab.active{color:var(--br);border-bottom-color:var(--br);background:#fff}
+
 .page-content{max-width:1600px;margin:0 auto;padding:12px 20px}
+
 .page-panel{display:none}
+
 .page-panel.active{display:block}
+
 .col-panel{background:var(--card);border-radius:10px;box-shadow:0 1px 5px rgba(0,0,0,.06);overflow:hidden;margin-bottom:14px}
+
 .col-header{background:var(--nv);color:#fff;padding:10px 16px;font-weight:700;font-size:.88em;display:flex;align-items:center;gap:8px}
+
 .col-body{padding:12px}
+
 .search-box{display:flex;gap:6px;margin-bottom:10px;position:relative}
+
 .suggest-dropdown{position:absolute;top:100%;left:0;right:0;background:#fff;border:2px solid var(--br);border-top:none;border-radius:0 0 8px 8px;max-height:320px;overflow-y:auto;z-index:200;box-shadow:0 6px 20px rgba(0,0,0,.15);display:none}
+
 .suggest-dropdown.show{display:block}
+
 .suggest-item{padding:7px 14px;cursor:pointer;font-size:.78em;border-bottom:1px solid #f0f0f0;display:flex;align-items:center;gap:8px;transition:background .1s}
+
 .suggest-item:hover,.suggest-item.active{background:#fff7ed}
+
 .suggest-item:last-child{border-bottom:none}
+
 .suggest-tag{display:inline-block;padding:1px 6px;border-radius:4px;font-size:.85em;font-weight:700;white-space:nowrap;flex-shrink:0}
+
 .suggest-tag.hik{background:#e8600a;color:#fff}
+
 .suggest-tag.comp{background:#2563eb;color:#fff}
+
 .suggest-model{font-family:'Consolas','Courier New',monospace;font-weight:700;color:var(--nv);font-size:.95em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
 .suggest-info{color:var(--st);font-size:.85em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1}
+
 .suggest-series{color:var(--br);font-size:.8em;white-space:nowrap;flex-shrink:0}
+
 .search-box input{flex:1;padding:9px 12px;border:2px solid var(--bd);border-radius:8px;font-size:.86em;outline:none;transition:border-color .15s;background:#fafafa}
+
 .search-box input:focus{border-color:var(--br);background:#fff}
+
 .search-box input::placeholder{color:#bbb}
+
 .search-box button{padding:9px 14px;border:none;border-radius:8px;font-size:.8em;font-weight:600;cursor:pointer;white-space:nowrap;transition:opacity .15s}
+
 .search-box button:hover{opacity:.85}
+
 .btn-search{background:var(--br);color:#fff}
+
 .btn-clear{background:#e5e7eb;color:var(--tx)}
+
 .search-tip{font-size:.68em;color:var(--st);margin-bottom:8px}
 
+
+
 /* TABS */
+
 .series-tabs{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px}
+
 .series-tab{padding:5px 11px;border:1.5px solid var(--bd);border-radius:6px;background:#fff;cursor:pointer;font-size:.76em;font-weight:600;color:var(--st);transition:all .15s;white-space:nowrap}
+
 .series-tab:hover{border-color:var(--br);color:var(--br)}
+
 .series-tab.active{background:var(--br);color:#fff;border-color:var(--br)}
+
 .series-tab.matched{background:#fef3c7;border-color:#ca8a04;color:#92400e}
 
+
+
 /* TABLE */
+
 .table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-top:4px}
+
 .param-table{width:100%;border-collapse:collapse;font-size:.72em;min-width:580px}
+
 .param-table th{background:#1e293b;color:#fff;padding:5px 6px;text-align:center;font-weight:600;white-space:nowrap;font-size:.92em}
+
 .param-table th:first-child{text-align:left;min-width:85px}
+
 .param-table td{padding:4px 6px;border-bottom:1px solid #e5e7eb;text-align:center;vertical-align:middle}
+
 .param-table td:first-child{text-align:left;font-weight:600;white-space:nowrap;color:var(--nv)}
+
 .param-table tr:nth-child(even){background:#fafcfd}
+
 .param-table tr:hover{background:#f3f4f6}
+
 .param-table .model-cell{font-family:'Consolas','Courier New',monospace;font-size:.7em;color:var(--br);font-weight:700;max-width:130px;word-break:break-all}
+
 .param-table .yes{color:var(--gr);font-weight:700}
+
 .param-table .no{color:#bbb}
+
 .param-table .rd{color:var(--rd);font-weight:700}
 
+
+
 /* KEY ROW */
+
 .param-table tr.key-row td{background:#fef7ed}
+
 .param-table tr.key-row td:first-child{color:var(--br);font-weight:800}
 
+
+
 /* SEARCH HIGHLIGHT */
+
 .param-table tr.search-hit td{background:#fffbeb !important}
+
 .param-table th.search-hit-col{background:#fef9c3 !important;color:#92400e !important;border-bottom:3px solid #e8600a !important}
 
+
+
 /* LINK BUTTONS */
+
 .links-row{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px;padding-top:6px;border-top:1px solid var(--bd)}
+
 .links-row a{display:inline-flex;align-items:center;gap:2px;padding:4px 9px;font-size:.7em;border-radius:5px;text-decoration:none;font-weight:600;white-space:nowrap;transition:opacity .15s}
+
 .links-row a:hover{opacity:.8}
+
 .link-spec{background:#dbeafe;color:#1e40af}
+
 .link-3d{background:#fef3c7;color:#92400e}
+
 .link-manual{background:#f3e8ff;color:#6b21a8}
+
 .link-site{background:#dcfce7;color:#166534}
+
 .link-doc{background:#fff7ed;color:#c2410c;border:1px solid #fdba74;font-size:.73em;padding:5px 10px}
 
+
+
 /* EMPTY / NOT FOUND */
+
 .empty-state{text-align:center;padding:30px 20px;color:var(--st)}
+
 .empty-state .big{font-size:2em;margin-bottom:6px;opacity:.6}
 
+
+
 /* COMP RESULT */
+
 .comp-result-header{background:#fff7ed;border:1px solid #fdba74;border-radius:8px;padding:10px 14px;margin-bottom:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+
 .comp-result-header .badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:6px;font-size:.74em;font-weight:700}
+
 .badge-comp{background:#fee2e2;color:#991b1b}
+
 .badge-hik{background:#fff7ed;color:#c2410c;border:1px solid #fdba74}
+
 .badge-vs{background:#fef9c3;color:#92400e}
 
+
+
 .comp-series-card{border:1px solid var(--bd);border-radius:8px;margin-bottom:10px;overflow:hidden}
+
 .comp-series-card .card-title{background:#f8fafc;padding:8px 12px;font-weight:700;font-size:.82em;color:var(--nv);border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:6px}
+
 .comp-series-card .card-body{padding:10px 12px}
 
+
+
 /* COMP + HIK SIDE-BY-SIDE */
+
 .compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
+
 .compare-col{min-width:0}
+
 .compare-col .col-label{font-size:.73em;font-weight:700;margin-bottom:6px;padding:3px 8px;border-radius:4px;display:inline-block}
+
 .comp-label{background:#fef2f2;color:#991b1b}
+
 .hik-label{background:#fff7ed;color:#c2410c}
 
+
+
 /* HIK COUNTERPART CARD */
+
 .hik-counter{border:2px dashed var(--br);border-radius:8px;padding:10px 12px;background:#fffdf7}
+
 .hik-counter .counter-title{font-weight:700;color:var(--br);margin-bottom:6px;font-size:.82em}
+
 .hik-counter table{font-size:.7em;width:100%;border-collapse:collapse}
+
 .hik-counter td{padding:3px 5px;border-bottom:1px solid #fcd9b8}
+
 .hik-counter td:first-child{font-weight:600;color:var(--st);white-space:nowrap;width:35%}
+
 .hik-counter .mval{font-family:'Consolas','Courier New',monospace;color:var(--br);font-weight:700}
 
+
+
 /* MODEL TABLE */
+
 .model-list-table{width:100%;border-collapse:collapse;font-size:.69em;margin-top:6px}
+
 .model-list-table th{background:#334155;color:#fff;padding:4px 5px;text-align:center;font-weight:600;white-space:nowrap}
+
 .model-list-table td{padding:3px 5px;border-bottom:1px solid #e5e7eb;text-align:center}
+
 .model-list-table tr:nth-child(even){background:#f8fafc}
+
 .model-list-table .model-name{font-family:'Consolas','Courier New',monospace;font-size:.68em;color:var(--br);font-weight:700;text-align:left}
 
+
+
 /* VS ANALYSIS ROW */
+
 .vs-row{background:#fef2f2;border:1px solid #fecaca;border-radius:6px;padding:7px 10px;margin-top:8px;font-size:.73em}
+
 .vs-row strong{color:var(--rd)}
 
+
+
 /* SEARCH HIT HIGHLIGHT (text level) */
+
 mark.search-mark{background:#fef08a;color:inherit;padding:0 2px;border-radius:2px}
 
+
+
 /* RESPONSIVE */
+
 @media(max-width:900px){
+
   .compare-grid{grid-template-columns:1fr}
+
   .header{padding:6px 10px}
+
   .header h1{font-size:.82em}
+
   .header .sub{font-size:.6em}
+
   .page-tab{font-size:.72em;padding:8px 8px}
+
   .col-body{padding:6px !important}
+
   .search-box input{font-size:.76em;padding:6px 8px}
+
   .search-box button{padding:6px 10px;font-size:.7em}
+
   .search-tip{font-size:.6em;margin-bottom:4px}
+
   .series-tabs{gap:2px;margin-bottom:4px}
+
   .series-tab{padding:4px 6px;font-size:.65em}
+
   .param-table{font-size:.6em}
+
   .model-list-table{font-size:.58em}
+
   .links-row{gap:2px;margin-top:4px;padding-top:4px}
+
   .links-row a{padding:3px 6px;font-size:.65em}
+
   .comp-result-header{padding:6px 8px;font-size:.7em}
+
   .card-title{padding:5px 8px;font-size:.7em}
+
   .card-body{padding:6px 8px}
+
   .vs-row{padding:4px 6px;font-size:.65em;margin-top:4px}
+
   .empty-state{padding:20px 12px}
+
   .empty-state .big{font-size:2em}
+
   .empty-state p{font-size:.75em}
+
 }
+
 </style>
+
 </head>
+
 <body>
+
 <div class="header"><div class="header-inner">
+
   <div><h1>🏢 竞品资料检索</h1><div class="sub">型号/品牌搜索 · 基恩士·康耐视等</div></div>
+
 </div></div>
+
+
 
 <div class="page-panel active" id="page-comp">
+
 <div class="col-body" style="padding:10px">
+
   <div class="search-box">
+
     <input type="text" id="comp-search" placeholder="输入竞品型号(如 IV4、VS、IS3805、VN4000、SS5016)..." onkeydown="suggestKeydown(event,'comp')" oninput="_debounceSuggest('comp')" autocomplete="off">
+
     <button class="btn-search" onclick="doCompSearch()">🔍 搜索</button>
+
     <button class="btn-clear" onclick="clearCompSearch()">✕ 清除</button>
+
     <div class="suggest-dropdown" id="comp-suggest"></div>
+
   </div>
+
   <div class="search-tip">💡 搜型号如 IV4、VS、IS3805</div>
 
+
+
   <!-- Empty State (before search) -->
+
   <div id="comp-empty" class="empty-state">
+
     <div class="big">🔍</div>
+
     <p>输入竞品型号或品牌名称开始搜索<br>仅显示匹配的系列 + 海康对标型号(参考)</p>
+
   </div>
 
+
+
   <!-- Result Container -->
+
   <div id="comp-result"></div>
+
 </div></div>
 
+
+
 <script>
+
 // ==================== DATA ====================
+
 // Hikvision data (for counterpart cross-reference)
+
 const hikData = {
+
   sc1000: {
+
     name:'SC1000系列 视觉传感器',url:'https://www.hikrobotics.com/cn/machinevision/visionproduct?id=320&typeId=38',
+
     specs:{'定位':'入门经济型','分辨率范围':'30万~80万','传感器':'CMOS','快门':'全局','最大帧率':'15fps','AI能力':'有无/计数/识别','通讯':'100M Ethernet','防护':'IP67','应用':'基础有无检测/颜色识别/读码','软件':'SCMVS客户端'},
+
     models:[
+
       ['MV-SC1003M-03S-WBN-SR','640×480','CMOS','-','15','黑白','3.1mm','手动','有无/计数/识别'],
+
       ['MV-SC1003M-03S-WBN-NR','640×480','CMOS','-','15','黑白','3.1mm','手动','有无/计数/识别'],
+
       ['MV-SC1003C-03S-WBN-SR','640×480','CMOS','-','15','彩色','3.1mm','手动','有无/计数/识别'],
+
       ['MV-SC1003C-03S-WBN-NR','640×480','CMOS','-','15','彩色','3.1mm','手动','有无/计数/识别'],
+
       ['MV-SCA002M-03S-WBN-SR','640×480','CMOS','-','15','黑白','3.1mm','手动','有无/计数'],
+
       ['MV-SCA002M-03S-WBN-NR','640×480','CMOS','-','15','黑白','3.1mm','手动','有无/计数'],
+
       ['MV-SCA002C-03S-WBN-SR','640×480','CMOS','-','15','彩色','3.1mm','手动','有无/计数'],
+
       ['MV-SCA002C-03S-WBN-NR','640×480','CMOS','-','15','彩色','3.1mm','手动','有无/计数'],
+
       ['MV-SCA004M-05S-WBN-SR','1024×768','CMOS','-','15','黑白','4.9mm','手动','有无/计数/测量'],
+
       ['MV-SCA004M-05S-WBN-NR','1024×768','CMOS','-','15','黑白','4.9mm','手动','有无/计数/测量'],
+
       ['MV-SC1008M-05S-WBN-SR','1024×768','CMOS','-','15','黑白','4.9mm','手动','有无/计数/测量'],
+
       ['MV-SC1008M-05S-WBN-NR','1024×768','CMOS','-','15','黑白','4.9mm','手动','有无/计数/测量'],
+
       ['MV-SCi3XC-H-WX_S','640×480','CMOS','-','15','彩色','3.1mm','手动','有无/计数/识别'],
+
       ['MV-SCi3XC-H-WX_N','640×480','CMOS','-','15','彩色','3.1mm','手动','有无/计数/识别'],
+
     ]
+
   },
+
   sc2000: {
+
     name:'SC2000系列 视觉传感器',url:'https://www.hikrobotics.com/cn/machinevision/visionproduct?id=280&typeId=38',
+
     specs:{'定位':'性价比进阶型','分辨率范围':'40万~240万','传感器':'CMOS','快门':'全局','最大帧率':'75fps','AI能力':'OCR/有无/计数/定位','通讯':'100M Ethernet','防护':'IP67','应用':'通用缺陷检测/定位引导/OCR','软件':'SCMVS客户端'},
+
     models:[
+
       ['MV-SC2013XM-05M-WBN','1280×1024','CMOS','-','55','黑白','5mm','手动','OCR/有无/计数'],
+
       ['MV-SC2013XM-12M-WBN','1280×1024','CMOS','-','55','黑白','12mm','手动','OCR/有无/计数'],
+
       ['MV-SC2013XM-16M-WBN','1280×1024','CMOS','-','55','黑白','16mm','手动','OCR/有无/计数'],
+
       ['MV-SC2013XC-05M-WBN','1280×1024','CMOS','-','55','彩色','5mm','手动','OCR/有无/计数'],
+
       ['MV-SC2013XC-12M-WBN','1280×1024','CMOS','-','55','彩色','12mm','手动','OCR/有无/计数'],
+
       ['MV-SC2013XC-16M-WBN','1280×1024','CMOS','-','55','彩色','16mm','手动','OCR/有无/计数'],
+
       ['MV-SC2023XM-05M-WBN','1920×1280','CMOS','-','75','黑白','5mm','手动','OCR/有无/计数'],
+
       ['MV-SC2023XM-12M-WBN','1920×1280','CMOS','-','75','黑白','12mm','手动','OCR/有无/计数'],
+
       ['MV-SC2023XM-16M-WBN','1920×1280','CMOS','-','75','黑白','16mm','手动','OCR/有无/计数'],
+
       ['MV-SC2023XC-05M-WBN','1920×1280','CMOS','-','75','彩色','5mm','手动','OCR/有无/计数'],
+
       ['MV-SC2023XC-12M-WBN','1920×1280','CMOS','-','75','彩色','12mm','手动','OCR/有无/计数'],
+
       ['MV-SC2023XC-16M-WBN','1920×1280','CMOS','-','75','彩色','16mm','手动','OCR/有无/计数'],
+
       ['MV-SC2004EM-06S-WBN-Mini','704×540','CMOS','-','60','黑白','6.72mm','手动','有无/计数'],
+
       ['MV-SC2004EM-08S-WBN','704×540','CMOS','-','60','黑白','8mm','手动','有无/计数'],
+
       ['MV-SC2004EC-12S-WBN','704×540','CMOS','-','60','彩色','12.4mm','手动','有无/计数'],
+
       ['MV-SC2004EC-08S-WBN','704×540','CMOS','-','60','彩色','8mm','手动','有无/计数'],
+
       ['MV-SC2004EM-15S-WBN','704×540','CMOS','-','60','黑白','14.8mm','手动','有无/计数'],
+
       ['MV-SC2004EM-12S-WBN','704×540','CMOS','-','60','黑白','12.4mm','手动','有无/计数'],
+
       ['MV-SC2004EC-15S-WBN','704×540','CMOS','-','60','彩色','14.8mm','手动','有无/计数'],
+
       ['MV-SC2016EM-06S-WBN-Mini','1408×1024','CMOS','-','60','黑白','6.72mm','手动','有无/计数/OCR'],
+
       ['MV-SC2016EM-06S-WBN-S','1408×1024','CMOS','-','60','黑白','6.72mm','手动','有无/计数/OCR'],
+
       ['MV-SC2016EM-08S-WBN','1408×1024','CMOS','-','60','黑白','8mm','手动','有无/计数/OCR'],
+
       ['MV-SC2016EM-12S-WBN','1408×1024','CMOS','-','60','黑白','12.4mm','手动','有无/计数/OCR'],
+
       ['MV-SC2016EM-15S-WBN','1408×1024','CMOS','-','60','黑白','14.8mm','手动','有无/计数/OCR'],
-      ['MV-SC2016EC-03S-MED','1408×1024','CMOS','-','40','彩色','3mm','手动','有无/计数/OCR'],
-      ['MV-SC2016EC-06S-MED','1408×1024','CMOS','-','40','彩色','6mm','手动','有无/计数/OCR'],
+
+
+
       ['MV-SC2016EC-08S-WBN','1408×1024','CMOS','-','60','彩色','8mm','手动','有无/计数/OCR'],
+
       ['MV-SC2016EC-08S-WBN-S','1408×1024','CMOS','-','60','彩色','8mm','手动','有无/计数/OCR'],
+
       ['MV-SC2016EC-12S-WBN','1408×1024','CMOS','-','60','彩色','12.4mm','手动','有无/计数/OCR'],
+
       ['MV-SC2016EC-15S-WBN','1408×1024','CMOS','-','60','彩色','14.8mm','手动','有无/计数/OCR'],
+
       ['MV-SCB003EM-06S-WBN','704×540','CMOS','-','60','黑白','6.72mm','手动','有无/计数'],
+
       ['MV-SCB003EM-08S-WBN','704×540','CMOS','-','60','黑白','8mm','手动','有无/计数'],
+
       ['MV-SCB003EM-12S-WBN','704×540','CMOS','-','60','黑白','12.4mm','手动','有无/计数'],
+
       ['MV-SCB003EM-15S-WBN','704×540','CMOS','-','60','黑白','14.8mm','手动','有无/计数'],
+
       ['MV-SCB003EC-08S-WBN','704×540','CMOS','-','60','彩色','8mm','手动','有无/计数'],
+
       ['MV-SCB003EC-12S-WBN','704×540','CMOS','-','60','彩色','12.4mm','手动','有无/计数'],
+
       ['MV-SCB003EC-15S-WBN','704×540','CMOS','-','60','彩色','14.8mm','手动','有无/计数'],
+
       ['MV-SCB007EM-06S-WBN','1408×1024','CMOS','-','60','黑白','6.72mm','手动','有无/计数/OCR'],
+
       ['MV-SCB007EM-08S-WBN','1408×1024','CMOS','-','60','黑白','8mm','手动','有无/计数/OCR'],
+
       ['MV-SCB007EM-12S-WBN','1408×1024','CMOS','-','60','黑白','12.4mm','手动','有无/计数/OCR'],
+
       ['MV-SCB007EM-15S-WBN','1408×1024','CMOS','-','60','黑白','14.8mm','手动','有无/计数/OCR'],
+
       ['MV-SCB007EC-08S-WBN','1408×1024','CMOS','-','60','彩色','8mm','手动','有无/计数/OCR'],
+
       ['MV-SCB007EC-12S-WBN','1408×1024','CMOS','-','60','彩色','12.4mm','手动','有无/计数/OCR'],
+
       ['MV-SCB007EC-15S-WBN','1408×1024','CMOS','-','60','彩色','14.8mm','手动','有无/计数/OCR'],
+
       ['MV-SCB006XM-05M-WBN','1920×1080','CMOS','-','30','黑白','5mm','手动','有无/计数'],
+
       ['MV-SCB006XM-12M-WBN','1920×1080','CMOS','-','30','黑白','12mm','手动','有无/计数'],
+
       ['MV-SCB006XM-16M-WBN','1920×1080','CMOS','-','30','黑白','16mm','手动','有无/计数'],
+
       ['MV-SCB006XC-05M-WBN','1920×1080','CMOS','-','30','彩色','5mm','手动','有无/计数'],
+
       ['MV-SCB006XC-12M-WBN','1920×1080','CMOS','-','30','彩色','12mm','手动','有无/计数'],
+
       ['MV-SCB006XC-16M-WBN','1920×1080','CMOS','-','30','彩色','16mm','手动','有无/计数'],
+
       ['MV-SCB008XM-05M-WBN','1920×1280','CMOS','-','75','黑白','5mm','手动','有无/计数/OCR'],
+
       ['MV-SCB008XM-12M-WBN','1920×1280','CMOS','-','75','黑白','12mm','手动','有无/计数/OCR'],
+
       ['MV-SCB008XM-16M-WBN','1920×1280','CMOS','-','75','黑白','16mm','手动','有无/计数/OCR'],
+
       ['MV-SCB008XC-05M-WBN','1920×1280','CMOS','-','75','彩色','5mm','手动','有无/计数/OCR'],
+
       ['MV-SCB008XC-12M-WBN','1920×1280','CMOS','-','75','彩色','12mm','手动','有无/计数/OCR'],
+
       ['MV-SCB008XC-16M-WBN','1920×1280','CMOS','-','75','彩色','16mm','手动','有无/计数/OCR'],
+
       ['HY-ZXJ6168C-W','1408×1024','CMOS','-','60','彩色','8mm','手动','有无/计数'],
+
       ['HK-TD032-8-WBN','1408×1024','CMOS','-','60','黑白','8mm','手动','有无/计数'],
+
       ['HK-TD032-12-WBN','1408×1024','CMOS','-','60','黑白','12.4mm','手动','有无/计数'],
+
       ['HK-TD032-15-WBN','1408×1024','CMOS','-','60','黑白','14.8mm','手动','有无/计数'],
+
       ['MV-SCP16M-H-WX-08S-WBN','1408×1024','CMOS','-','60','黑白','8mm','手动','有无/计数/OCR'],
+
       ['MV-SCP16M-H-WX-12S-WBN','1408×1024','CMOS','-','60','黑白','12.4mm','手动','有无/计数/OCR'],
+
       ['MV-SCP16M-H-WX-15S-WBN','1408×1024','CMOS','-','60','黑白','14.8mm','手动','有无/计数/OCR'],
+
       ['MV-SCP16C-H-WX-08S-WBN','1408×1024','CMOS','-','60','彩色','8mm','手动','有无/计数/OCR'],
+
       ['MV-SCP16C-H-WX-12S-WBN','1408×1024','CMOS','-','60','彩色','12.4mm','手动','有无/计数/OCR'],
+
       ['MV-SCP16C-H-WX-15S-WBN','1408×1024','CMOS','-','60','彩色','14.8mm','手动','有无/计数/OCR'],
+
       ['MV-SCP16C-H-WX-08S-WBN-S','1408×1024','CMOS','-','60','彩色','8mm','手动','有无/计数/OCR'],
+
       ['HY-ZXJ6163C-W','1408×1024','CMOS','-','40','彩色','3mm','手动','有无/计数'],
+
       ['HY-ZXJ6166C-W','1408×1024','CMOS','-','40','彩色','6mm','手动','有无/计数'],
+
     ]
+
   },
+
   sc2000x: {
+
     name:'SC2000X系列 视觉传感器(AI)',url:'https://www.hikrobotics.com/cn/machinevision/visionproduct?typeId=38',
+
     specs:{'定位':'AI入门(边缘学习)','分辨率':'130万~240万','传感器':'CMOS','快门':'全局','最大帧率':'75fps','AI能力':'⭐边缘学习:异常判断/种类识别/学习计数','通讯':'GigE千兆','防护':'IP65','应用':'防错检测/OCR/分类','软件':'SCMVS客户端','独有':'AI边缘学习模块(相机内训练)'},
+
     models:[
+
       ['MV-SC2013XC-05M-WBN','1280×1024','CMOS','全局','55','彩色','5mm','异常判断/种类识别'],
+
       ['MV-SC2013XM-12M-WBN','1280×1024','CMOS','全局','55','黑白','12mm','异常判断/种类识别'],
+
       ['MV-SC2023XC-05M-WBN','1920×1280','CMOS','全局','75','彩色','5mm','异常判断/种类识别/学习计数'],
+
       ['MV-SC2023XC-12M-WBN','1920×1280','CMOS','全局','75','彩色','12mm','异常判断/种类识别/学习计数'],
+
       ['MV-SC2023XM-12M-WBN','1920×1280','CMOS','全局','75','黑白','12mm','异常判断/种类识别/学习计数'],
+
       ['MV-SC2023XC-16M-WBN','1920×1280','CMOS','全局','75','彩色','16mm','异常判断/种类识别/学习计数'],
+
     ]
+
   },
+
   sc3000: {
-    name:'SC3000系列 视觉传感器',url:'https://www.hikrobotics.com/cn/machinevision/visionproduct?typeId=38&id=262',
-    specs:{'定位':'高性能AI视觉传感器','分辨率范围':'130万~500万','传感器':'CMOS,全局快门','像元尺寸':'3.45μm(3016/3030)/3.2μm(3050)','靶面':'1/2.9″~1/1.45″','最大帧率':'100fps','AI能力':'⭐边缘学习:异常检测/OCR/HDR','通讯':'100M Ethernet','防护':'IP67','功耗':'48W max','应用':'3C/汽车/锂电/半导体','独有':'RGBW四色光源/偏振/红外镜头罩/180°旋转尾线','软件':'SCMVS客户端'},
+
+    name:'SC3000/X系列 视觉传感器（主推SC3000X）',url:'https://www.hikrobotics.com/cn/machinevision/visionproduct?typeId=38&id=262',
+
+    specs:{'定位':'高性能AI视觉传感器（主推SC3000X系列）','分辨率范围':'130万~500万','传感器':'CMOS,全局快门','像元尺寸':'3.45μm(3016/3030)/3.2μm(3050)','靶面':'1/2.9″~1/1.45″','最大帧率':'100fps','AI能力':'⭐SC3000X主推：边缘学习 / 学习OCR / 深度学习（异常检测/OCR/HDR）','主推型号':'MV-SC3020X / 3030X / 3050X / 3060X（边缘学习·学习OCR·深度学习）','通讯':'100M Ethernet','防护':'IP67','功耗':'48W max','应用':'3C/汽车/锂电/半导体','独有':'RGBW四色光源/偏振/红外镜头罩/180°旋转尾线','软件':'SCMVS客户端'},
+
     models:[
-      ['MV-SC3013XC-05M-MED','1216×1024','3.45μm','1/2.9″','100','彩色','5mm','机械自动','异常检测/OCR/HDR'],
-      ['MV-SC3013XC-06M-MED','1216×1024','3.45μm','1/2.9″','100','彩色','6mm','机械自动','异常检测/OCR/HDR'],
+
+
+
       ['MV-SC3013XM-08M-WBN','1216×1024','3.45μm','1/2.9″','60','黑白','8mm','机械自动','有无/计数/OCR'],
+
       ['MV-SC3013XC-08M-WBN','1216×1024','3.45μm','1/2.9″','60','彩色','8mm','机械自动','有无/计数/OCR'],
+
       ['MV-SC3013XM-12M-WBN','1216×1024','3.45μm','1/2.9″','60','黑白','12mm','机械自动','有无/计数/OCR'],
+
       ['MV-SC3013XC-12M-WBN','1216×1024','3.45μm','1/2.9″','60','彩色','12mm','机械自动','有无/计数/OCR'],
+
       ['MV-SC3013XM-16M-WBN','1216×1024','3.45μm','1/2.9″','60','黑白','16mm','机械自动','有无/计数'],
+
       ['MV-SC3013XC-16M-WBN','1216×1024','3.45μm','1/2.9″','60','彩色','16mm','机械自动','有无/计数'],
+
       ['MV-SC3016M-06M-WBN','1408×1024','-','-','60','黑白','6mm','机械自动','有无/计数/OCR'],
+
       ['MV-SC3016C-06M-WBN','1408×1024','-','-','60','彩色','6mm','机械自动','有无/计数/OCR'],
+
       ['MV-SC3016M-12M-WBN','1408×1024','-','-','60','黑白','12mm','机械自动','有无/计数/OCR'],
+
       ['MV-SC3016C-12M-WBN','1408×1024','-','-','60','彩色','12mm','机械自动','有无/计数/OCR'],
+
       ['MV-SC3016M-15M-WBN','1408×1024','-','-','60','黑白','14.8mm','机械自动','有无/计数'],
+
       ['MV-SC3016C-15M-WBN','1408×1024','-','-','60','彩色','14.8mm','机械自动','有无/计数'],
+
       ['MV-SC3020XM-08M-WBN','1536×1264','-','-','100','黑白','8mm','机械自动','边缘学习/异常检测'],
+
       ['MV-SC3020XM-12M-WBN','1536×1264','-','-','100','黑白','12mm','机械自动','边缘学习/异常检测'],
+
       ['MV-SC3020XM-16M-WBN','1536×1264','-','-','100','黑白','16mm','机械自动','边缘学习/异常检测'],
+
       ['MV-SC3020XC-08M-WBN','1536×1264','-','-','100','彩色','8mm','机械自动','边缘学习/异常检测'],
+
       ['MV-SC3020XC-12M-WBN','1536×1264','-','-','100','彩色','12mm','机械自动','边缘学习/异常检测'],
+
       ['MV-SC3020XC-16M-WBN','1536×1264','-','-','100','彩色','16mm','机械自动','边缘学习/异常检测'],
-      ['MV-SC3030XC-05M-MED','2048×1536','3.45μm','1/1.7″','40','彩色','5mm','机械自动','边缘学习/异常检测/OCR/HDR'],
+
+
       ['MV-SC3030XM-08M-WBN','2048×1536','3.45μm','1/1.7″','40','黑白','8mm','机械自动','边缘学习/异常检测/OCR'],
+
       ['MV-SC3030XC-08M-WBN','2048×1536','3.45μm','1/1.7″','40','彩色','8mm','机械自动','边缘学习/异常检测/OCR'],
+
       ['MV-SC3030XM-12M-WBN','2048×1536','3.45μm','1/1.7″','40','黑白','12mm','机械自动','边缘学习/异常检测/OCR'],
+
       ['MV-SC3030XC-12M-WBN','2048×1536','3.45μm','1/1.7″','40','彩色','12mm','机械自动','边缘学习/异常检测/OCR'],
+
       ['MV-SC3030XM-16M-WBN','2048×1536','3.45μm','1/1.7″','40','黑白','16mm','机械自动','边缘学习/异常检测'],
+
       ['MV-SC3030XC-16M-WBN','2048×1536','3.45μm','1/1.7″','40','彩色','16mm','机械自动','边缘学习/异常检测'],
+
       ['MV-SC3050XM-08M-WBN','2432×2048','3.45μm','1/1.45″','40','黑白','8mm','机械自动','⭐深度学习/边缘学习/OCR/HDR'],
+
       ['MV-SC3050XM-08M-WBN-S','2432×2048','3.45μm','1/1.45″','40','黑白','8mm','机械自动','⭐深度学习/边缘学习/OCR/HDR'],
+
       ['MV-SC3050XC-08M-WBN','2432×2048','3.45μm','1/1.45″','40','彩色','8mm','机械自动','⭐深度学习/边缘学习/OCR/HDR'],
+
       ['MV-SC3050XC-08M-WBN-S','2432×2048','3.45μm','1/1.45″','40','彩色','8mm','机械自动','⭐深度学习/边缘学习/OCR/HDR'],
+
       ['MV-SC3050XM-12M-WBN','2432×2048','3.45μm','1/1.45″','40','黑白','12mm','机械自动','⭐深度学习/边缘学习'],
+
       ['MV-SC3050XM-12M-WBN-S','2432×2048','3.45μm','1/1.45″','40','黑白','12mm','机械自动','⭐深度学习/边缘学习'],
+
       ['MV-SC3050XC-12M-WBN','2432×2048','3.45μm','1/1.45″','40','彩色','12mm','机械自动','⭐深度学习/边缘学习'],
+
       ['MV-SC3050XC-12M-WBN-S','2432×2048','3.45μm','1/1.45″','40','彩色','12mm','机械自动','⭐深度学习/边缘学习'],
+
       ['MV-SC3050XM-16M-WBN','2432×2048','3.45μm','1/1.45″','40','黑白','16mm','机械自动','⭐深度学习/边缘学习'],
+
       ['MV-SC3050XM-16M-WBN-S','2432×2048','3.45μm','1/1.45″','40','黑白','16mm','机械自动','⭐深度学习/边缘学习'],
+
       ['MV-SC3050XC-16M-WBN','2432×2048','3.45μm','1/1.45″','40','彩色','16mm','机械自动','⭐深度学习/边缘学习'],
+
       ['MV-SC3050XC-16M-WBN-S','2432×2048','3.45μm','1/1.45″','40','彩色','16mm','机械自动','⭐深度学习/边缘学习'],
+
       ['MV-SC3050M-08M-WBN V4','2432×2048','3.45μm','1/1.45″','50','黑白','8mm','机械自动','⭐深度学习/边缘学习/OCR'],
+
       ['MV-SC3050M-12M-WBN V4','2432×2048','3.45μm','1/1.45″','50','黑白','12mm','机械自动','⭐深度学习/边缘学习'],
+
       ['MV-SC3050M-16M-WBN V4','2432×2048','3.45μm','1/1.45″','50','黑白','16mm','机械自动','⭐深度学习/边缘学习'],
+
       ['MV-SC3060XM-08M-WBN','3200×1920','-','-','20','黑白','8mm','机械自动','边缘学习/异常检测'],
+
       ['MV-SC3060XM-12M-WBN','3200×1920','-','-','20','黑白','12mm','机械自动','边缘学习/异常检测'],
+
       ['MV-SC3060XM-16M-WBN','3200×1920','-','-','20','黑白','16mm','机械自动','边缘学习/异常检测'],
+
       ['MV-SC3060XC-08M-WBN','3200×1920','-','-','20','彩色','8mm','机械自动','边缘学习/异常检测'],
+
       ['MV-SC3060XC-12M-WBN','3200×1920','-','-','20','彩色','12mm','机械自动','边缘学习/异常检测'],
+
       ['MV-SC3060XC-16M-WBN','3200×1920','-','-','20','彩色','16mm','机械自动','边缘学习/异常检测'],
+
       ['MV-SCC005XM-08M-WBN','1216×1024','-','-','60','黑白','8mm','机械自动','有无/计数/OCR'],
+
       ['MV-SCC005XC-08M-WBN','1216×1024','-','-','60','彩色','8mm','机械自动','有无/计数/OCR'],
+
       ['MV-SCC005XM-12M-WBN','1216×1024','-','-','60','黑白','12mm','机械自动','有无/计数/OCR'],
+
       ['MV-SCC005XC-12M-WBN','1216×1024','-','-','60','彩色','12mm','机械自动','有无/计数/OCR'],
+
       ['MV-SCC005XM-16M-WBN','1216×1024','-','-','60','黑白','16mm','机械自动','有无/计数'],
+
       ['MV-SCC005XC-16M-WBN','1216×1024','-','-','60','彩色','16mm','机械自动','有无/计数'],
+
       ['MV-SCC009XM-08M-WBN','2048×1536','-','-','40','黑白','8mm','机械自动','边缘学习/异常检测/OCR'],
+
       ['MV-SCC009XC-08M-WBN','2048×1536','-','-','40','彩色','8mm','机械自动','边缘学习/异常检测/OCR'],
+
       ['MV-SCC009XM-12M-WBN','2048×1536','-','-','40','黑白','12mm','机械自动','边缘学习/异常检测/OCR'],
+
       ['MV-SCC009XC-12M-WBN','2048×1536','-','-','40','彩色','12mm','机械自动','边缘学习/异常检测/OCR'],
+
       ['MV-SCC009XM-16M-WBN','2048×1536','-','-','40','黑白','16mm','机械自动','边缘学习/异常检测'],
+
       ['MV-SCC009XC-16M-WBN','2048×1536','-','-','40','彩色','16mm','机械自动','边缘学习/异常检测'],
+
       ['CY-CB50XC-12MW','2432×2048','-','-','40','彩色','16mm','机械自动','深度学习/边缘学习'],
+
       ['CY-CB50XC-16MW','2432×2048','-','-','40','彩色','12mm','机械自动','深度学习/边缘学习'],
+
       ['MV-SCT16C-H-WX-06M-WBN','1408×1024','-','-','60','彩色','6mm','机械自动','有无/计数/OCR'],
+
       ['MV-SCT16C-H-WX-12M-WBN','1408×1024','-','-','60','彩色','12.4mm','机械自动','有无/计数/OCR'],
+
       ['MV-SCT16C-H-WX-15M-WBN','1408×1024','-','-','60','彩色','14.8mm','机械自动','有无/计数'],
+
       ['MV-SCT5XC-H-WX-08M-WBN','2432×2048','-','-','40','彩色','8mm','机械自动','深度学习/边缘学习'],
+
       ['MV-SCT5XC-H-WX-12M-WBN','2432×2048','-','-','40','彩色','12mm','机械自动','深度学习/边缘学习'],
+
       ['MV-SCT5XC-H-WX-16M-WBN','2432×2048','-','-','40','彩色','16mm','机械自动','深度学习/边缘学习'],
+
       ['SC016M-12M-01','1408×1024','-','-','60','黑白','12mm','机械自动','有无/计数/OCR'],
+
       ['MV-TD1216XC-60M-WBN','1216×1024','-','-','60','彩色','12mm','机械自动','有无/计数/OCR'],
+
     ]
+
   },
+
   sc5000x: {
+
     name:'SC5000X系列 智能相机',url:'https://www.hikrobotics.com/cn/machinevision/visionproduct?typeId=38&id=284',
+
     specs:{'定位':'AI深度学习智能相机','分辨率范围':'200万~1200万','传感器':'CMOS','快门':'全局(5020/5050)/卷帘(5060)','最大帧率':'100fps','AI能力':'⭐VM算法平台(160+算法)+AI深度学习+全监督检测+边缘学习','通讯':'GigE千兆','防护':'IP67','功耗':'10W(典型)','应用':'复杂缺陷检测/装配验证/OCR/锂电/汽车','独有':'C-Mount镜头/模块化光源/180°旋转尾线/FINS/KV/SLMP','软件':'VM V4.4.50(基础+深度学习+行业方案包)'},
+
     models:[
+
       ['MV-SC5020XM-00C-NNN','1600×1216','3.45μm','1/2.3″','100','黑白','C口(无镜头)','VM+AI深度学习'],
+
       ['MV-SC5020XC-00C-NNN','1600×1216','3.45μm','1/2.3″','100','彩色','C口(无镜头)','VM+AI深度学习'],
+
       ['MV-SC5020XM-06M-WBN','1600×1216','3.45μm','1/2.3″','100','黑白','6mm','VM+AI深度学习'],
+
       ['MV-SC5020XC-06M-WBN','1600×1216','3.45μm','1/2.3″','100','彩色','6mm','VM+AI深度学习'],
+
       ['MV-SC5020XM-12M-WBN','1600×1216','3.45μm','1/2.3″','100','黑白','12mm','VM+AI深度学习'],
+
       ['MV-SC5020XC-12M-WBN','1600×1216','3.45μm','1/2.3″','100','彩色','12mm','VM+AI深度学习'],
+
       ['MV-SC5020XM-16M-WBN','1600×1216','3.45μm','1/2.3″','100','黑白','16mm','VM+AI深度学习'],
+
       ['MV-SC5020XC-16M-WBN','1600×1216','3.45μm','1/2.3″','100','彩色','16mm','VM+AI深度学习'],
+
       ['MV-SC5050XM-00C-NNN','2432×2048','3.45μm','2/3″','60','黑白','C口(无镜头)','VM+AI深度学习/全监督'],
+
       ['MV-SC5050XC-00C-NNN','2432×2048','3.45μm','2/3″','60','彩色','C口(无镜头)','VM+AI深度学习/全监督'],
+
       ['MV-SC5050XM-08M-WBN','2432×2048','3.45μm','2/3″','60','黑白','8mm','VM+AI深度学习/全监督'],
+
       ['MV-SC5050XC-08M-WBN','2432×2048','3.45μm','2/3″','60','彩色','8mm','VM+AI深度学习/全监督'],
+
       ['MV-SC5050XM-12M-WBN','2432×2048','3.45μm','2/3″','60','黑白','12mm','VM+AI深度学习/全监督'],
+
       ['MV-SC5050XC-12M-WBN','2432×2048','3.45μm','2/3″','60','彩色','12mm','VM+AI深度学习/全监督'],
+
       ['MV-SC5050XM-16M-WBN','2432×2048','3.45μm','2/3″','60','黑白','16mm','VM+AI深度学习/全监督'],
+
       ['MV-SC5050XC-16M-WBN','2432×2048','3.45μm','2/3″','60','彩色','16mm','VM+AI深度学习/全监督'],
+
       ['MV-SC5050XM-PPB-12M-WBN','2432×2048','3.45μm','2/3″','60','黑白','12mm','VM+AI深度学习/全监督'],
+
       ['MV-SC5050XM-PPM-16M-WBN','2432×2048','3.45μm','2/3″','60','黑白','16mm','VM+AI深度学习/全监督'],
+
       ['MV-SC5050XM-PPB-16M-WBN','2432×2048','3.45μm','2/3″','60','黑白','16mm','VM+AI深度学习/全监督'],
+
       ['MV-SC5060XM-08M-WBN','3200×1920','2.0μm','1/1.8″','15','黑白','8mm','VM+AI深度学习/OCR'],
+
       ['MV-SC5060XC-08M-WBN','3200×1920','2.0μm','1/1.8″','15','彩色','8mm','VM+AI深度学习/OCR'],
+
       ['MV-SC5060XM-12M-WBN','3200×1920','2.0μm','1/1.8″','15','黑白','12mm','VM+AI深度学习/OCR'],
+
       ['MV-SC5060XC-12M-WBN','3200×1920','2.0μm','1/1.8″','15','彩色','12mm','VM+AI深度学习/OCR'],
+
       ['MV-SC5060XM-16M-WBN','3200×1920','2.0μm','1/1.8″','15','黑白','16mm','VM+AI深度学习'],
+
       ['MV-SC5060XC-16M-WBN','3200×1920','2.0μm','1/1.8″','15','彩色','16mm','VM+AI深度学习'],
+
       ['MV-SC5060XM-00C-NNN','3200×1920','2.0μm','1/1.8″','15','黑白','C口(无镜头)','VM+AI深度学习'],
+
       ['MV-SC5060XC-00C-NNN','3200×1920','2.0μm','1/1.8″','15','彩色','C口(无镜头)','VM+AI深度学习'],
+
       ['MV-SC5100XM-08M-WBN','4096×2816','2.0μm','1/1.8″','10','黑白','8mm','VM+AI深度学习'],
+
       ['MV-SC5100XC-08M-WBN','4096×2816','2.0μm','1/1.8″','10','彩色','8mm','VM+AI深度学习'],
+
       ['MV-SC5100XM-12M-WBN','4096×2816','2.0μm','1/1.8″','10','黑白','12mm','VM+AI深度学习'],
+
       ['MV-SC5100XC-12M-WBN','4096×2816','2.0μm','1/1.8″','10','彩色','12mm','VM+AI深度学习'],
+
       ['MV-SC5100XM-16M-WBN','4096×2816','2.0μm','1/1.8″','10','黑白','16mm','VM+AI深度学习'],
+
       ['MV-SC5100XC-16M-WBN','4096×2816','2.0μm','1/1.8″','10','彩色','16mm','VM+AI深度学习'],
+
       ['MV-SC5100XM-00C-NNN','4096×2816','2.0μm','1/1.8″','10','黑白','C口(无镜头)','VM+AI深度学习'],
+
       ['MV-SC5100XC-00C-NNN','4096×2816','2.0μm','1/1.8″','10','彩色','C口(无镜头)','VM+AI深度学习'],
+
       ['MV-SC5120XM-00C-NNN','4096×2944','-','-','30','黑白','C口(无镜头)','VM+AI深度学习'],
+
       ['MV-SC5120XC-00C-NNN','4096×2944','-','-','30','彩色','C口(无镜头)','VM+AI深度学习'],
+
       ['YTH-INA050M-16M-WBN-MF','2432×2048','3.45μm','2/3″','60','黑白','16mm','VM+AI深度学习'],
+
       ['MV-SC5520XC-00C-MAX','4096×2944','-','-','30','彩色','C口(无镜头)','VM+AI深度学习'],
+
       ['MV-XC-3550-08W','2432×2048','3.45μm','2/3″','60','黑白','8mm','VM+AI深度学习'],
+
     ]
+
   },
+
   sc6000: {
+
     name:'SC6000系列 AI智能相机',url:'https://www.hikrobotics.com/cn/machinevision/visionproduct?typeId=38',
+
     specs:{'定位':'旗舰AI智能相机','分辨率范围':'160万~2500万','传感器':'CMOS','快门':'全局','最大帧率':'60fps','AI能力':'⭐VM完整版+140+视觉工具+30+通讯协议','通讯':'GigE千兆','防护':'IP67','功耗':'14.4W max','应用':'半导体/精密制造/复杂缺陷/OCR/装配','独有':'C-Mount+外接显示器+外接光源控制/2500万像素','软件':'VM完整版(基础+深度学习+行业方案包)'},
+
     models:[
+
       ['MV-SC6016M-00C-NNN/V2','1408×1024','3.45μm','1/2.9″','60','黑白','C口(无镜头)','VM完整版+全监督+深度学习'],
+
       ['MV-SC6016C-00C-NNN/V2','1408×1024','3.45μm','1/2.9″','60','彩色','C口(无镜头)','VM完整版+全监督+深度学习'],
+
       ['MV-SC6016M-12M-XBN','1408×1024','3.45μm','1/2.9″','60','黑白','12mm','VM完整版+深度学习'],
+
       ['MV-SC6016C-16M-XBN','1408×1024','3.45μm','1/2.9″','60','彩色','16mm','VM完整版+深度学习'],
+
       ['MV-SC6050M-00C-NNN/V2','2432×2048','3.45μm','2/3″','40','黑白','C口(无镜头)','VM完整版+全监督+深度学习'],
+
       ['MV-SC6050C-00C-NNN/V2','2432×2048','3.45μm','2/3″','40','彩色','C口(无镜头)','VM完整版+全监督+深度学习'],
+
       ['MV-SC6050M-08M-XBN','2432×2048','3.45μm','2/3″','40','黑白','8mm','VM完整版+深度学习/OCR'],
+
       ['MV-SC6050C-16M-XBN','2432×2048','3.45μm','2/3″','40','彩色','16mm','VM完整版+AI深度学习/OCR'],
+
       ['MV-SC6250M-00C-NNN','5120×5120','2.5μm','1″','-','黑白','C口(无镜头)','2500万像素/VM完整版'],
+
     ]
+
   },
+
   sc6500: {
+
     name:'SC6500系列 半导体晶圆OCR智能相机',url:'https://www.hikrobotics.com/en/news/newsdetail?id=88',
+
     specs:{'定位':'半导体晶圆信息读取专用','分辨率范围':'81万~160万','传感器':'CMOS,全局快门','像元尺寸':'3.45μm','通讯':'GigE千兆','AI能力':'⭐VM完整版+140+算法+半导体SEMI标准OCR','存储':'8GB RAM/64GB','防护':'IP40','应用':'半导体晶圆ID/DM码/QR码/Barcode','独有':'红色LED/明暗视场组合/抗振动抗冲击'},
+
     models:[
+
       ['MV-SC6500-AI-WID','1408×1024','3.45μm','1/2.9″','60','黑白','12mm','自动调节','半导体SEMI标准OCR/DM/QR/Barcode'],
+
       ['MV-SC6500P-AI-WID-RBN','1408×576','3.45μm','1/3.4″','120','黑白','M12','自动调节','⭐晶圆ID专用/81万像素/条光RGB'],
+
     ]
+
   }
+
 };
+
+
 
 // Link rules by series
+
 const hikLinks = {
+
   sc1000:{site:'https://www.hikrobotics.com/cn/machinevision/visionproduct?id=320&typeId=38',doc:'https://docs.qq.com/aio/DSGNFcXVjd1NOV0FH?p=Nyh20mJze6d8arv6Hc7QK2'},
+
   sc2000:{site:'https://www.hikrobotics.com/cn/machinevision/visionproduct?id=280&typeId=38',doc:'https://docs.qq.com/aio/DSGNFcXVjd1NOV0FH?p=Nyh20mJze6d8arv6Hc7QK2'},
+
   sc2000x:{site:'https://www.hikrobotics.com/cn/machinevision/visionproduct?typeId=38',doc:'https://docs.qq.com/aio/DSGNFcXVjd1NOV0FH?p=Nyh20mJze6d8arv6Hc7QK2'},
+
   sc3000:{site:'https://www.hikrobotics.com/cn/machinevision/visionproduct?typeId=38&id=262',doc:'https://docs.qq.com/aio/DSGNFcXVjd1NOV0FH?p=Nyh20mJze6d8arv6Hc7QK2'},
+
   sc5000x:{site:'https://www.hikrobotics.com/cn/machinevision/visionproduct?typeId=38&id=284',doc:'https://docs.qq.com/aio/DTHVtbHNpcHFVd0JI'},
+
   sc6000:{site:'https://www.hikrobotics.com/cn/machinevision/visionproduct?typeId=38',doc:'https://docs.qq.com/aio/DTHVtbHNpcHFVd0JI'},
+
   sc6500:{site:'https://www.hikrobotics.com/en/news/newsdetail?id=88',doc:'https://docs.qq.com/aio/DTHVtbHNpcHFVd0JI'}
+
 };
+
+
 
 // Competitor data — each series has searchKeys for precise matching
+
 const compData = [
+
   {
+
     id:'keyence',brand:'基恩士 KEYENCE',region:'intl',logo:'#e8600a',logoText:'K',
-    counterpart:'IV4→SC3000; VS→SC6000',
+
+    counterpart:'IV4→SC3000/X; VS→SC6000',
+
     reason:'VS系列对标SC6000(同为旗舰级,最高2500万像素);VS优势:ZoomTrax光学变焦19组镜头(免更换镜头)+ESD-Safe+PoE;海康优势:VM完整版140+视觉工具+30+通讯协议(FINS/KV/SLMP)+外接显示器+外接光源控制',
+
     url:'https://www.keyence.com.cn/products/vision/vision-sys/vs/',
+
     series:[
+
       {name:'IV4 系列(AI旗舰视觉传感器)',searchKeys:['iv4'],
+
         models:[
+
         ['IV4-400CA/MA','窄视野','1/2.9″ CMOS','1280×960','全局','60','自动','400mm~','AI区分/识别/计数/OCR/AI触发','65工具','IP67','12.8W'],
+
         ['IV4-500CA/MA','标准','1/2.9″ CMOS','1280×960','全局','60','自动','50mm~','AI区分/识别/计数/OCR/AI触发','65工具','IP67','12.8W'],
+
         ['IV4-600CA/MA','宽视野','1/2.9″ CMOS','1280×960','全局','60','自动','50mm~','AI区分/识别/计数/OCR/AI触发','65工具','IP67','12.8W'],
+
         ['IV4-G120','紧凑型','-','1280×960','全局','-','-','-','放大器+相机分离,65工具','PoE','IP67','-'],
+
       ]},
+
       {name:'IV3 系列',searchKeys:['iv3'],
+
         models:[
+
         ['IV3-400CA/MA','窄视野','1/2.9″ CMOS','1280×960','全局','60','-','400mm~','学习/轮廓/颜色面积/OCR','65工具','IP67','-'],
+
         ['IV3-500CA/MA','标准','1/2.9″ CMOS','1280×960','全局','60','-','50mm~','学习/轮廓/颜色面积/OCR','65工具','IP67','-'],
+
         ['IV3-600CA/MA','宽视野','1/2.9″ CMOS','1280×960','全局','60','-','50mm~','学习/轮廓/颜色面积/OCR','65工具','IP67','-'],
+
       ]},
+
       {name:'IV2 系列',searchKeys:['iv2'],
+
         models:[
+
         ['IV2-G30','标准型','CMOS','1280×960','-','-','-','-','16工具,轮廓/宽度/OCR/位置修正','128程序','IP67','-'],
+
         ['IV2-G30F','学习型','CMOS','1280×960','-','-','-','-','学习+标准双模式,16工具','128程序','IP67','-'],
+
       ]},
+
       {name:'VS系列 一体式智能相机(AI×光学变焦ZoomTrax)',searchKeys:['vs','vs-l','vs-s','vs-c'],
+
         specs:{
+
           '产品定位':'AI×光学变焦一体式智能相机,一键优质成像',
+
           '核心创新':'⭐ZoomTrax光学变焦:19组镜头,软件一键变焦,无需更换镜头',
+
           'AI能力':'双AI引擎:①AI检测(2500万像素高精度) ②AI分割/分类/OCR(仅需数十张训练图)',
+
           '分辨率范围':'1.6MP~25MP(5档可选)',
+
           '快门':'全局',
+
           '防护':'IP67',
+
           '电源':'PoE(IEEE802.3at Class4) 或 24VDC',
+
           '通讯':'Ethernet 1000BASE-T',
+
           'I/O':'1In/3Out/2In-Out(可切换),M12接口',
+
           '光源':'内置LED+专属照明I/F,支持LumiTrax/Multi-Spectrum',
+
           '存储':'microSD最大64GB',
+
           '环境':'ESD-Safe(IEC61340-5-1),抗震10-500Hz,耐冲击50G',
+
           '认证':'CE/FCC/NRTL/KC/UKCA',
+
           '独有优势':'光学变焦免更换镜头/OLED显示屏/操作按钮×3/角度监视器'
+
         },
+
         models:[
+
         // L系列 标准变焦 (150-5000mm)
+
         ['VS-L160MX/CX','1.6MP 1440×1072','1/2.9″','3.45μm','全局','85','×8.75 ZoomTrax','150-5000mm','AI检测/分割/OCR/规则库','PoE+24VDC','IP67','约700g'],
+
         ['VS-L320MX/CX','3.2MP 2048×1536','1/1.8″','3.45μm','全局','83','×6.0 ZoomTrax','150-5000mm','AI检测/分割/OCR/规则库','PoE+24VDC','IP67','约700g'],
+
         ['VS-L500MX/CX','5MP 2544×1904','2/3″','3.45μm','全局','81','×5.0 ZoomTrax','150-5000mm','AI检测/分割/OCR/规则库','PoE+24VDC','IP67','约700g'],
+
         ['VS-L1500MX/CX','15MP 4400×3296','1.1″','2.5μm','全局','48','×2.75 ZoomTrax','150-5000mm','AI检测/分割/OCR/规则库','PoE+24VDC','IP67','约700g'],
+
         // S系列 近距离变焦 (50-500mm)
+
         ['VS-S160MX/CX','1.6MP 1440×1072','1/2.9″','3.45μm','全局','85','×3.5 ZoomTrax','50-500mm','AI检测/分割/OCR/规则库','PoE+24VDC','IP67','约570g'],
+
         ['VS-S320MX/CX','3.2MP 2048×1536','1/1.8″','3.45μm','全局','83','×2.4 ZoomTrax','50-500mm','AI检测/分割/OCR/规则库','PoE+24VDC','IP67','约570g'],
+
         ['VS-S500MX/CX','5MP 2544×1904','2/3″','3.45μm','全局','81','×2.0 ZoomTrax','50-500mm','AI检测/分割/OCR/规则库','PoE+24VDC','IP67','约570g'],
+
         ['VS-S1500MX/CX','15MP 4400×3296','1.1″','2.5μm','全局','48','×1.1 ZoomTrax','50-500mm','AI检测/分割/OCR/规则库','PoE+24VDC','IP67','约570g'],
+
         // C系列 C接口
+
         ['VS-C160MX/CX','1.6MP 1440×1072','1/2.9″','3.45μm','全局','83','C-Mount','-','AI检测/分割/OCR/规则库','PoE+24VDC','IP67','约420g'],
+
         ['VS-C320MX/CX','3.2MP 2048×1536','1/1.8″','3.45μm','全局','62','C-Mount','-','AI检测/分割/OCR/规则库','PoE+24VDC','IP67','约420g'],
+
         ['VS-C500MX/CX','5MP 2448×2048','2/3″','3.45μm','全局','55','C-Mount','-','AI检测/分割/OCR/规则库','PoE+24VDC','IP67','约420g'],
+
         ['VS-C1500MX/CX','15MP 4400×3296','1.1″','2.5μm','全局','40','C-Mount','-','AI检测/分割/OCR/规则库','PoE+24VDC','IP67','约420g'],
+
         ['VS-C2500MX/CX','⭐25MP 5120×5120','1.1″','2.5μm','全局','28','C-Mount','-','⭐25MP AI检测/分割/OCR','PoE+24VDC','IP67','约420g'],
+
       ]}
+
     ]
+
   },
+
   {
+
     id:'cognex',brand:'康耐视 Cognex',region:'intl',logo:'#2563eb',logoText:'C',
-    counterpart:'IS3900→SC6000; IS3800→SC5000X/SC6000; IS2800→SC3000; IS8900→SC2000X/SC3000; IS6900→SC6000; IS1740→SC6500; D900→SC5000X',
-    reason:'3900(25MP+Qualcomm AI)对标SC6000旗舰;3800对标SC5000X/SC6000;2800对标SC3000;8900超紧凑对标SC2000X;6900(GPU控制器型)对标SC6000;1740晶圆OCR对标SC6500半导体;D900对标SC5000X深度版。海康优势:VM平台+内置AI边缘学习+FINS/SLMP+30+协议;康耐视优势:ViDi深度学习+液态镜头1800M次+Qualcomm/NVIDIA AI芯片+全球30000+晶圆装机量',
+
+    counterpart:'IS3900→SC6000; IS3800→SC5000X/SC6000; IS2800→SC3000/X; IS8900→SC2000X/SC3000/X; IS6900→SC6000; IS1740→SC6500; D900→SC5000X',
+
+    reason:'3900(25MP+Qualcomm AI)对标SC6000旗舰;3800对标SC5000X/SC6000;2800对标SC3000/X;8900超紧凑对标SC2000X;6900(GPU控制器型)对标SC6000;1740晶圆OCR对标SC6500半导体;D900对标SC5000X深度版。海康优势:VM平台+内置AI边缘学习+FINS/SLMP+30+协议;康耐视优势:ViDi深度学习+液态镜头1800M次+Qualcomm/NVIDIA AI芯片+全球30000+晶圆装机量',
+
     url:'https://www.cognex.com/products/machine-vision/2d-machine-vision-systems',
+
     series:[
+
       {name:'In-Sight 3900(高性能AI旗舰 ⭐2026新品)',searchKeys:['is3900','is3901','is3905','is3916','is3925','3900','3901','3905','3916','3925'],
+
         specs:{
+
           '产品定位':'⭐高性能AI旗舰,Qualcomm驱动,4X处理速度,5000件/分钟',
+
           'AI能力':'Edge AI+Advanced AI(分割/分类/OCR/装配验证),无需外接PC',
+
           '处理器':'Qualcomm高性能AI芯片,嵌入式边缘推理',
+
           '分辨率范围':'1.6MP~25MP,实时处理25MP高分辨率图像',
+
           '内存存储':'8GB RAM + 128GB Flash(处理内存翻倍,8X存储)',
+
           '通信':'⭐双以太网(2.5Gb),PROFINET/EtherNet/IP/EtherCAT/SLMP/ModbusTCP/MQTT',
+
           '成像技术':'⭐HDR+(单次采集优化对比度)+SurfaceFX(表面缺陷提取)+多色照明',
+
           '镜头':'C口/康耐视高速液态镜头自动对焦',
+
           '防护':'IP67(选配)',
+
           '认证':'CE/FCC/RoHS'
+
         },
+
         models:[
+
         ['IS3901M/C','1.6MP 1440×1080','1/2.3″ CMOS','3.45μm','全局','125','C口/液态镜头','8GB/128GB','Edge AI+Advanced AI','IP67'],
+
         ['IS3905M/C','5MP 2448×2048','2/3″ CMOS','3.45μm','全局','32','C口/液态镜头','8GB/128GB','Edge AI+Advanced AI','IP67'],
+
         ['IS3916M/C','16MP 5320×3032','1.1″ CMOS','2.74μm','全局','28','C口/液态镜头','8GB/128GB','Edge AI+Advanced AI','IP67'],
+
         ['IS3925M/C','⭐25MP 5320×4600','1.2″ CMOS','2.74μm','全局','21','C口/液态镜头','8GB/128GB','⭐25MP Edge AI+Advanced AI','IP67'],
+
       ]},
+
       {name:'In-Sight 3800(中高端AI视觉系统)',searchKeys:['is3800','is3801','is3803','is3805','is3808','is3812','is3816','3800','3801','3803','3805','3808','3812','3816'],
+
         models:[
+
         ['IS3801M/C','1440×1080','1/2.3″','3.45μm','全局','125/52','C口/液态镜头','4GB/7.2GB','SLMP/RS232/SFTP/TCP/EtherNet/IP/Modbus/PROFINET','IP67'],
+
         ['IS3803M/C','2048×1536','1/1.8″','3.45μm','全局','47/30','C口/液态镜头','4GB/7.2GB','同上','IP67'],
+
         ['IS3805M/C','2448×2048','2/3″','3.45μm','全局','32/21','C口/液态镜头','4GB/7.2GB','同上','IP67'],
+
         ['IS3808M/C','2840×2840','2/3″','2.74μm','全局','24/12','C口/液态镜头','4GB/7.2GB','同上','IP67'],
+
         ['IS3812M/C','4096×3000','1/1.1″','2.74μm','全局','22/11','C口/液态镜头','4GB/7.2GB','同上','IP67'],
+
         ['IS3816M/C','5320×3032','1.1″','2.74μm','全局','18/8','C口/液态镜头','4GB/7.2GB','同上','IP67'],
+
       ]},
+
       {name:'In-Sight 2800(入门AI视觉系统)',searchKeys:['is2800','is2801','is2802','is2805','2800','2801','2802','2805'],
+
         models:[
+
         ['IS2800','720×540','1/2.8″','2.8μm','-','45','MultiTorch集成','-','Edge Learning边缘学习','IP54'],
+
         ['IS2801','1440×1080','1/2.8″','2.8μm','-','45','MultiTorch/12/16mm','-','ViDi EL分类器+规则工具','IP67'],
+
         ['IS2802','1920×1080','1/2.8″','2.8μm','-','45','MultiTorch/C-mount','-','ViDi EL+规则工具,2MP','IP67'],
+
         ['IS2805','2616×1964','1/2.8″','2.0μm','卷帘','10','C-Mount','-','电子表格/规则型(无EL/AI)','IP40'],
+
       ]},
+
       {name:'In-Sight D900(深度学习专用)',searchKeys:['d900','d905','d902'],
+
         models:[
+
         ['D905M/C','2448×2048','2/3″','3.45μm','全局','26/16','C/S-Mount','16GB','ViDi深度学习(缺陷/OCR/装配)','IP67'],
+
         ['D902M/C','1920×1200','1/2.3″','3.45μm','全局','51/34','C/S-Mount','16GB','ViDi深度学习','IP67'],
+
       ]},
+
       {name:'In-Sight 8900(超紧凑AI视觉系统,21 CFR Part 11合规)',searchKeys:['is8900','is8902','is8905','is8912','8900','8902','8905','8912'],
+
         specs:{
+
           '产品定位':'超紧凑全嵌入式AI视觉系统,专为OEM和受监管行业(制药/医疗器械)',
+
           '合规性':'⭐21 CFR Part 11(审核日志+单点登录SSO)',
+
           'AI能力':'Edge AI(分割/分类/OCR)+规则工具',
+
           '成像技术':'HDR+(生产线速度提高80%)+液态镜头1800M次寿命',
+
           '内存':'4GB SoM + 512MB SDRAM',
+
           '通信':'TCP/IP/PROFINET/EtherNet/IP/SLMP/ModbusTCP/(S)FTP/RS-232C',
+
           '接口':'M12电源/以太网 + M8 I/O',
+
           '防护':'IP40,0-40°C,205g超紧凑',
+
           '认证':'CE/FCC/KCC/TÜV SÜD NRTL/RoHS'
+
         },
+
         models:[
+
         ['IS8900','0.5MP','C口','142fps','外部照明','Edge AI(分割/分类/OCR)','4GB SoM','TCP/IP/PROFINET/EtherNet/IP/SLMP/ModbusTCP','IP40','205g'],
+
         ['IS8902','2MP','C口','86fps','外部照明','Edge AI+规则工具','4GB SoM','同上','IP40','205g'],
+
         ['IS8905','5MP','C口','47fps','外部照明','Edge AI+规则工具','4GB SoM','同上','IP40','205g'],
+
         ['IS8912','12MP','C口','21fps','外部照明','Edge AI+规则工具','4GB SoM','同上','IP40','205g'],
+
       ]},
+
       {name:'In-Sight 6900(模块化AI视觉控制器,NVIDIA GPU)',searchKeys:['is6900','6900'],
+
         specs:{
+
           '产品定位':'⭐模块化AI视觉控制器,GPU加速,支持外接工业相机(CIC),2.3MP~65MP',
+
           '处理器':'⭐NVIDIA Jetson嵌入式GPU,支持Transformer架构AI模型',
+
           'AI能力':'高级AI(少样本10-20张分类+像素级分割)+Edge AI+规则工具',
+
           '相机支持':'2.3MP~65MP Cognex工业相机(CIC),面阵+线阵',
+
           '内存存储':'16GB RAM + 256GB Flash',
+
           '通信':'2×5Gb以太网+1Gb数据+1Gb工业以太网',
+
           '协议':'PROFINET/EtherNet/IP/EtherCAT/SLMP/ModbusTCP/MQTT/TCP/IP/(S)FTP',
+
           'I/O':'4通用输入,4高速+4低速输出',
+
           '环境':'0-40°C,IP40,570g,压铸铝锌外壳',
+
           '认证':'CE/FCC/KCC/TÜV SÜD NRTL/RoHS'
+
         },
+
         models:[
+
         ['IS6900','控制器型','NVIDIA Jetson GPU','16GB/256GB','2.3~65MP外接CIC','面阵+线阵','Transformer AI+少样本分割','PROFINET/EtherCAT/EtherNet/IP/SLMP','570g'],
+
       ]},
+
       {name:'In-Sight 1740 晶圆读码器(半导体晶圆OCR ⭐对标SC6500)',searchKeys:['is1740','is1741','is1742','1740','1741','1742'],
+
         specs:{
+
           '产品定位':'⭐半导体晶圆ID专用读码器,全球30000+装机量,100%可追溯',
+
           '照明系统':'⭐12种内置照明模式(明视场+暗视场),辅助照明端口扩展',
+
           '读取能力':'OCR+SEMI T7 DataMatrix+条码,T7+OCR双备援读取策略',
+
           '自主学习':'⭐读取失败后自动调节光源和图像滤波器,自适应优化并保存',
+
           '存储':'128MB Flash + 256MB SDRAM,最多50个工件文件',
+
           '通信':'Ethernet 10/100 + RS-232C',
+
           '协议':'In-Sight/Native Mode/LKx5/Electroglas/TEL/TSK',
+
           '环境':'0-45°C,洁净室兼容',
+
           '认证':'⭐SEMI S2/CE/UL/FCC/RoHS/EN 62471'
+
         },
+
         models:[
+
         ['IS1740','0.36MP 752×480','1/3″ CMOS','6.0μm','41fps','红色LED 615-640nm','12种照明模式','OCR+代码读取(入门)','Ethernet/RS-232C','SEMI S2'],
+
         ['IS1741','0.79MP 1024×768','1/3″ CCD','4.65μm','17fps','红色LED 622nm','12种照明模式','⭐T7 DataMatrix+OCR(主力)','Ethernet/RS-232C','SEMI S2'],
+
         ['IS1742','0.79MP 1024×768','1/3″ CCD','4.65μm','17fps','红外LED 870-890nm','12种照明模式','超薄涂层晶圆(IR穿透)','Ethernet/RS-232C','SEMI S2'],
+
       ]},
+
       {name:'In-Sight 7000/8000/9000(基于规则的传统视觉系统)',searchKeys:['is7000','is8000','is9000','7000','8000','9000'],
+
         models:[
+
         ['IS7000','通用型','受控环境','PatMax图案匹配','电子表格编程','-','TCP/IP/EtherNet/IP/PROFINET','IP67','-'],
+
         ['IS8000','⭐超紧凑型','受控环境','PatMax图案匹配','电子表格编程','体积最小','TCP/IP/EtherNet/IP','-','-'],
+
         ['IS9000','面阵+线扫描','高速高分辨率','PatMax图案匹配','电子表格编程','线扫描支持','TCP/IP/EtherNet/IP/PROFINET','IP67','-'],
+
       ]}
+
     ]
+
   },
+
   {
+
     id:'smartmore',brand:'思谋科技 SmartMore',region:'cn',logo:'#7c3aed',logoText:'S',
-    counterpart:'VN2000→SC2000X/SC3000; VN4000→SC3000X/SC5000X',
+
+    counterpart:'VN2000→SC2000X/SC3000/X; VN4000→SC3000X/SC5000X',
+
     reason:'思谋优势:液态调焦+Cube-A毫秒变焦+AI二分类+全协议(MELSEC/SLMP);海康对标:SC3000X+边缘学习+VM平台',
+
     url:'https://cn.smartmore.com/',
+
     series:[
+
       {name:'VN2000 ViNeo(紧凑型)',searchKeys:['vn2000'],
+
         models:[
+
         ['VN2000-100-030','1280×800','1/4″','3μm','全局','60','液态调焦(6mm)','40-300mm','白光LED','有无/计数/正反/位置修正','TCP/ModBus/MELSEC/SLMP/EtherNet/IP/Profinet','IP67','约100g'],
+
         ['VN2000-100-032','1280×800','1/4″','3μm','全局','60','液态调焦(6mm)','40-300mm','红色LED(偏振)','有无/计数/正反/位置修正','同上','IP67','约100g'],
+
       ]},
+
       {name:'VN4000 ViNeo(AI深度学习)',searchKeys:['vn4000'],
+
         models:[
+
         ['VN4000-101-020','1280×800','1/4″','3μm','全局','60','手动(8/12/16mm)','100-1000mm','白/红双色,4组独立,16种补光','⭐AI二分类/OCR/有无/计数/位置修正','TCP/ModBus/MELSEC/SLMP/EtherNet/IP/Profinet/Serial','IP67','约220g'],
+
       ]}
+
     ]
+
   },
+
   {
+
     id:'opt',brand:'奥普特 OPT',region:'cn',logo:'#16a34a',logoText:'O',
-    counterpart:'SCB1→SC2000X/SC3000; SCA1→SC3000X/SC5000X; SCA2→SC5000X/SC6000',
+
+    counterpart:'SCB1→SC2000X/SC3000/X; SCA1→SC3000X/SC5000X; SCA2→SC5000X/SC6000',
+
     reason:'OPT全链条自研+HDMI直连是差异化优势;海康对标:更多AI模块(边缘学习)+更好通讯(FINS/KV/SLMP)+IP67 vs IP62',
+
     url:'https://www.optmv.com/',
+
     series:[
+
       {name:'SCB1 紧凑型智能相机',searchKeys:['scb1'],
+
         models:[
+
         ['OPT-SCB1-M023G-L06','1920×1200','1/2.6″','3.0μm','全局','90','M8/手动(6mm)','50-2000mm','红/白/蓝可选','有无/计数/OCR/深度学习','TCP/UDP/Serial/EtherNet/IP/Modbus/Profinet/FTP','IP62','234g'],
+
         ['OPT-SCB1-C023G-L06','1920×1200','1/2.6″','3.0μm','全局','90','M8/手动(6mm)','50-2000mm','红/白/蓝可选','有无/计数/OCR(彩色)','同上','IP62','234g'],
+
         ['OPT-SCB1-M023G-L25','1920×1200','1/2.6″','3.0μm','全局','90','手动(25mm)','-','-','长焦版','同上','IP62','-'],
+
       ]},
+
       {name:'SCA1 C接口智能相机',searchKeys:['sca1'],
+
         models:[
+
         ['OPT-SCA1-50MC','2464×2048','2/3″','3.45μm','全局','30','C-Mount','-','-','HDMI直连/定位/测量/检测','RS232/GigE/USB2.0/HDMI','IP62','382g'],
+
         ['OPT-SCA1-C023G-L12','1920×1200','1/2.6″','3.0μm','全局','90','M12/自动(12mm)','50-2000mm','红/白/蓝+绿色瞄准','深度学习OCR/HDMI','同上','IP62','466g'],
+
       ]},
+
       {name:'SCA2 C接口(多分辨率卷帘快门)',searchKeys:['sca2'],
+
         models:[
+
         ['OPT-SCA2-60MC','3072×2048','1/1.8″','2.4μm','卷帘','30','C-Mount','-','-','-','HDMI/GigE/USB','IP62','382g'],
+
         ['OPT-SCA2-80MC','3840×2144','1/1.8″','2.0μm','卷帘','30','C-Mount','-','-','-','HDMI/GigE/USB','IP62','382g'],
+
         ['OPT-SCA2-120MC','4000×3000','1/1.7″','1.85μm','卷帘','25','C-Mount','-','-','-','HDMI/GigE/USB','IP62','382g'],
+
         ['OPT-SCA2-200MC','5440×3648','1″','2.4μm','卷帘','20','C-Mount','-','-','-','HDMI/GigE/USB','IP62','382g'],
+
       ]}
+
     ]
+
   },
+
   {
+
     id:'huarui',brand:'华睿科技 Huarui',region:'cn',logo:'#0d9488',logoText:'H',
-    counterpart:'SS3000→SC2000X; SS4000→SC3000; SS5000→SC3000X/SC5000X',
+
+    counterpart:'SS3000→SC2000X; SS4000→SC3000/X; SS5000→SC3000X/SC5000X',
+
     reason:'华睿SS5000电动调焦+AI芯片+4路分区光源;海康对标:全系全局快门(vs X86卷帘)+FINS/KV/SLMP+VM平台+IP67(vs IP65)',
+
     url:'https://www.huarui.com/',
+
     series:[
+
       {name:'SS3000 超紧凑AI视觉传感器',searchKeys:['ss3000','ss3016'],
+
         models:[
+
         ['SS3016PMG-16H-RGF01','1440×1080','-','-','全局','60','手动(16mm)','红光','定位/AI分类/有无/正反/测量/识别','100M/RS232/GPIO','IP65','45×35×25.5mm'],
+
         ['SS3016PCG-07H-WGF01','1440×1080','-','-','全局','60','手动(7mm)','白光','定位/AI分类/有无/正反/颜色识别','100M/RS232/GPIO','IP65','同上'],
+
       ]},
+
       {name:'SS4000 AI视觉传感器',searchKeys:['ss4000','ss4013'],
+
         models:[
+
         ['SS4013CG-07M-WGG01','1280×1024','-','-','全局','60','电动调焦(7mm)','白光','⭐AI分类/读码/特征搜索/OCR/颜色识别','100M/RS232/GPIO','IP65','电动调焦一键自动对焦'],
+
         ['SS4013系列(多焦距)','1280×1024','-','-','全局','60','电动(多焦距可选)','白光/红/蓝','AI分类/OCR','100M/RS232/GPIO','IP65','-'],
+
       ]},
+
       {name:'SS5000 AI视觉传感器(旗舰)',searchKeys:['ss5000','ss5016','ss5050'],
+
         models:[
+
         ['SS5016MG-08M-WGG01','1440×1080','-','-','全局','60','电动(8mm)','白光(8LED,4路)','⭐AI芯片/AI分类/OCR/定位/计数','千兆/RS232/GPIO','IP65','100-1500mm,<350g'],
+
         ['SS5016CG-16M-WGG01','1440×1080','-','-','全局','60','电动(16mm)','白光','AI芯片/分类/OCR','千兆','IP65','彩色版'],
+
         ['SS5016MG-12M-WGG01','1440×1080','-','-','全局','60','电动(12mm)','白光','AI芯片/分类/OCR','千兆','IP65','12mm焦段'],
+
         ['SS5050MG-08M-WGG01','2368×1792','-','-','全局','45','电动(8mm)','白光(12LED,4路)','⭐AI芯片/深度学习分类/OCR','千兆','IP65','高分辨率5MP版'],
+
         ['SS5050系列(8/12/16/25mm)','2368×1792','-','-','全局','45','电动(多焦距)','白/红/蓝/红外','AI芯片/深度学习','千兆','IP65','偏振/非偏振可选'],
+
       ]},
+
       {name:'X86系列(⚠卷帘快门)',searchKeys:['x86'],
+
         models:[
+
         ['X86系列','-','-','-','卷帘','-','C口(需自配镜头)','外置','⚠运动场景有拖影风险','-','-','需自配镜头和光源'],
+
       ]}
+
     ]
+
   },
+
   {
+
     id:'decheng',brand:'德成视觉 Decheng',region:'cn',logo:'#ca8a04',logoText:'D',
+
     counterpart:'DC-100→SC1000; DC-200→SC2000X; DC-300→SC30XX; DC-400→SC3000X; DC-500→无直接对标',
+
     reason:'德成最大优势:超低价格(DC-100 ¥899起);海康优势:AI边缘学习/更丰富算法/更全通讯/品牌信任/IP67全系',
+
     url:'http://www.dcjdkj.com/',
+
     series:[
+
       {name:'DC-100(入门级)',searchKeys:['dc-100','dc100'],
+
         models:[
+
         ['DC-100','640×480','CMOS','-','-','120','M12/手动','4核ARM','有无/正反/尺寸/颜色/位置','RS232/千兆','IP67','12W','¥899起,入门首选'],
+
       ]},
+
       {name:'DC-200(中级)',searchKeys:['dc-200','dc200'],
+
         models:[
+
         ['DC-200(8mm)','1280×1024','1/3″CMOS','4.0μm','-','120','M12/机械(8mm)','ARM A55 2GHz 4核/2GB DDR4','正反/有无/尺寸/颜色/位置','RS232/千兆/HDMI/USB','IP67','12W','-'],
+
         ['DC-200(16mm)','1280×1024','1/3″CMOS','4.0μm','-','120','M12/机械(16mm)','ARM A55 2GHz 4核/2GB DDR4','正反/有无/尺寸/颜色/位置','同上','IP67','12W','广视野型'],
+
       ]},
+
       {name:'DC-300(进阶)',searchKeys:['dc-300','dc300'],
+
         models:[
+
         ['DC-300','2048×1536','1/2″CMOS','3.2μm','-','60','M12','-','继承DC-200,提升至300万像素','RS232/千兆/HDMI','IP67','-','-'],
+
       ]},
+
       {name:'DC-400(高端)',searchKeys:['dc-400','dc400'],
+
         models:[
+
         ['DC-400(低配)','1280×960','CMOS','4.0μm','-','120','C-type M12(8/16/25mm)','ARM Cortex 8核 2.4GHz/4GB DDR4','缺陷检测/尺寸测量/定位/读码/OCR','千兆/HDMI/USB/RS232','IP67','12W','8核高性能处理器'],
+
         ['DC-400(高配)','2592×1944','CMOS','2.4μm','-','60','C-type M12(8/16/25mm)','ARM Cortex 8核 2.4GHz/4GB DDR4','缺陷检测/尺寸测量/定位/读码/OCR','同上','IP67','12W','500万高分辨率版'],
+
       ]},
+
       {name:'DC-500(一体机工作站)',searchKeys:['dc-500','dc500'],
+
         models:[
+
         ['DC-500','30万/130万/500万(可选)','-','-','-','-','12-36mm(选配)','Linux系统/13.3″触摸屏','有无/正反/对比/尺寸/轮廓/字符识别','千兆/WiFi/8入8出/4路光源','IP65','20W','含显示器一体机,2.2kg,350×218×36mm'],
+
       ]}
+
     ]
+
   }
+
 ];
 
+
+
 // Counterpart map (comp search key -> hik series)
+
 const counterpartMap = {
+
   'iv4':'sc3000','iv3':'sc2000x','iv2':'sc2000',
+
   'vs':'sc6000',
+
   'is3900':'sc6000','is3901':'sc6000','is3905':'sc6000','is3916':'sc6000','is3925':'sc6000',
+
   'is3800':'sc5000x','is3801':'sc5000x','is3803':'sc5000x','is3805':'sc5000x','is3808':'sc5000x','is3812':'sc6000','is3816':'sc6000',
+
   'is2800':'sc3000','is2801':'sc3000','is2802':'sc3000','is2805':'sc3000',
+
   'is8900':'sc2000x','is8902':'sc2000x','is8905':'sc3000','is8912':'sc5000x',
+
   'is6900':'sc6000',
+
   'is1740':'sc6500','is1741':'sc6500','is1742':'sc6500',
+
   'is7000':'sc1000','is8000':'sc1000','is9000':'sc2000',
+
   'd900':'sc5000x','d905':'sc5000x','d902':'sc5000x',
+
   'vn2000':'sc2000x','vn4000':'sc3000',
+
   'scb1':'sc2000x','sca1':'sc3000','sca2':'sc5000x',
+
   'ss3000':'sc2000x','ss4000':'sc3000','ss5000':'sc3000','ss5016':'sc3000','ss5050':'sc5000x','ss3016':'sc2000x','ss4013':'sc3000','x86':'sc6000',
+
   'dc-100':'sc1000','dc-200':'sc2000x','dc-300':'sc3000','dc-400':'sc3000','dc-500':'sc5000x',
+
 };
+
 // Brand name -> hik default series
+
 const brandHikMap = {
+
   '基恩士':'sc6000','keyence':'sc6000',
+
   '康耐视':'sc5000x','cognex':'sc5000x',
+
   '思谋':'sc2000x','smartmore':'sc2000x',
+
   'opt':'sc3000','奥普特':'sc3000',
+
   '华睿':'sc3000','huarai':'sc3000',
+
   '德成':'sc2000x','decheng':'sc2000x'
+
 };
+
+
+
 
 
 // ==================== COMPETITOR SEARCH ====================
+
 function matchSeries(qn, searchKeys){
+
   if(!searchKeys)return false;
+
   return searchKeys.some(sk=>{
+
     // Exact match
+
     if(qn===sk)return true;
+
     // Query starts with searchKey (e.g., "iv4-400" starts with "iv4")
+
     if(qn.length>sk.length && qn.startsWith(sk)){
+
       const nc=qn[sk.length];
+
       if(!/[a-z0-9]/.test(nc))return true; // word boundary
+
     }
+
     // SearchKey starts with query (e.g., query "iv4" matches key "iv4-400")
+
     if(sk.length>qn.length && sk.startsWith(qn)){
+
       const nc=sk[qn.length];
+
       if(!/[a-z0-9]/.test(nc))return true; // word boundary
+
     }
+
     return false;
+
   });
+
 }
 
+
+
 // Find Hik counterpart key from query
+
 function findHikKey(qn){
+
   // Try exact match in counterpartMap
+
   if(counterpartMap[qn])return counterpartMap[qn];
+
   // Try prefix match
+
   for(const [k,v] of Object.entries(counterpartMap)){
+
     if(qn.startsWith(k)&&(qn.length===k.length||!/[a-z0-9]/.test(qn[k.length])))return v;
+
     if(k.startsWith(qn)&&(k.length===qn.length||!/[a-z0-9]/.test(k[qn.length])))return v;
+
   }
+
   return null;
+
 }
+
 function doCompSearch(){
+
+
 
   const rawQ=document.getElementById('comp-search').value.trim();
 
+
+
   const q=rawQ.toLowerCase();
+
+
 
   if(!q)return;
 
+
+
   document.getElementById('comp-empty').style.display='none';
+
+
 
   const container=document.getElementById('comp-result');
 
 
 
+
+
+
+
   // Normalize query for model matching
+
+
 
   const qn=q.replace(/[^a-z0-9-]/g,'');
 
 
 
+
+
+
+
   // Brand name lookup table
+
+
 
   const brandNames={
 
+
+
     keyence:['基恩士','keyence'], cognex:['康耐视','cognex'],
+
+
 
     smartmore:['思谋','smartmore'], opt:['奥普特','opt'],
 
+
+
     huarai:['华睿','huarai'], decheng:['德成','decheng']
 
+
+
   };
+
+
+
+
 
 
 
@@ -823,255 +1639,511 @@ function doCompSearch(){
 
 
 
+
+
+
+
   // Step 1: Try model-specific search first (e.g., "IV4", "VS", "SCB1")
+
+
 
   compData.forEach(c=>{
 
+
+
     let matchedSeries=[];
+
+
 
     let hikKey=null;
 
+
+
     c.series.forEach(s=>{
+
+
 
       if(matchSeries(qn,s.searchKeys)){
 
+
+
         matchedSeries.push(s);
+
+
 
         if(!hikKey){
 
+
+
           hikKey=findHikKey(qn);
+
+
 
           if(!hikKey){
 
+
+
             for(const sk of (s.searchKeys||[])){
+
+
 
               if(counterpartMap[sk]){hikKey=counterpartMap[sk];break;}
 
+
+
             }
+
+
 
           }
 
+
+
         }
+
+
 
       }
 
+
+
     });
+
+
 
     if(matchedSeries.length>0){
 
+
+
       if(!hikKey)hikKey='sc3000';
+
+
 
       if(!hikData[hikKey])hikKey='sc3000';
 
+
+
       results.push({comp:c,matchedSeries,hikKey});
+
+
 
     }
 
+
+
   });
+
+
+
+
 
 
 
   // Step 2: If no model match, try brand name search
 
+
+
   if(results.length===0){
+
+
 
     for(const [bid,names] of Object.entries(brandNames)){
 
+
+
       if(names.some(n=>q.includes(n.toLowerCase()))){
+
+
 
         const comp=compData.find(c=>c.id===bid);
 
+
+
         if(comp){
+
+
 
           const hk=brandHikMap[names[0]]||'sc3000';
 
+
+
           results.push({comp,matchedSeries:comp.series.slice(),hikKey:hikData[hk]?hk:'sc3000'});
+
+
 
         }
 
+
+
         break;
+
+
 
       }
 
+
+
     }
 
+
+
   }
+
+
+
+
 
 
 
   if(results.length===0){
 
+
+
     container.innerHTML='<div class="empty-state"><div class="big">🔍</div><p>未找到匹配的竞品<br>请尝试输入 IV4、VS、IS3805、VN4000、SS5016、SCB1、DC-400 或品牌名</p></div>';
+
+
 
     return;
 
+
+
   }
+
+
+
+
 
 
 
   // Render results
 
+
+
   let html='';
+
+
 
   results.forEach(r=>{
 
+
+
     const c=r.comp;
+
+
 
     // Header with search summary
 
+
+
     html+=`<div class="comp-result-header">
+
+
 
       <span class="badge badge-comp">🏢 ${c.brand}</span>
 
+
+
       <span class="region ${c.region==='cn'?'region-cn':'region-intl'}" style="font-size:.6em;padding:1px 4px;border-radius:3px;${c.region==='cn'?'background:#fee2e2;color:#991b1b':'background:#dbeafe;color:#1e40af'}">${c.region==='cn'?'🇨🇳 国产':'🌐 国外'}</span>
+
+
 
       <span class="badge badge-hik">🎯 海康对标(参考): ${hikData[r.hikKey].name}</span>
 
+
+
       <span class="badge badge-vs">📊 ${r.matchedSeries.length}个系列</span>
+
+
 
     </div>`;
 
 
 
+
+
+
+
     // Side-by-side: competitor vs Hik
 
+
+
     html+=`<div class="compare-grid"><div class="compare-col">`;
+
+
 
     html+=`<span class="col-label comp-label">🏢 ${c.brand} 参数</span>`;
 
 
 
+
+
+
+
     // Render each matched series
+
+
 
     r.matchedSeries.forEach(s=>{
 
+
+
       html+=`<div class="comp-series-card" style="margin-top:6px">
 
+
+
         <div class="card-title">📦 ${s.name}</div>
+
+
 
         <div class="card-body">`;
 
 
 
+
+
+
+
       // Series specs (if available)
+
+
 
       if(s.specs){
 
+
+
         html+=`<div class="table-scroll" style="margin-bottom:6px"><table class="param-table" style="min-width:300px">
+
+
 
         <thead><tr><th>参数项</th><th>值</th></tr></thead><tbody>`;
 
+
+
         for(const [k,v] of Object.entries(s.specs)){
+
+
 
           html+=`<tr${k.includes('AI')||k.includes('核心')||k.includes('独有')?' class="key-row"':''}><td>${k}</td><td>${v}</td></tr>`;
 
+
+
         }
 
+
+
         html+=`</tbody></table></div>`;
+
+
 
       }
 
 
 
+
+
+
+
       // Model table
+
+
 
       html+=`<div class="table-scroll"><table class="model-list-table">
 
+
+
       <thead><tr><th>型号</th>`;
+
+
 
       // Dynamic headers based on model array length
 
+
+
       const numCols=s.models[0]?.length||0;
+
+
 
       const colNames=['型号','分辨率/规格','传感器/靶面','像元/快门','快门/帧率','帧率','镜头/变焦','工作距/光源','AI/能力','通讯/电源','防护','重量/备注'];
 
+
+
       for(let i=1;i<numCols;i++)html+=`<th>${colNames[i]||'参数'+i}</th>`;
+
+
 
       html+=`</tr></thead><tbody>`;
 
+
+
       s.models.forEach(m=>{
+
+
 
         html+=`<tr><td class="model-name">${m[0]}</td>`;
 
+
+
         for(let i=1;i<m.length;i++)html+=`<td>${m[i]||'-'}</td>`;
+
+
 
         html+=`</tr>`;
 
+
+
       });
+
+
 
       html+=`</tbody></table></div>`;
 
+
+
       html+=`</div></div>`;
+
+
 
     });
 
 
 
+
+
+
+
     // VS analysis
+
+
 
     html+=`<div class="vs-row"><strong>vs 海康:</strong> ${c.reason}</div>`;
 
+
+
     // Competitor website link
 
+
+
     html+=`<div class="links-row"><a class="link-site" href="${c.url}" target="_blank" style="font-size:.7em">🏠 ${c.brand}官网</a></div>`;
+
+
 
     html+=`</div>`; // end comp-col
 
 
 
+
+
+
+
     // Hik counterpart column
+
+
 
     const hikD=hikData[r.hikKey];
 
+
+
     if(hikD){
+
+
 
       html+=`<div class="compare-col">
 
+
+
         <span class="col-label hik-label">🔶 海康对标(参考): ${hikD.name}</span>
+
+
 
         <div class="hik-counter">
 
+
+
           <div class="counter-title">🔶 ${hikD.name}</div>
+
+
 
           <div class="table-scroll"><table>
 
+
+
           <tr><td>定位</td><td>${hikD.specs['定位']||'-'}</td></tr>
+
+
 
           <tr><td>分辨率范围</td><td>${hikD.specs['分辨率范围']||hikD.specs['分辨率']||'-'}</td></tr>
 
+
+
           <tr><td>传感器</td><td>${hikD.specs['传感器']||'-'}</td></tr>
+
+
 
           <tr><td>快门</td><td>${hikD.specs['快门']||'-'}</td></tr>
 
+
+
           <tr><td>最大帧率</td><td>${hikD.specs['最大帧率']||'-'}</td></tr>
+
+
 
           <tr><td>AI能力</td><td>${hikD.specs['AI能力']||'-'}</td></tr>
 
+
+
           <tr><td>通讯</td><td>${hikD.specs['通讯']||'-'}</td></tr>
+
+
 
           <tr><td>防护</td><td>${hikD.specs['防护']||'-'}</td></tr>
 
+
+
           <tr><td>独有优势</td><td>${hikD.specs['独有']||'-'}</td></tr>
+
+
 
           </table></div>
 
+
+
           <div class="links-row" style="margin-top:6px">
+
+
 
             <a class="link-site" href="${hikD.url}" target="_blank" style="font-size:.68em">🏠 海康官网产品页</a>
 
+
+
             <a class="link-doc" href="${(hikLinks[r.hikKey]||{}).doc||'#'}" target="_blank" style="font-size:.68em">💻 软件下载</a>
+
+
 
           </div>
 
+
+
         </div>
+
+
 
       </div>`;
 
+
+
     }
+
+
 
     html+=`</div>`; // end compare-grid
 
+
+
   });
+
+
+
+
 
 
 
@@ -1079,195 +2151,390 @@ function doCompSearch(){
 
 
 
+
+
+
+
   // Highlight search text in results
+
+
 
   setTimeout(()=>{
 
+
+
     if(qn.length>=2){
+
+
 
       const re=new RegExp('('+qn.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi');
 
+
+
       document.querySelectorAll('#comp-result .model-name, #comp-result td').forEach(el=>{
+
+
 
         if(el.children.length===0){
 
+
+
           const t=el.textContent;
+
+
 
           if(re.test(t)){
 
+
+
             el.innerHTML=t.replace(re,'<mark class="search-mark">$1</mark>');
+
+
 
           }
 
+
+
         }
+
+
 
       });
 
+
+
     }
+
+
 
   },50);
 
+
+
 }
+
+
+
 
 
 function clearCompSearch(){
 
+
+
   document.getElementById('comp-search').value='';
+
+
 
   document.getElementById('comp-result').innerHTML='';
 
+
+
   document.getElementById('comp-empty').style.display='block';
 
+
+
 }
+
+
+
+
 
 
 
 // ==================== FUZZY SEARCH (COMPETITOR ONLY) ====================
 
+
+
 let _suggestIndex = null;
+
 function buildSuggestIndex(){
+
   if(_suggestIndex) return _suggestIndex;
+
   _suggestIndex = [];
+
   compData.forEach(c=>{
+
     c.series.forEach(s=>{
+
       (s.models||[]).forEach(row=>{
+
         if(!row||!row[0]) return;
+
         _suggestIndex.push({
+
           compId:c.id, brand:c.brand, seriesName:s.name,
+
           searchKeys:s.searchKeys||[],
+
           model:row[0], extra:(row.slice(1,3).join(' ')||''),
+
           searchText:(row.join(' ')+' '+s.name+' '+c.brand+' '+(s.searchKeys||[]).join(' ')).toLowerCase()
+
         });
+
       });
+
     });
+
   });
+
   return _suggestIndex;
+
 }
+
+
 
 let _suggestActiveIdx = -1;
+
 let _suggestCurrentList = [];
+
 let _suggestTimer = null;
 
+
+
 function _debounceSuggest(type) {
+
   clearTimeout(_suggestTimer);
+
   _suggestTimer = setTimeout(() => showSuggest(type), 150);
+
 }
+
+
 
 function showSuggest(){
+
   const input = document.getElementById('comp-search');
+
   const dd = document.getElementById('comp-suggest');
+
   const q = input.value.trim().toLowerCase();
+
   if(!q || q.length<1){ dd.classList.remove('show'); dd.innerHTML=''; _suggestCurrentList=[]; return; }
 
+
+
   const idx = buildSuggestIndex();
+
   const qn = q.replace(/[^a-z0-9\u4e00-\u9fff]/g,'');
+
   const results = [];
+
   for(const item of idx){
+
     let score = 0;
+
     const ml = item.model.toLowerCase();
+
     if(ml.startsWith(q)) score += 100;
+
     else if(ml.includes(q)) score += 60;
+
     if(qn && ml.replace(/[^a-z0-9]/g,'').includes(qn)) score += 80;
+
     if(item.searchText.includes(q)) score += 20;
+
     if(qn && item.searchText.replace(/[^a-z0-9\u4e00-\u9fff]/g,'').includes(qn)) score += 30;
+
     if(item.seriesName.toLowerCase().includes(q)) score += 15;
+
     if(score > 0) results.push({item, score});
+
   }
+
   results.sort((a,b)=>b.score-a.score);
 
+
+
   _suggestCurrentList = results.slice(0,12).map(r=>r.item);
+
   _suggestActiveIdx = -1;
 
+
+
   if(_suggestCurrentList.length === 0){
+
     dd.classList.remove('show');
+
     dd.innerHTML = '';
+
     return;
+
   }
+
+
 
   let html = '';
+
   _suggestCurrentList.forEach((item,i)=>{
+
     const tag = '<span class="suggest-tag comp">'+(item.brand||'').substr(0,2)+'</span>';
+
     const seriesShort = (item.seriesName||'').replace(/系列.*/,'');
+
     html += '<div class="suggest-item" data-idx="'+i+'" onmousedown="clickSuggest('+i+');return false">'
+
       + tag
+
       + '<span class="suggest-model">'+item.model+'</span>'
+
       + '<span class="suggest-info">'+(item.extra||'')+'</span>'
+
       + '<span class="suggest-series">'+seriesShort+'</span>'
+
       + '</div>';
+
   });
+
   dd.innerHTML = html;
+
   dd.classList.add('show');
+
 }
+
+
 
 function clickSuggest(idx){
+
   const item = _suggestCurrentList[idx];
+
   if(!item) return;
+
   const input = document.getElementById('comp-search');
+
   const dd = document.getElementById('comp-suggest');
+
   input.value = item.model;
+
   dd.classList.remove('show');
+
   dd.innerHTML = '';
+
   _suggestCurrentList = [];
+
   doCompSearch();
+
 }
+
+
 
 function suggestKeydown(e){
+
   const dd = document.getElementById('comp-suggest');
+
   if(e.key==='Enter'){
+
     if(_suggestActiveIdx >= 0 && _suggestCurrentList[_suggestActiveIdx]){
+
       e.preventDefault();
+
       clickSuggest(_suggestActiveIdx);
+
     } else {
+
       dd.classList.remove('show');
+
       doCompSearch();
+
     }
+
     return;
+
   }
+
   if(!_suggestCurrentList.length){
+
     if(e.key==='Enter') doCompSearch();
+
     return;
+
   }
+
   if(e.key==='ArrowDown'){
+
     e.preventDefault();
+
     _suggestActiveIdx = Math.min(_suggestActiveIdx+1, _suggestCurrentList.length-1);
+
     updateSuggestActive(dd);
+
   } else if(e.key==='ArrowUp'){
+
     e.preventDefault();
+
     _suggestActiveIdx = Math.max(_suggestActiveIdx-1, 0);
+
     updateSuggestActive(dd);
+
   } else if(e.key==='Escape'){
+
     dd.classList.remove('show');
+
     dd.innerHTML = '';
+
     _suggestCurrentList = [];
+
     _suggestActiveIdx = -1;
+
   }
+
 }
+
+
 
 function updateSuggestActive(dd){
+
   const items = dd.querySelectorAll('.suggest-item');
+
   items.forEach((el,i)=>{
+
     if(i===_suggestActiveIdx) el.classList.add('active');
+
     else el.classList.remove('active');
+
   });
+
   if(_suggestActiveIdx >= 0 && items[_suggestActiveIdx]){
+
     items[_suggestActiveIdx].scrollIntoView({block:'nearest'});
+
   }
+
 }
 
+
+
 // Close dropdown when clicking outside
+
 document.addEventListener('click', function(e){
+
   if(!e.target.closest('.search-box')){
+
     document.querySelectorAll('.suggest-dropdown').forEach(dd=>{
+
       dd.classList.remove('show');
+
       dd.innerHTML = '';
+
     });
+
     _suggestCurrentList = [];
+
     _suggestActiveIdx = -1;
+
   }
+
 });
 
+
+
 // ==================== INIT ====================
+
 // Competitor page — show empty state initially
+
 </script>
+
 </body>
+
 </html>
