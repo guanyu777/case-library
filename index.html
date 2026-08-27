@@ -4,6 +4,94 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>深分智能相机案例·资料库</title>
+<style id="sc-assist-css">
+/* sc-assistant.css — 深分智能相机 网页 AI 助手（右下角悬浮） */
+#sc-abtn{
+  position:fixed; right:20px; bottom:20px; z-index:99990;
+  width:56px; height:56px; border-radius:50%;
+  background:linear-gradient(135deg,var(--br,#e8600a),var(--brd,#c45200));
+  color:#fff; border:none; cursor:pointer; font-size:26px;
+  display:flex; align-items:center; justify-content:center;
+  box-shadow:0 6px 22px rgba(232,96,10,.42); transition:transform .18s ease;
+}
+#sc-abtn:hover{ transform:scale(1.08); }
+#sc-abtn .sc-badge{
+  position:absolute; top:6px; right:6px; width:12px; height:12px;
+  border-radius:50%; background:#16a34a; border:2px solid #fff;
+}
+#sc-abtn .sc-close{ position:absolute; inset:0; display:none; align-items:center; justify-content:center; font-size:24px; }
+
+#sc-panel{
+  position:fixed; right:20px; bottom:88px; z-index:99991;
+  width:368px; max-width:calc(100vw - 40px);
+  height:540px; max-height:calc(100vh - 120px);
+  background:#fff; border-radius:16px; overflow:hidden;
+  box-shadow:0 14px 44px rgba(10,22,40,.28);
+  display:none; flex-direction:column;
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+}
+#sc-panel.sc-open{ display:flex; }
+
+#sc-head{
+  background:var(--nv,#0A1628); color:#fff; padding:12px 14px;
+  display:flex; align-items:center; gap:10px; flex-shrink:0;
+}
+#sc-head .sc-ava{ width:34px; height:34px; border-radius:50%; background:linear-gradient(135deg,#e8600a,#c45200);
+  display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
+#sc-head .sc-t{ line-height:1.25; }
+#sc-head .sc-t b{ font-size:.92em; }
+#sc-head .sc-t small{ display:block; font-size:.66em; color:#94a3b8; }
+#sc-head .sc-x{ margin-left:auto; cursor:pointer; font-size:1.3em; opacity:.7; line-height:1; }
+#sc-head .sc-x:hover{ opacity:1; }
+
+#sc-msgs{ flex:1; overflow-y:auto; padding:14px; background:var(--bg2,#F5F7FA); display:flex; flex-direction:column; gap:10px; }
+.sc-row{ display:flex; gap:8px; max-width:100%; }
+.sc-row.user{ flex-direction:row-reverse; }
+.sc-bubble{
+  max-width:82%; padding:9px 12px; border-radius:12px; font-size:.84em; line-height:1.55;
+  word-break:break-word; box-shadow:0 1px 2px rgba(0,0,0,.05);
+}
+.sc-row.bot .sc-bubble{ background:#fff; color:var(--nv,#0A1628); border:1px solid var(--bd,#DDE5EF); border-top-left-radius:3px; }
+.sc-row.user .sc-bubble{ background:var(--br,#e8600a); color:#fff; border-top-right-radius:3px; }
+.sc-bubble b{ color:var(--br,#e8600a); }
+.sc-row.user .sc-bubble b{ color:#fff; }
+.sc-bubble code{ font-family:Consolas,'Courier New',monospace; background:rgba(232,96,10,.1); padding:0 4px; border-radius:3px; }
+.sc-bubble .sc-kbd{ display:inline-block; background:#fff7ed; color:var(--br,#e8600a); border:1px solid #fed7aa;
+  border-radius:5px; padding:0 6px; font-size:.92em; }
+
+/* 卡片（型号/系列）*/
+.sc-card{ border:1px solid var(--bd,#DDE5EF); border-radius:10px; padding:10px 12px; background:#fff; margin-top:2px; }
+.sc-card .sc-m{ font-family:Consolas,'Courier New',monospace; font-weight:700; color:var(--br,#e8600a); font-size:1.02em; }
+.sc-card .sc-meta{ display:flex; flex-wrap:wrap; gap:5px; margin-top:6px; }
+.sc-card .sc-chip{ font-size:.7em; background:#eef2f7; color:var(--nv,#0A1628); border-radius:6px; padding:2px 7px; }
+.sc-card .sc-chip.ai{ background:#ede9fe; color:#6d28d9; }
+.sc-card .sc-line{ font-size:.74em; color:var(--st,#4A5A6A); margin-top:5px; }
+
+/* 快捷回复 */
+#sc-quick{ display:flex; flex-wrap:wrap; gap:6px; padding:8px 12px 2px; background:var(--bg2,#F5F7FA); flex-shrink:0; }
+.sc-chip-btn{ font-size:.74em; padding:5px 11px; border:1.5px solid var(--bd,#DDE5EF); border-radius:18px;
+  background:#fff; cursor:pointer; color:var(--st,#4A5A6A); transition:all .15s; }
+.sc-chip-btn:hover{ border-color:var(--br,#e8600a); color:var(--br,#e8600a); background:#fff7ed; }
+
+/* 输入栏 */
+#sc-bar{ display:flex; gap:8px; padding:10px 12px; border-top:1px solid var(--bd,#DDE5EF); background:#fff; flex-shrink:0; }
+#sc-in{ flex:1; padding:9px 12px; border:2px solid var(--bd,#DDE5EF); border-radius:9px; font-size:.86em; outline:none; font-family:inherit; }
+#sc-in:focus{ border-color:var(--br,#e8600a); }
+#sc-send{ padding:0 16px; border:none; border-radius:9px; background:var(--br,#e8600a); color:#fff; font-weight:700; cursor:pointer; font-size:.86em; }
+#sc-send:hover{ opacity:.88; }
+.sc-foot{ font-size:.62em; color:#94a3b8; text-align:center; padding:4px 0 8px; background:#fff; }
+
+/* 小屏适配 */
+@media (max-width:480px){
+  #sc-panel{ left:8px; right:8px; bottom:80px; width:auto; }
+  #sc-abtn{ right:12px; bottom:12px; }
+}
+.sc-typing{ display:inline-flex; gap:3px; padding:4px 2px; }
+.sc-typing i{ width:6px; height:6px; border-radius:50%; background:#cbd5e1; animation:scblink 1.2s infinite; }
+.sc-typing i:nth-child(2){ animation-delay:.2s; } .sc-typing i:nth-child(3){ animation-delay:.4s; }
+@keyframes scblink{ 0%,60%,100%{opacity:.3} 30%{opacity:1} }
+
+</style>
 <style>
 :root{--br:#e8600a;--brd:#c45200;--nv:#0A1628;--nv2:#1A2B4A;
 --tp:#1A2332;--ts:#4A5A6A;--tm:#8A9BAC;
@@ -134,12 +222,80 @@ body{padding:0;font-size:14px}.wrap{border-radius:0;box-shadow:none;max-width:10
 .ccard{box-shadow:0 1px 4px rgba(0,0,0,.08)}
 }
 </style>
+<style id="sc-enhance-css">
+/* ===== #9 暗色模式：覆盖 :root 变量 ===== */
+[data-theme="dark"]{
+  --nv:#0B1322; --nv2:#121D33;
+  --tp:#E6EDF5; --ts:#9FB0C3; --tm:#6E8095;
+  --bg:#0E1626; --bg2:#16223A; --cd:#152033;
+  --bd:#26344E; --bd2:#1E2B45;
+  --br:#FF7A2E; --brd:#E8600A;
+}
+[data-theme="dark"] body{ color:var(--tp); }
+
+/* ===== #9 骨架屏（iframe 加载占位） ===== */
+.tp.frame{ position:relative; }
+.skel{ position:absolute; inset:0; z-index:5; display:none;
+  background:linear-gradient(100deg, var(--bg2) 30%, var(--bd) 50%, var(--bg2) 70%);
+  background-size:200% 100%; animation:skel-sh 1.2s linear infinite;
+  border-radius:0 0 12px 12px; }
+.skel.on{ display:block; }
+@keyframes skel-sh{ 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+/* ===== #9 暗/亮切换按钮 ===== */
+#theme-toggle{ position:fixed; top:11px; right:16px; z-index:99985;
+  width:34px; height:34px; border-radius:50%; border:1px solid rgba(255,255,255,.28);
+  background:rgba(0,0,0,.35); color:#fff; cursor:pointer; font-size:16px;
+  display:flex; align-items:center; justify-content:center; transition:.2s; }
+#theme-toggle:hover{ background:rgba(0,0,0,.55); transform:scale(1.08); }
+
+/* ===== #9 无障碍：焦点可见 ===== */
+.nav-item:focus-visible{ outline:3px solid var(--br); outline-offset:2px; border-radius:6px; }
+:focus-visible{ outline:2px solid var(--br); outline-offset:1px; }
+
+/* ===== 右侧悬浮头像（留资 + 小V AI助手） ===== */
+.sc-actbar{ position:fixed; right:18px; bottom:92px; z-index:99980; display:flex; flex-direction:column; gap:10px; }
+/* 小V AI助手：与选型助手一致的橙色渐变头像，点击外链新窗口打开 */
+.sc-va{ width:50px; height:50px; border-radius:50%; border:none; cursor:pointer; text-decoration:none;
+  background:linear-gradient(135deg,var(--br,#e8600a),var(--brd,#c45200)); color:#fff; font-size:23px; font-weight:800;
+  display:flex; align-items:center; justify-content:center;
+  box-shadow:0 6px 22px rgba(232,96,10,.42); transition:transform .18s ease; }
+.sc-va:hover{ transform:scale(1.08); }
+.sc-act{ width:48px; height:48px; border-radius:50%; border:none; cursor:pointer;
+  background:var(--nv); color:#fff; font-size:20px; box-shadow:0 6px 18px rgba(0,0,0,.28);
+  display:flex; align-items:center; justify-content:center; transition:.18s; }
+.sc-act:hover{ transform:scale(1.08); }
+
+/* ===== #10 弹窗（留资） ===== */
+.sc-modal{ position:fixed; inset:0; z-index:99995; display:none;
+  align-items:center; justify-content:center; background:rgba(0,0,0,.55); padding:16px; }
+.sc-modal.on{ display:flex; }
+.sc-mcard{ width:min(420px,100%); background:var(--cd); color:var(--tp);
+  border-radius:14px; padding:22px; box-shadow:0 20px 60px rgba(0,0,0,.45); }
+.sc-mcard h3{ margin:0 0 4px; font-size:1.15em; }
+.sc-mcard p.sub{ margin:0 0 16px; color:var(--ts); font-size:.9em; }
+.sc-field{ margin-bottom:12px; }
+.sc-field label{ display:block; font-size:.85em; margin-bottom:4px; color:var(--ts); }
+.sc-field input, .sc-field textarea{ width:100%; padding:10px 12px; border:1.5px solid var(--bd);
+  border-radius:8px; background:var(--bg2); color:var(--tp); font-size:.95em; outline:none; box-sizing:border-box; }
+.sc-field input:focus, .sc-field textarea:focus{ border-color:var(--br); }
+.sc-err{ color:#e5484d; font-size:.8em; margin:2px 0 10px; min-height:1em; }
+.sc-mbtn{ width:100%; padding:11px; border:none; border-radius:8px; cursor:pointer;
+  background:var(--br); color:#fff; font-weight:700; font-size:1em; }
+.sc-mhead{ display:flex; align-items:center; justify-content:space-between; }
+.sc-mx{ cursor:pointer; font-size:1.5em; line-height:1; color:var(--ts); }
+
+@media (prefers-reduced-motion: reduce){
+  .skel{ animation:none; }
+  *{ transition:none !important; }
+}
+</style>
 </head>
 <body>
 <div class="wrap">
 <div class="bar"><h1>🏭 深分智能相机案例·资料库 <span class="bd">V1.0</span></h1></div>
 <div class="abody">
-<nav class="nav"><div class="nav-item on" onclick="swTab(1,this)"><span class="ni">🔍</span>案例搜索</div><div class="nav-item" onclick="swTab(2,this)"><span class="ni">🏭</span>行业浏览</div><div class="nav-item" onclick="swTab(3,this)"><span class="ni">🔶</span>产品检索</div><div class="nav-item" onclick="swTab(4,this)"><span class="ni">🏢</span>竞品对标</div></nav>
+<nav class="nav"><div class="nav-item on" onclick="swTab(1,this)"><span class="ni">🔍</span>案例搜索</div><div class="nav-item" onclick="swTab(2,this)"><span class="ni">🏭</span>行业浏览</div><div class="nav-item" onclick="swTab(3,this)"><span class="ni">🔶</span>产品检索</div><div class="nav-item" onclick="swTab(4,this)"><span class="ni">🏢</span>竞品对标</div><div class="nav-item" onclick="swTab(5,this)"><span class="ni">🎯</span>选型验算</div></nav>
 <div class="carea">
 <div id="t1" class="tp on">
 <div class="sbox"><div class="srow"><span class="sico">🔍</span><input class="sinput" id="sq" placeholder="搜索案例名称、行业、类型、相机型号、算法..."></div><div class="sinfo" id="sinfo"></div></div>
@@ -183,8 +339,9 @@ body{padding:0;font-size:14px}.wrap{border-radius:0;box-shadow:none;max-width:10
 </div>
 </div>
 </div>
-<div id="t3" class="tp frame"><iframe src="sc-hik.html" title="海康产品检索"></iframe></div>
-<div id="t4" class="tp frame"><iframe src="sc-comp.html" title="竞品资料检索"></iframe></div>
+<div id="t3" class="tp frame"><iframe src="sc-hik.html" title="海康产品检索"></iframe><div class="skel" id="skel-t3"></div></div>
+<div id="t4" class="tp frame"><iframe src="sc-comp.html" title="竞品资料检索"></iframe><div class="skel" id="skel-t4"></div></div>
+<div id="t5" class="tp frame"><iframe src="sc-selector.html" title="智能选型验算"></iframe><div class="skel" id="skel-t5"></div></div>
 </div></div>
 <div class="footer" style="padding:6px 10px">
 <div style="display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap">
@@ -473,6 +630,512 @@ document.addEventListener('DOMContentLoaded',function(){
   });
 });
 
+</script>
+<script id="sc-assist-kb">
+/* 自动生成，请勿手改。由 build_assist_kb.js 从 CAM_DB 派生。 */
+var ASSIST_KB = {"series":{"SC1000":{"name":"SC1000 系列","pos":"入门紧凑型 · 130万级 · 有无/计数/定位引导 · 小视野场景","models":6,"resMin":0.31,"resMax":0.79,"fpsMax":15,"ai":false,"caps":["有无","计数","识别","测量"]},"SC2000":{"name":"SC2000 系列","pos":"通用主流 · 200万级 · 常规检测/识别","models":22,"resMin":0.38,"resMax":2.46,"fpsMax":75,"ai":false,"caps":["有无","计数","OCR"]},"SC3000":{"name":"SC3000 系列","pos":"主流高性能 · 300万级 · 缺陷/OCR/尺寸测量","models":32,"resMin":1.25,"resMax":6.14,"fpsMax":100,"ai":true,"caps":["异常检测","OCR","HDR","有无","计数","边缘学习","⭐深度学习"]},"SC5000":{"name":"SC5000 系列","pos":"高分辨率 · 500万级 · 精细缺陷/小特征","models":26,"resMin":0,"resMax":0,"fpsMax":100,"ai":true,"caps":[]},"SC6000":{"name":"SC6000 系列","pos":"高分辨率 · 600万级 · 大幅面/高精度","models":12,"resMin":0,"resMax":0,"fpsMax":60,"ai":true,"caps":[]},"SCA":{"name":"SCA 系列","pos":"紧凑型 (SCA) · 轻量一体","models":6,"resMin":0.31,"resMax":0.79,"fpsMax":15,"ai":false,"caps":["有无","计数","测量"]},"SCB":{"name":"SCB 系列","pos":"超紧凑板级 (SCB) · 空间受限嵌入式","models":22,"resMin":0.38,"resMax":2.46,"fpsMax":75,"ai":false,"caps":["有无","计数","OCR"]},"SCC":{"name":"SCC 系列","pos":"紧凑型 (SCC) · 轻量一体","models":6,"resMin":0,"resMax":3.15,"fpsMax":75,"ai":true,"caps":["有无","计数","OCR","边缘学习","异常检测"]}},"models":{"MV-SC1003C-03S-WBN-NR":{"b":"SC1003C","family":"SC1000","rw":640,"rh":480,"fps":15,"ai":0,"focals":[3.1],"pxMin":0.1,"pxMax":0.19,"caps":["有无","计数","识别"],"color":"C"},"MV-SC1003C-03S-WBN-SR":{"b":"SC1003C","family":"SC1000","rw":640,"rh":480,"fps":15,"ai":0,"focals":[3.1],"pxMin":0.24,"pxMax":0.34,"caps":["有无","计数","识别"],"color":"C"},"MV-SC1003M-03S-WBN-NR":{"b":"SC1003M","family":"SC1000","rw":640,"rh":480,"fps":15,"ai":0,"focals":[3.1],"pxMin":0.1,"pxMax":0.19,"caps":["有无","计数","识别"],"color":"M"},"MV-SC1003M-03S-WBN-SR":{"b":"SC1003M","family":"SC1000","rw":640,"rh":480,"fps":15,"ai":0,"focals":[3.1],"pxMin":0.24,"pxMax":0.34,"caps":["有无","计数","识别"],"color":"M"},"MV-SC1008M-05S-WBN-NR":{"b":"SC1008M","family":"SC1000","rw":1024,"rh":768,"fps":15,"ai":0,"focals":[4.9],"pxMin":0.04,"pxMax":0.09,"caps":["有无","计数","测量"],"color":"M"},"MV-SC1008M-05S-WBN-SR":{"b":"SC1008M","family":"SC1000","rw":1024,"rh":768,"fps":15,"ai":0,"focals":[4.9],"pxMin":0.11,"pxMax":0.15,"caps":["有无","计数","测量"],"color":"M"},"MV-SC2004EC-08":{"b":"SC2004EC","family":"SC2000","rw":704,"rh":540,"fps":60,"ai":0,"focals":[8],"pxMin":0.07,"pxMax":1.69,"caps":["有无","计数"],"color":"C"},"MV-SC2004EC-12":{"b":"SC2004EC","family":"SC2000","rw":704,"rh":540,"fps":60,"ai":0,"focals":[12.4],"pxMin":0.11,"pxMax":1.11,"caps":["有无","计数"],"color":"C"},"MV-SC2004EC-15":{"b":"SC2004EC","family":"SC2000","rw":704,"rh":540,"fps":60,"ai":0,"focals":[14.8],"pxMin":0.13,"pxMax":0.93,"caps":["有无","计数"],"color":"C"},"MV-SC2004EM-08":{"b":"SC2004EM","family":"SC2000","rw":704,"rh":540,"fps":60,"ai":0,"focals":[8],"pxMin":0.07,"pxMax":1.69,"caps":["有无","计数"],"color":"M"},"MV-SC2004EM-12":{"b":"SC2004EM","family":"SC2000","rw":704,"rh":540,"fps":60,"ai":0,"focals":[12.4],"pxMin":0.11,"pxMax":1.11,"caps":["有无","计数"],"color":"M"},"MV-SC2004EM-15":{"b":"SC2004EM","family":"SC2000","rw":704,"rh":540,"fps":60,"ai":0,"focals":[14.8],"pxMin":0.13,"pxMax":0.93,"caps":["有无","计数"],"color":"M"},"MV-SC2013XC-05":{"b":"SC2013XC","family":"SC2000","rw":1280,"rh":1024,"fps":55,"ai":0,"focals":[5],"pxMin":0.01,"pxMax":0.54,"caps":["OCR","有无","计数"],"color":"C"},"MV-SC2013XC-12":{"b":"SC2013XC","family":"SC2000","rw":1280,"rh":1024,"fps":55,"ai":0,"focals":[12],"pxMin":0.01,"pxMax":0.23,"caps":["OCR","有无","计数"],"color":"C"},"MV-SC2013XM-05":{"b":"SC2013XM","family":"SC2000","rw":1280,"rh":1024,"fps":55,"ai":0,"focals":[5],"pxMin":0.01,"pxMax":0.54,"caps":["OCR","有无","计数"],"color":"M"},"MV-SC2013XM-12":{"b":"SC2013XM","family":"SC2000","rw":1280,"rh":1024,"fps":55,"ai":0,"focals":[12],"pxMin":0.01,"pxMax":0.23,"caps":["OCR","有无","计数"],"color":"M"},"MV-SC2016EC-08":{"b":"SC2016EC","family":"SC2000","rw":1408,"rh":1024,"fps":40,"ai":0,"focals":[8],"pxMin":0.03,"pxMax":0.85,"caps":["有无","计数","OCR"],"color":"C"},"MV-SC2016EC-12":{"b":"SC2016EC","family":"SC2000","rw":1408,"rh":1024,"fps":40,"ai":0,"focals":[12.4],"pxMin":0.06,"pxMax":0.56,"caps":["有无","计数","OCR"],"color":"C"},"MV-SC2016EC-15":{"b":"SC2016EC","family":"SC2000","rw":1408,"rh":1024,"fps":40,"ai":0,"focals":[14.8],"pxMin":0.06,"pxMax":0.47,"caps":["有无","计数","OCR"],"color":"C"},"MV-SC2016EM-08":{"b":"SC2016EM","family":"SC2000","rw":1408,"rh":1024,"fps":60,"ai":0,"focals":[8],"pxMin":0.03,"pxMax":0.85,"caps":["有无","计数","OCR"],"color":"M"},"MV-SC2016EM-12":{"b":"SC2016EM","family":"SC2000","rw":1408,"rh":1024,"fps":60,"ai":0,"focals":[12.4],"pxMin":0.06,"pxMax":0.56,"caps":["有无","计数","OCR"],"color":"M"},"MV-SC2016EM-15":{"b":"SC2016EM","family":"SC2000","rw":1408,"rh":1024,"fps":60,"ai":0,"focals":[14.8],"pxMin":0.06,"pxMax":0.47,"caps":["有无","计数","OCR"],"color":"M"},"MV-SC2023XC-05":{"b":"SC2023XC","family":"SC2000","rw":1920,"rh":1280,"fps":75,"ai":0,"focals":[5],"pxMin":0.04,"pxMax":0.44,"caps":["OCR","有无","计数"],"color":"C"},"MV-SC2023XC-12":{"b":"SC2023XC","family":"SC2000","rw":1920,"rh":1280,"fps":75,"ai":0,"focals":[12],"pxMin":0.01,"pxMax":0.18,"caps":["OCR","有无","计数"],"color":"C"},"MV-SC2023XC-16":{"b":"SC2023XC","family":"SC2000","rw":1920,"rh":1280,"fps":75,"ai":0,"focals":[16],"pxMin":0.02,"pxMax":0.14,"caps":["OCR","有无","计数"],"color":"C"},"MV-SC2023XM-05":{"b":"SC2023XM","family":"SC2000","rw":1920,"rh":1280,"fps":75,"ai":0,"focals":[5],"pxMin":0.01,"pxMax":0.44,"caps":["OCR","有无","计数"],"color":"M"},"MV-SC2023XM-12":{"b":"SC2023XM","family":"SC2000","rw":1920,"rh":1280,"fps":75,"ai":0,"focals":[12],"pxMin":0.01,"pxMax":0.18,"caps":["OCR","有无","计数"],"color":"M"},"MV-SC2023XM-16":{"b":"SC2023XM","family":"SC2000","rw":1920,"rh":1280,"fps":75,"ai":0,"focals":[16],"pxMin":0.02,"pxMax":0.14,"caps":["OCR","有无","计数"],"color":"M"},"MV-SC3013XC-08":{"b":"SC3013XC","family":"SC3000","rw":1216,"rh":1024,"fps":100,"ai":1,"focals":[8],"pxMin":0.02,"pxMax":1.69,"caps":["异常检测","OCR","HDR"],"color":"C"},"MV-SC3013XM-08":{"b":"SC3013XM","family":"SC3000","rw":1216,"rh":1024,"fps":60,"ai":1,"focals":[8],"pxMin":0.02,"pxMax":1.69,"caps":["有无","计数","OCR"],"color":"M"},"MV-SC3016C-06":{"b":"SC3016C","family":"SC3000","rw":1408,"rh":1024,"fps":60,"ai":0,"focals":[6],"pxMin":0.01,"pxMax":1.15,"caps":["有无","计数","OCR"],"color":"C"},"MV-SC3016C-12":{"b":"SC3016C","family":"SC3000","rw":1408,"rh":1024,"fps":60,"ai":0,"focals":[12],"pxMin":0.02,"pxMax":0.58,"caps":["有无","计数","OCR"],"color":"C"},"MV-SC3016C-15":{"b":"SC3016C","family":"SC3000","rw":1408,"rh":1024,"fps":60,"ai":0,"focals":[14.8],"pxMin":0.01,"pxMax":0.47,"caps":["有无","计数","OCR"],"color":"C"},"MV-SC3016M-06":{"b":"SC3016M","family":"SC3000","rw":1408,"rh":1024,"fps":60,"ai":0,"focals":[6],"pxMin":0.01,"pxMax":1.15,"caps":["有无","计数","OCR"],"color":"M"},"MV-SC3016M-12":{"b":"SC3016M","family":"SC3000","rw":1408,"rh":1024,"fps":60,"ai":0,"focals":[12],"pxMin":0.02,"pxMax":0.58,"caps":["有无","计数","OCR"],"color":"M"},"MV-SC3016M-15":{"b":"SC3016M","family":"SC3000","rw":1408,"rh":1024,"fps":60,"ai":0,"focals":[14.8],"pxMin":0.01,"pxMax":0.47,"caps":["有无","计数","OCR"],"color":"M"},"MV-SC3020XC-08":{"b":"SC3020XC","family":"SC3000","rw":1536,"rh":1264,"fps":100,"ai":1,"focals":[8],"pxMin":0.04,"pxMax":0.85,"caps":["边缘学习","异常检测"],"color":"C"},"MV-SC3020XC-12":{"b":"SC3020XC","family":"SC3000","rw":1536,"rh":1264,"fps":100,"ai":1,"focals":[12],"pxMin":0.02,"pxMax":0.58,"caps":["边缘学习","异常检测"],"color":"C"},"MV-SC3020XC-16":{"b":"SC3020XC","family":"SC3000","rw":1536,"rh":1264,"fps":100,"ai":1,"focals":[16],"pxMin":0.02,"pxMax":0.43,"caps":["边缘学习","异常检测"],"color":"C"},"MV-SC3020XM-08":{"b":"SC3020XM","family":"SC3000","rw":1536,"rh":1264,"fps":100,"ai":1,"focals":[8],"pxMin":0.04,"pxMax":0.85,"caps":["边缘学习","异常检测"],"color":"M"},"MV-SC3020XM-12":{"b":"SC3020XM","family":"SC3000","rw":1536,"rh":1264,"fps":100,"ai":1,"focals":[12],"pxMin":0.02,"pxMax":0.58,"caps":["边缘学习","异常检测"],"color":"M"},"MV-SC3020XM-16":{"b":"SC3020XM","family":"SC3000","rw":1536,"rh":1264,"fps":100,"ai":1,"focals":[16],"pxMin":0.02,"pxMax":0.43,"caps":["边缘学习","异常检测"],"color":"M"},"MV-SC3030XC-08":{"b":"SC3030XC","family":"SC3000","rw":2048,"rh":1536,"fps":40,"ai":1,"focals":[8],"pxMin":0.01,"pxMax":0.85,"caps":["边缘学习","异常检测","OCR","HDR"],"color":"C"},"MV-SC3030XC-12":{"b":"SC3030XC","family":"SC3000","rw":2048,"rh":1536,"fps":40,"ai":1,"focals":[12],"pxMin":0.02,"pxMax":0.58,"caps":["边缘学习","异常检测","OCR","HDR"],"color":"C"},"MV-SC3030XC-16":{"b":"SC3030XC","family":"SC3000","rw":2048,"rh":1536,"fps":40,"ai":1,"focals":[16],"pxMin":0.01,"pxMax":0.43,"caps":["边缘学习","异常检测","OCR","HDR"],"color":"C"},"MV-SC3030XM-08":{"b":"SC3030XM","family":"SC3000","rw":2048,"rh":1536,"fps":40,"ai":1,"focals":[8],"pxMin":0.01,"pxMax":0.85,"caps":["边缘学习","异常检测","OCR"],"color":"M"},"MV-SC3030XM-12":{"b":"SC3030XM","family":"SC3000","rw":2048,"rh":1536,"fps":40,"ai":1,"focals":[12],"pxMin":0.02,"pxMax":0.58,"caps":["边缘学习","异常检测","OCR"],"color":"M"},"MV-SC3030XM-16":{"b":"SC3030XM","family":"SC3000","rw":2048,"rh":1536,"fps":40,"ai":1,"focals":[16],"pxMin":0.01,"pxMax":0.43,"caps":["边缘学习","异常检测","OCR"],"color":"M"},"MV-SC3050XC-08":{"b":"SC3050XC","family":"SC3000","rw":2432,"rh":2048,"fps":40,"ai":1,"focals":[8],"pxMin":0.01,"pxMax":0.85,"caps":["⭐深度学习","边缘学习","OCR","HDR"],"color":"C"},"MV-SC3050XC-12":{"b":"SC3050XC","family":"SC3000","rw":2432,"rh":2048,"fps":40,"ai":1,"focals":[12],"pxMin":0.02,"pxMax":0.58,"caps":["⭐深度学习","边缘学习","OCR","HDR"],"color":"C"},"MV-SC3050XC-16":{"b":"SC3050XC","family":"SC3000","rw":2432,"rh":2048,"fps":40,"ai":1,"focals":[16],"pxMin":0.01,"pxMax":0.43,"caps":["⭐深度学习","边缘学习","OCR","HDR"],"color":"C"},"MV-SC3050XM-08":{"b":"SC3050XM","family":"SC3000","rw":2432,"rh":2048,"fps":40,"ai":1,"focals":[8],"pxMin":0.01,"pxMax":0.85,"caps":["⭐深度学习","边缘学习","OCR","HDR"],"color":"M"},"MV-SC3050XM-12":{"b":"SC3050XM","family":"SC3000","rw":2432,"rh":2048,"fps":40,"ai":1,"focals":[12],"pxMin":0.02,"pxMax":0.58,"caps":["⭐深度学习","边缘学习","OCR","HDR"],"color":"M"},"MV-SC3050XM-16":{"b":"SC3050XM","family":"SC3000","rw":2432,"rh":2048,"fps":40,"ai":1,"focals":[16],"pxMin":0.01,"pxMax":0.43,"caps":["⭐深度学习","边缘学习","OCR","HDR"],"color":"M"},"MV-SC3060XC-08":{"b":"SC3060XC","family":"SC3000","rw":3200,"rh":1920,"fps":20,"ai":1,"focals":[8],"pxMin":0.01,"pxMax":0.49,"caps":["边缘学习","异常检测"],"color":"C"},"MV-SC3060XC-12":{"b":"SC3060XC","family":"SC3000","rw":3200,"rh":1920,"fps":20,"ai":1,"focals":[12],"pxMin":0.01,"pxMax":0.33,"caps":["边缘学习","异常检测"],"color":"C"},"MV-SC3060XC-16":{"b":"SC3060XC","family":"SC3000","rw":3200,"rh":1920,"fps":20,"ai":1,"focals":[16],"pxMin":0.01,"pxMax":0.25,"caps":["边缘学习","异常检测"],"color":"C"},"MV-SC3060XM-08":{"b":"SC3060XM","family":"SC3000","rw":3200,"rh":1920,"fps":20,"ai":1,"focals":[8],"pxMin":0.01,"pxMax":0.49,"caps":["边缘学习","异常检测"],"color":"M"},"MV-SC3060XM-12":{"b":"SC3060XM","family":"SC3000","rw":3200,"rh":1920,"fps":20,"ai":1,"focals":[12],"pxMin":0.01,"pxMax":0.33,"caps":["边缘学习","异常检测"],"color":"M"},"MV-SC3060XM-16":{"b":"SC3060XM","family":"SC3000","rw":3200,"rh":1920,"fps":20,"ai":1,"focals":[16],"pxMin":0.01,"pxMax":0.25,"caps":["边缘学习","异常检测"],"color":"M"},"MV-SC5020XC-06":{"b":"SC5020XC","family":"SC5000","rw":0,"rh":0,"fps":100,"ai":1,"focals":[6],"pxMin":0.01,"pxMax":1.13,"caps":[],"color":"C"},"MV-SC5020XC-08":{"b":"SC5020XC","family":"SC5000","rw":0,"rh":0,"fps":100,"ai":1,"focals":[8],"pxMin":0.04,"pxMax":0.86,"caps":[],"color":"C"},"MV-SC5020XC-12":{"b":"SC5020XC","family":"SC5000","rw":0,"rh":0,"fps":100,"ai":1,"focals":[12],"pxMin":0.02,"pxMax":0.57,"caps":[],"color":"C"},"MV-SC5020XC-16":{"b":"SC5020XC","family":"SC5000","rw":0,"rh":0,"fps":100,"ai":1,"focals":[16],"pxMin":0.02,"pxMax":0.43,"caps":[],"color":"C"},"MV-SC5020XM-06":{"b":"SC5020XM","family":"SC5000","rw":0,"rh":0,"fps":100,"ai":1,"focals":[6],"pxMin":0.01,"pxMax":1.13,"caps":[],"color":"C"},"MV-SC5020XM-08":{"b":"SC5020XM","family":"SC5000","rw":0,"rh":0,"fps":100,"ai":1,"focals":[8],"pxMin":0.04,"pxMax":0.86,"caps":[],"color":"C"},"MV-SC5020XM-12":{"b":"SC5020XM","family":"SC5000","rw":0,"rh":0,"fps":100,"ai":1,"focals":[12],"pxMin":0.02,"pxMax":0.57,"caps":[],"color":"C"},"MV-SC5020XM-16":{"b":"SC5020XM","family":"SC5000","rw":0,"rh":0,"fps":100,"ai":1,"focals":[16],"pxMin":0.02,"pxMax":0.43,"caps":[],"color":"C"},"MV-SC5050XC-08":{"b":"SC5050XC","family":"SC5000","rw":0,"rh":0,"fps":100,"ai":1,"focals":[8],"pxMin":0.01,"pxMax":0.85,"caps":[],"color":"C"},"MV-SC5050XC-12":{"b":"SC5050XC","family":"SC5000","rw":0,"rh":0,"fps":100,"ai":1,"focals":[12],"pxMin":0.02,"pxMax":0.57,"caps":[],"color":"C"},"MV-SC5050XC-16":{"b":"SC5050XC","family":"SC5000","rw":0,"rh":0,"fps":100,"ai":1,"focals":[16],"pxMin":0.02,"pxMax":0.43,"caps":[],"color":"C"},"MV-SC5050XM-08":{"b":"SC5050XM","family":"SC5000","rw":0,"rh":0,"fps":100,"ai":1,"focals":[8],"pxMin":0.01,"pxMax":0.85,"caps":[],"color":"C"},"MV-SC5050XM-12":{"b":"SC5050XM","family":"SC5000","rw":0,"rh":0,"fps":100,"ai":1,"focals":[12],"pxMin":0.02,"pxMax":0.57,"caps":[],"color":"C"},"MV-SC5050XM-16":{"b":"SC5050XM","family":"SC5000","rw":0,"rh":0,"fps":100,"ai":1,"focals":[16],"pxMin":0.02,"pxMax":0.43,"caps":[],"color":"C"},"MV-SC5060XC-08":{"b":"SC5060XC","family":"SC5000","rw":0,"rh":0,"fps":100,"ai":1,"focals":[8],"pxMin":0.01,"pxMax":0.49,"caps":[],"color":"C"},"MV-SC5060XC-12":{"b":"SC5060XC","family":"SC5000","rw":0,"rh":0,"fps":100,"ai":1,"focals":[12],"pxMin":0.01,"pxMax":0.33,"caps":[],"color":"C"},"MV-SC5060XC-16":{"b":"SC5060XC","family":"SC5000","rw":0,"rh":0,"fps":100,"ai":1,"focals":[16],"pxMin":0.01,"pxMax":0.25,"caps":[],"color":"C"},"MV-SC5060XM-08":{"b":"SC5060XM","family":"SC5000","rw":0,"rh":0,"fps":100,"ai":1,"focals":[8],"pxMin":0.01,"pxMax":0.49,"caps":[],"color":"C"},"MV-SC5060XM-12":{"b":"SC5060XM","family":"SC5000","rw":0,"rh":0,"fps":100,"ai":1,"focals":[12],"pxMin":0.01,"pxMax":0.33,"caps":[],"color":"C"},"MV-SC5060XM-16":{"b":"SC5060XM","family":"SC5000","rw":0,"rh":0,"fps":100,"ai":1,"focals":[16],"pxMin":0.01,"pxMax":0.25,"caps":[],"color":"C"},"MV-SC5100XC-08":{"b":"SC5100XC","family":"SC5000","rw":0,"rh":0,"fps":0,"ai":0,"focals":[8],"pxMin":0.01,"pxMax":0.49,"caps":[],"color":"C"},"MV-SC5100XC-12":{"b":"SC5100XC","family":"SC5000","rw":0,"rh":0,"fps":0,"ai":0,"focals":[12],"pxMin":0.01,"pxMax":0.33,"caps":[],"color":"C"},"MV-SC5100XC-16":{"b":"SC5100XC","family":"SC5000","rw":0,"rh":0,"fps":0,"ai":0,"focals":[16],"pxMin":0.01,"pxMax":0.25,"caps":[],"color":"C"},"MV-SC5100XM-08":{"b":"SC5100XM","family":"SC5000","rw":0,"rh":0,"fps":0,"ai":0,"focals":[8],"pxMin":0.01,"pxMax":0.49,"caps":[],"color":"C"},"MV-SC5100XM-12":{"b":"SC5100XM","family":"SC5000","rw":0,"rh":0,"fps":0,"ai":0,"focals":[12],"pxMin":0.01,"pxMax":0.33,"caps":[],"color":"C"},"MV-SC5100XM-16":{"b":"SC5100XM","family":"SC5000","rw":0,"rh":0,"fps":0,"ai":0,"focals":[16],"pxMin":0.01,"pxMax":0.25,"caps":[],"color":"C"},"MV-SC6016C-06":{"b":"SC6016C","family":"SC6000","rw":0,"rh":0,"fps":60,"ai":1,"focals":[6],"pxMin":0.058,"pxMax":1.15,"caps":[],"color":"C"},"MV-SC6016C-12":{"b":"SC6016C","family":"SC6000","rw":0,"rh":0,"fps":60,"ai":1,"focals":[12],"pxMin":0.029,"pxMax":0.575,"caps":[],"color":"C"},"MV-SC6016C-16":{"b":"SC6016C","family":"SC6000","rw":0,"rh":0,"fps":60,"ai":1,"focals":[16],"pxMin":0.022,"pxMax":0.431,"caps":[],"color":"C"},"MV-SC6016M-06":{"b":"SC6016M","family":"SC6000","rw":0,"rh":0,"fps":60,"ai":1,"focals":[6],"pxMin":0.058,"pxMax":1.15,"caps":[],"color":"C"},"MV-SC6016M-12":{"b":"SC6016M","family":"SC6000","rw":0,"rh":0,"fps":60,"ai":1,"focals":[12],"pxMin":0.029,"pxMax":0.575,"caps":[],"color":"C"},"MV-SC6016M-16":{"b":"SC6016M","family":"SC6000","rw":0,"rh":0,"fps":60,"ai":1,"focals":[16],"pxMin":0.022,"pxMax":0.431,"caps":[],"color":"C"},"MV-SC6050C-08":{"b":"SC6050C","family":"SC6000","rw":0,"rh":0,"fps":60,"ai":1,"focals":[8],"pxMin":0.043,"pxMax":0.863,"caps":[],"color":"C"},"MV-SC6050C-12":{"b":"SC6050C","family":"SC6000","rw":0,"rh":0,"fps":60,"ai":1,"focals":[12],"pxMin":0.029,"pxMax":0.575,"caps":[],"color":"C"},"MV-SC6050C-16":{"b":"SC6050C","family":"SC6000","rw":0,"rh":0,"fps":60,"ai":1,"focals":[16],"pxMin":0.022,"pxMax":0.431,"caps":[],"color":"C"},"MV-SC6050M-08":{"b":"SC6050M","family":"SC6000","rw":0,"rh":0,"fps":60,"ai":1,"focals":[8],"pxMin":0.043,"pxMax":0.863,"caps":[],"color":"C"},"MV-SC6050M-12":{"b":"SC6050M","family":"SC6000","rw":0,"rh":0,"fps":60,"ai":1,"focals":[12],"pxMin":0.029,"pxMax":0.575,"caps":[],"color":"C"},"MV-SC6050M-16":{"b":"SC6050M","family":"SC6000","rw":0,"rh":0,"fps":60,"ai":1,"focals":[16],"pxMin":0.022,"pxMax":0.431,"caps":[],"color":"C"},"MV-SCA002C-03S-WBN-NR":{"b":"SCA002C","family":"SCA","rw":640,"rh":480,"fps":15,"ai":0,"focals":[3.1],"pxMin":0.1,"pxMax":0.19,"caps":["有无","计数"],"color":"C"},"MV-SCA002C-03S-WBN-SR":{"b":"SCA002C","family":"SCA","rw":640,"rh":480,"fps":15,"ai":0,"focals":[3.1],"pxMin":0.24,"pxMax":0.34,"caps":["有无","计数"],"color":"C"},"MV-SCA002M-03S-WBN-NR":{"b":"SCA002M","family":"SCA","rw":640,"rh":480,"fps":15,"ai":0,"focals":[3.1],"pxMin":0.1,"pxMax":0.19,"caps":["有无","计数"],"color":"M"},"MV-SCA002M-03S-WBN-SR":{"b":"SCA002M","family":"SCA","rw":640,"rh":480,"fps":15,"ai":0,"focals":[3.1],"pxMin":0.24,"pxMax":0.34,"caps":["有无","计数"],"color":"M"},"MV-SCA004M-05S-WBN-NR":{"b":"SCA004M","family":"SCA","rw":1024,"rh":768,"fps":15,"ai":0,"focals":[4.9],"pxMin":0.04,"pxMax":0.09,"caps":["有无","计数","测量"],"color":"M"},"MV-SCA004M-05S-WBN-SR":{"b":"SCA004M","family":"SCA","rw":1024,"rh":768,"fps":15,"ai":0,"focals":[4.9],"pxMin":0.11,"pxMax":0.15,"caps":["有无","计数","测量"],"color":"M"},"MV-SCB003EC-08":{"b":"SCB003EC","family":"SCB","rw":704,"rh":540,"fps":60,"ai":0,"focals":[8],"pxMin":0.07,"pxMax":1.69,"caps":["有无","计数"],"color":"C"},"MV-SCB003EC-12":{"b":"SCB003EC","family":"SCB","rw":704,"rh":540,"fps":60,"ai":0,"focals":[12.4],"pxMin":0.11,"pxMax":1.11,"caps":["有无","计数"],"color":"C"},"MV-SCB003EC-15":{"b":"SCB003EC","family":"SCB","rw":704,"rh":540,"fps":60,"ai":0,"focals":[14.8],"pxMin":0.13,"pxMax":0.93,"caps":["有无","计数"],"color":"C"},"MV-SCB003EM-08":{"b":"SCB003EM","family":"SCB","rw":704,"rh":540,"fps":60,"ai":0,"focals":[8],"pxMin":0.07,"pxMax":1.69,"caps":["有无","计数"],"color":"M"},"MV-SCB003EM-12":{"b":"SCB003EM","family":"SCB","rw":704,"rh":540,"fps":60,"ai":0,"focals":[12.4],"pxMin":0.11,"pxMax":1.11,"caps":["有无","计数"],"color":"M"},"MV-SCB003EM-15":{"b":"SCB003EM","family":"SCB","rw":704,"rh":540,"fps":60,"ai":0,"focals":[14.8],"pxMin":0.13,"pxMax":0.93,"caps":["有无","计数"],"color":"M"},"MV-SCB006XC-05":{"b":"SCB006XC","family":"SCB","rw":1920,"rh":1080,"fps":30,"ai":0,"focals":[5],"pxMin":0.02,"pxMax":0.35,"caps":["有无","计数"],"color":"C"},"MV-SCB006XC-12":{"b":"SCB006XC","family":"SCB","rw":1920,"rh":1080,"fps":30,"ai":0,"focals":[12],"pxMin":0.02,"pxMax":0.19,"caps":["有无","计数"],"color":"C"},"MV-SCB006XM-05":{"b":"SCB006XM","family":"SCB","rw":1920,"rh":1080,"fps":30,"ai":0,"focals":[5],"pxMin":0.02,"pxMax":0.35,"caps":["有无","计数"],"color":"M"},"MV-SCB006XM-12":{"b":"SCB006XM","family":"SCB","rw":1920,"rh":1080,"fps":30,"ai":0,"focals":[12],"pxMin":0.02,"pxMax":0.19,"caps":["有无","计数"],"color":"M"},"MV-SCB007EC-08":{"b":"SCB007EC","family":"SCB","rw":1408,"rh":1024,"fps":60,"ai":0,"focals":[8],"pxMin":0.03,"pxMax":0.85,"caps":["有无","计数","OCR"],"color":"C"},"MV-SCB007EC-12":{"b":"SCB007EC","family":"SCB","rw":1408,"rh":1024,"fps":60,"ai":0,"focals":[12.4],"pxMin":0.06,"pxMax":0.56,"caps":["有无","计数","OCR"],"color":"C"},"MV-SCB007EC-15":{"b":"SCB007EC","family":"SCB","rw":1408,"rh":1024,"fps":60,"ai":0,"focals":[14.8],"pxMin":0.06,"pxMax":0.47,"caps":["有无","计数","OCR"],"color":"C"},"MV-SCB007EM-08":{"b":"SCB007EM","family":"SCB","rw":1408,"rh":1024,"fps":60,"ai":0,"focals":[8],"pxMin":0.03,"pxMax":0.85,"caps":["有无","计数","OCR"],"color":"M"},"MV-SCB007EM-12":{"b":"SCB007EM","family":"SCB","rw":1408,"rh":1024,"fps":60,"ai":0,"focals":[12.4],"pxMin":0.06,"pxMax":0.56,"caps":["有无","计数","OCR"],"color":"M"},"MV-SCB007EM-15":{"b":"SCB007EM","family":"SCB","rw":1408,"rh":1024,"fps":60,"ai":0,"focals":[14.8],"pxMin":0.06,"pxMax":0.47,"caps":["有无","计数","OCR"],"color":"M"},"MV-SCB008XC-05":{"b":"SCB008XC","family":"SCB","rw":1920,"rh":1280,"fps":75,"ai":0,"focals":[5],"pxMin":0.04,"pxMax":0.44,"caps":["有无","计数","OCR"],"color":"C"},"MV-SCB008XC-12":{"b":"SCB008XC","family":"SCB","rw":1920,"rh":1280,"fps":75,"ai":0,"focals":[12],"pxMin":0.01,"pxMax":0.18,"caps":["有无","计数","OCR"],"color":"C"},"MV-SCB008XC-16":{"b":"SCB008XC","family":"SCB","rw":1920,"rh":1280,"fps":75,"ai":0,"focals":[16],"pxMin":0.02,"pxMax":0.14,"caps":["有无","计数","OCR"],"color":"C"},"MV-SCB008XM-05":{"b":"SCB008XM","family":"SCB","rw":1920,"rh":1280,"fps":75,"ai":0,"focals":[5],"pxMin":0.01,"pxMax":0.44,"caps":["有无","计数","OCR"],"color":"M"},"MV-SCB008XM-12":{"b":"SCB008XM","family":"SCB","rw":1920,"rh":1280,"fps":75,"ai":0,"focals":[12],"pxMin":0.01,"pxMax":0.18,"caps":["有无","计数","OCR"],"color":"M"},"MV-SCB008XM-16":{"b":"SCB008XM","family":"SCB","rw":1920,"rh":1280,"fps":75,"ai":0,"focals":[16],"pxMin":0.02,"pxMax":0.14,"caps":["有无","计数","OCR"],"color":"M"},"MV-SCC005XC-08":{"b":"SCC005XC","family":"SCC","rw":1216,"rh":1024,"fps":60,"ai":0,"focals":[8],"pxMin":0.03,"pxMax":1.69,"caps":["有无","计数","OCR"],"color":"C"},"MV-SCC005XM-08":{"b":"SCC005XM","family":"SCC","rw":1216,"rh":1024,"fps":60,"ai":0,"focals":[8],"pxMin":0.03,"pxMax":1.69,"caps":["有无","计数","OCR"],"color":"M"},"MV-SCC009XC-08":{"b":"SCC009XC","family":"SCC","rw":2048,"rh":1536,"fps":40,"ai":1,"focals":[8],"pxMin":0.01,"pxMax":0.85,"caps":["边缘学习","异常检测","OCR"],"color":"C"},"MV-SCC009XM-08":{"b":"SCC009XM","family":"SCC","rw":2048,"rh":1536,"fps":40,"ai":1,"focals":[8],"pxMin":0.01,"pxMax":0.85,"caps":["边缘学习","异常检测","OCR"],"color":"M"},"MV-SCC010XC-08":{"b":"SCC010XC","family":"SCC","rw":0,"rh":0,"fps":75,"ai":0,"focals":[8],"pxMin":0.01,"pxMax":0.85,"caps":[],"color":"C"},"MV-SCC010XM-08":{"b":"SCC010XM","family":"SCC","rw":0,"rh":0,"fps":75,"ai":0,"focals":[8],"pxMin":0.01,"pxMax":0.85,"caps":[],"color":"C"}},"detects":{"有无检测":{"N":3,"ai":false,"hint":"有无/计数/定位，通常 N=3"},"缺陷检测":{"N":4,"ai":false,"hint":"划痕/污点/破损，通常 N=4"},"OCR/字符识别":{"N":5,"ai":false,"hint":"读码/字符，通常 N=5"},"尺寸测量":{"N":4,"ai":false,"hint":"尺寸/间距，通常 N=4"},"AI深度学习分类":{"N":4,"ai":true,"hint":"需 AI 算力型号"}}};
+
+</script>
+<script id="sc-assist-js">
+/* sc-assistant.js — 深分智能相机 网页 AI 助手（左下角悬浮）
+ * 纯前端确定性引擎：基于用户自有 SC 相机知识库（ASSIST_KB）与案例库（全局 D）。
+ * 无后端 / 无密钥，适配 GitHub Pages 静态托管。
+ * 函数以 function 声明，便于 Node 测试桩直接调用纯逻辑函数。
+ */
+(function(){
+'use strict';
+
+// ============================ 纯逻辑引擎 ============================
+function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+function has(o,k){ return o && Object.prototype.hasOwnProperty.call(o,k); }
+
+// 意图分类
+function classify(text){
+  text = text||'';
+  var raw = text;
+  var m = text.match(/mv-sc[\w-]+/i);
+  if(m) return {intent:'model', model:m[0].toUpperCase()};
+  var sm = text.match(/\bsc[0-9a-z]{2,8}\b/i);
+  if(sm) return {intent:'modelLike', q:sm[0].toUpperCase()};
+  if(/系列|家族|产品线|有哪些型号|型号表/.test(text)
+     || /sc(1000|2000|3000|5000|6000|6500)\b/i.test(text)
+     || /\b(scb|sca|scc)\b/i.test(text)) return {intent:'series'};
+  if(/选型|选择|选哪个|选什么|推荐|怎么选|帮我选|配什么|用什么相机|用什么型号/.test(text)) return {intent:'select'};
+  if(/单像素|精度|分辨率|像素|ppm|多少像素|清楚|看清/.test(text)) return {intent:'concept', topic:'precision'};
+  if(/视野|视场|fov|拍多大|范围|覆盖/.test(text)) return {intent:'concept', topic:'fov'};
+  if(/曝光|拖影|运动|速度|帧率|模糊|抖动|飞拍/.test(text)) return {intent:'concept', topic:'exposure'};
+  if(/案例|应用|行业|用在|做过|例子|场景|客户|方案/.test(text)) return {intent:'cases'};
+  if(/价格|报价|多少钱|购买|买|商务|联系|电话|微信|采购|询价|多少钱/.test(text)) return {intent:'contact'};
+  if(/^\s*(你好|您好|hi|hello|在吗|在不在|帮忙|你好呀)\b[\s?!。.，]*$/i.test(text)) return {intent:'greet'};
+  if(/谢谢|感谢|多谢|太棒|厉害|牛/.test(text)) return {intent:'thanks'};
+  return {intent:'fallback', raw:raw};
+}
+
+// 从文本识别检测类型
+function detectType(text){
+  text = (text||'').toLowerCase();
+  if(/ai|深度|学习|分类|神经网络|缺陷分类/.test(text)) return 'AI深度学习分类';
+  if(/ocr|字符|读码|字体|刻字|激光打标|铭牌/.test(text)) return 'OCR/字符识别';
+  if(/缺陷|划痕|污点|破损|脏|毛刺|裂纹|异物/.test(text)) return '缺陷检测';
+  if(/计数|数数|个数|数量|统计/.test(text)) return '计数';
+  if(/定位|引导|对位|纠偏|抓取/.test(text)) return '定位引导';
+  if(/尺寸|测量|长宽|间距|直径|长度/.test(text)) return '尺寸测量';
+  if(/有无|存在|在不在|到位|漏装/.test(text)) return '有无检测';
+  return null;
+}
+
+// 从自然语言解析选型需求
+function parseRequirements(text){
+  var req = {detect:detectType(text), N:3, minFeat:null, fw:null, fh:null, wd:null, fps:null, needAI:null, color:'any'};
+  if(req.detect && has(ASSIST_KB,'detects') && has(ASSIST_KB.detects,req.detect)) req.N = ASSIST_KB.detects[req.detect].N;
+  if(/\bai\b|深度/.test(text)) req.needAI = true;
+  if(/黑白/.test(text)) req.color='M';
+  if(/彩色/.test(text)) req.color='C';
+  var wh = text.match(/([\d.]+)\s*[xX*×]\s*([\d.]+)/);
+  if(wh){ req.fw = parseFloat(wh[1]); req.fh = parseFloat(wh[2]); }
+  var wd = text.match(/(?:工作距离|物距|距离|wd)[\s:：]*([\d.]+)\s*mm?/i);
+  if(wd) req.wd = parseFloat(wd[1]);
+  var fps = text.match(/([\d.]+)\s*fps/i); if(fps) req.fps = parseFloat(fps[1]);
+  var mf = text.match(/(?:特征|精度|尺寸|最小|识别)[\s:：]*([\d.]+)\s*mm/i);
+  if(mf){ req.minFeat = parseFloat(mf[1]); }
+  else {
+    var allmm = (text.match(/([\d.]+)\s*mm/ig)||[]).map(function(s){ return parseFloat(s.replace(/mm/i,'')); }).filter(function(n){ return n>0; });
+    if(req.wd) allmm = allmm.filter(function(n){ return Math.abs(n-req.wd)>0.5; });
+    if(req.fw) allmm = allmm.filter(function(n){ return Math.abs(n-req.fw)>0.5 && Math.abs(n-req.fh)>0.5; });
+    if(allmm.length) req.minFeat = Math.min.apply(null, allmm);
+  }
+  return req;
+}
+
+// 系列梯队（低成本优先）
+function famTier(family){
+  if(/1000/.test(family)) return 1;
+  if(/[BCA]/.test(family)) return 2;
+  if(/2000|3000/.test(family)) return 3;
+  if(/5000/.test(family)) return 4;
+  if(/6000|6500/.test(family)) return 5;
+  return 3;
+}
+
+// 助手侧轻量选型（用于对话内给出梯队建议；精确视野/物距校验交给选型验算页）
+function assistantSelect(req){
+  if(!has(ASSIST_KB,'models')) return [];
+  var N = req.N||3;
+  var reqPx = req.minFeat ? req.minFeat/N : null;
+  var pool = Object.keys(ASSIST_KB.models);
+  if(reqPx!=null) pool = pool.filter(function(m){ var md=ASSIST_KB.models[m]; return md.pxMin!=null && md.pxMin <= reqPx*1.05; });
+  if(req.fps) pool = pool.filter(function(m){ return ASSIST_KB.models[m].fps >= req.fps; });
+  if(req.needAI) pool = pool.filter(function(m){ return ASSIST_KB.models[m].ai===1; });
+  if(req.color && req.color!=='any') pool = pool.filter(function(m){ return (ASSIST_KB.models[m].color||'').indexOf(req.color)>=0; });
+  var scored = pool.map(function(m){
+    var md = ASSIST_KB.models[m];
+    var head = reqPx!=null ? (reqPx / md.pxMin) : 1;          // 精度余量
+    var cost = (6 - famTier(md.family)) / 5;                   // 成本梯队（低=高）
+    return { m:m, md:md, score: head*0.5 + cost*0.5 };
+  });
+  scored.sort(function(a,b){ return b.score - a.score; });
+  return scored.slice(0, 8);
+}
+
+// 型号规格卡片 HTML
+function modelCardHTML(model){
+  var md = ASSIST_KB.models[model]; if(!md) return '';
+  var res = md.rw && md.rh ? (Math.round(md.rw*md.rh/10000)/100)+'万像素 ('+md.rw+'×'+md.rh+')' : '—';
+  var px = (md.pxMin!=null&&md.pxMax!=null) ? (md.pxMin+' ~ '+md.pxMax+' mm') : '—';
+  var chips = '<span class="sc-chip">分辨率 '+res+'</span>'
+    + '<span class="sc-chip">帧率 '+md.fps+' fps</span>'
+    + '<span class="sc-chip">焦距 '+md.focals.join('/')+' mm</span>'
+    + '<span class="sc-chip">精度 '+px+'</span>'
+    + (md.ai?'<span class="sc-chip ai">⭐ AI 相机</span>':'')
+    + '<span class="sc-chip">'+md.color+'</span>';
+  var caps = md.caps && md.caps.length ? '<div class="sc-line">能力：'+md.caps.join('、')+'</div>' : '';
+  return '<div class="sc-card"><div class="sc-m">'+esc(model)+'</div><div class="sc-meta">'+chips+'</div>'+caps+'</div>';
+}
+
+// 系列概览 HTML
+function seriesHTML(){
+  if(!has(ASSIST_KB,'series')) return '暂无系列数据';
+  var order = ['SC1000','SC2000','SC3000','SC5000','SC6000','SC6500','SCA','SCB','SCC'];
+  var keys = Object.keys(ASSIST_KB.series).sort(function(a,b){ return order.indexOf(a)-order.indexOf(b); });
+  return keys.map(function(k){
+    var s = ASSIST_KB.series[k];
+    return '<div class="sc-card"><div class="sc-m">'+esc(s.name)+'</div>'
+      + '<div class="sc-line">'+esc(s.pos||'')+'</div>'
+      + '<div class="sc-meta">'
+      + '<span class="sc-chip">'+s.models+' 款</span>'
+      + '<span class="sc-chip">分辨率 '+s.resMin+'~'+s.resMax+' 万像素</span>'
+      + '<span class="sc-chip">最高 '+s.fpsMax+' fps</span>'
+      + (s.ai?'<span class="sc-chip ai">⭐ 含 AI</span>':'')
+      + '</div>'
+      + (s.caps&&s.caps.length?'<div class="sc-line">典型能力：'+s.caps.slice(0,8).join('、')+'</div>':'')
+      + '</div>';
+  }).join('');
+}
+
+// 案例检索（基于主页面全局 D）
+function searchCases(q){
+  if(typeof D==='undefined' || !D || !D.length) return [];
+  var kw = (q||'').toLowerCase();
+  return D.filter(function(c){
+    return [c.name,c.ind,c.type,c.cam,c.algo].filter(Boolean).some(function(f){ return (''+f).toLowerCase().indexOf(kw)>=0; });
+  }).slice(0,5);
+}
+function casesHTML(q){
+  var list = searchCases(q);
+  if(!list.length) return '<div class="sc-line">未在你资料库的案例中匹配到「'+esc(q)+'」。可试试行业名（如 汽车/电子/食品）或检测类型（如 缺陷/OCR）。</div>';
+  return list.map(function(c){
+    return '<div class="sc-card"><div class="sc-m" style="font-size:.92em">'+esc(c.name)+'</div>'
+      + '<div class="sc-meta"><span class="sc-chip">'+esc(c.ind||'')+'</span><span class="sc-chip">'+esc(c.type||'')+'</span></div>'
+      + '<div class="sc-line">相机：<code>'+esc(c.cam||'—')+'</code> · 算法：'+(c.algo||'—')+'</div></div>';
+  }).join('');
+}
+
+// ============================ UI 层 ============================
+function scInit(){
+  if(typeof document==='undefined' || !document.body) return;
+  if(document.getElementById('sc-abtn')) return; // 防重复注入
+
+  var btn = document.createElement('button');
+  btn.id='sc-abtn'; btn.setAttribute('aria-label','智能选型助手');
+  btn.innerHTML = '<span class="sc-ico">🤖</span><span class="sc-badge"></span>';
+  document.body.appendChild(btn);
+
+  var panel = document.createElement('div');
+  panel.id='sc-panel';
+  panel.innerHTML =
+    '<div id="sc-head"><div class="sc-ava">🤖</div>'
+    + '<div class="sc-t"><b>智能选型助手</b><small>基于海康 SC 规格库 · 确定性算法</small></div>'
+    + '<div class="sc-x" title="收起">✕</div></div>'
+    + '<div id="sc-msgs"></div>'
+    + '<div id="sc-quick"></div>'
+    + '<div id="sc-bar"><input id="sc-in" placeholder="问型号、选型、精度、案例…" /><button id="sc-send">发送</button></div>'
+    + '<div class="sc-foot">本助手不联网、不上传，仅基于本页公开资料作答</div>';
+  document.body.appendChild(panel);
+
+  var msgs = panel.querySelector('#sc-msgs');
+  var quick = panel.querySelector('#sc-quick');
+  var input = panel.querySelector('#sc-in');
+  var sendBtn = panel.querySelector('#sc-send');
+
+  function scroll(){ msgs.scrollTop = msgs.scrollHeight; }
+  function addRow(role, html){
+    var row = document.createElement('div');
+    row.className = 'sc-row '+(role==='user'?'user':'bot');
+    var b = document.createElement('div'); b.className='sc-bubble'; b.innerHTML = html;
+    row.appendChild(b); msgs.appendChild(row); scroll(); return row;
+  }
+  function typing(){
+    var row = addRow('bot','<span class="sc-typing"><i></i><i></i><i></i></span>');
+    return function(){ row.remove(); };
+  }
+  function setQuick(list){
+    quick.innerHTML='';
+    (list||[]).forEach(function(c){
+      var b=document.createElement('span'); b.className='sc-chip-btn'; b.textContent=c.label;
+      b.onclick=function(){ handle(c.text); }; quick.appendChild(b);
+    });
+  }
+
+  function bot(html, qk){
+    var stop = typing();
+    setTimeout(function(){ stop(); addRow('bot', html); if(qk) setQuick(qk); else setQuick(defaultQuick); }, 320);
+  }
+
+  var defaultQuick = [
+    {label:'怎么选型？', text:'帮我选型'},
+    {label:'有哪些系列？', text:'有哪些系列'},
+    {label:'单像素精度是？', text:'单像素精度是什么'},
+    {label:'查型号 SC3030', text:'SC3030'},
+    {label:'行业案例', text:'有哪些行业案例'},
+    {label:'去选型验算', text:'去选型验算页'}
+  ];
+
+  // 跳转到选型验算页并预填
+  function goSelector(req){
+    req = req||{};
+    var navs = document.querySelectorAll('.nav-item');
+    var target = null;
+    for(var i=0;i<navs.length;i++){ if(navs[i].textContent.indexOf('选型验算')>=0){ target=navs[i]; break; } }
+    if(target && typeof swTab==='function') swTab(5, target);
+    var payload = { type:'sc-fill', sel:{
+      detect: req.detect||'缺陷检测',
+      minfeat: req.minFeat||0.1, fw: req.fw||100, fh: req.fh||80,
+      wd: req.wd||200, fps: req.fps||30, color: req.color||'any',
+      ai: req.needAI?'yes':'auto'
+    }};
+    var ifr = document.querySelector('#t5 iframe');
+    if(ifr && ifr.contentWindow){
+      var tries=0;
+      (function send(){ try{ ifr.contentWindow.postMessage(payload,'*'); }catch(e){}
+        if(tries++<10) setTimeout(send,150); })();
+    }
+    bot('已为你打开 <b>🎯 选型验算</b> 页并预填需求，点「🚀 智能选型」即可看精确排名（含视野/物距校验）。', defaultQuick);
+  }
+
+  function concept(topic){
+    if(topic==='precision') return '📐 <b>单像素精度</b> = 视野宽度 ÷ 水平像素数（如 100mm 视野 ÷ 2048 像素 ≈ 0.049mm/像素）。<br>它决定了能看清的最小特征：需 <b>特征尺寸 ≥ N × 单像素精度</b>（N 常规取 3，缺陷/OCR 取 4~5）。<br>例：要识别 0.1mm 划痕，精度需 ≤ 0.1÷4 = 0.025mm，对应更高分辨率或更小工作距离。';
+    if(topic==='fov') return '🔭 <b>视野(FOV)</b> 是拍到的实际范围，随<b>工作距离</b>近似线性变化：距离越远视野越大、精度越低。选型要同时满足「精度达标」与「视野覆盖被测区域」两个约束。';
+    if(topic==='exposure') return '⚡ <b>运动曝光</b>：产线运动时，特征移动 N 个像素所需时间 = N × 单像素精度 ÷ 线速度（换算成 ms）。该值需 ≤ 相机最大曝光（受帧率上限 1000÷fps 约束），否则会出现拖影。静止场景无需考虑。';
+    return '';
+  }
+
+  function handle(text){
+    text = (text||'').trim(); if(!text) return;
+    addRow('user', esc(text));
+    var c = classify(text);
+
+    if(c.intent==='model'){
+      if(has(ASSIST_KB,'models') && has(ASSIST_KB.models,c.model)){ bot('为你查到 <code>'+esc(c.model)+'</code> 的规格：'+modelCardHTML(c.model), defaultQuick); }
+      else { bot('没在规格库里找到 <code>'+esc(c.model)+'</code>。可试试系列名（如 SC3030、SC6500）或「有哪些系列」。', defaultQuick); }
+      return;
+    }
+    if(c.intent==='modelLike'){
+      var hits = has(ASSIST_KB,'models') ? Object.keys(ASSIST_KB.models).filter(function(k){ return k.toUpperCase().indexOf(c.q.toUpperCase())>=0; }) : [];
+      if(hits.length===1){ bot('为你查到 <code>'+esc(hits[0])+'</code>：'+modelCardHTML(hits[0]), defaultQuick); }
+      else if(hits.length>1){ var top=hits.slice(0,4).map(function(k){ return '<code>'+esc(k)+'</code>'; }).join('、'); bot('匹配到多个型号（如 '+top+'…），点具体型号可看规格，或说完整型号如 MV-'+esc(c.q)+'X-12。', defaultQuick); }
+      else { bot('没找到含「'+esc(c.q)+'」的型号。可查看「有哪些系列」了解产品矩阵。', defaultQuick); }
+      return;
+    }
+    if(c.intent==='series'){ bot('📚 <b>SC 智能相机产品系列</b>（共 '+Object.keys(ASSIST_KB.series).length+' 个家族）：'+seriesHTML(), defaultQuick); return; }
+    if(c.intent==='concept'){ bot(concept(c.topic), defaultQuick); return; }
+    if(c.intent==='cases'){
+      var q = (text.replace(/案例|应用|行业|用在|做过|例子|场景|客户|方案|有哪些|什么|的|？|\?/g,'')||' ').trim() || '缺陷';
+      bot('🔎 你资料库中的相关案例：'+casesHTML(q), defaultQuick); return;
+    }
+    if(c.intent==='contact'){ bot('💬 本资料库为产品展示，公开页不含实时报价。商务/询价请联系您的海康销售或官方渠道；也可以告诉我你的<b>检测需求</b>，我帮你先整理一份选型清单。', defaultQuick); return; }
+    if(c.intent==='greet'){ bot('你好 👋 我是智能选型助手。可以问我：<br>• <b>怎么选型</b>（说检测类型+特征尺寸+视野）<br>• <b>查型号</b>（如 SC3030、MV-SC6500）<br>• <b>单像素精度/视野/曝光</b> 是什么<br>• <b>行业案例</b>', defaultQuick); return; }
+    if(c.intent==='thanks'){ bot('不客气 😊 需要选型或查型号随时叫我。', defaultQuick); return; }
+
+    if(c.intent==='select'){
+      var req = parseRequirements(text);
+      // “去选型验算页” 直接跳转预填
+      if(/去|打开|页/.test(text) && (req.minFeat||req.fw||req.wd)){
+        goSelector(req); return;
+      }
+      if(req.minFeat && (req.fw||req.wd)){
+        var top = assistantSelect(req);
+        if(!top.length){
+          bot('按你给的条件（特征 '+req.minFeat+'mm、N='+req.N+'、需精度 ≤ '+(req.minFeat/req.N).toFixed(3)+'mm），现有规格库暂无完全满足的型号。可减小特征尺寸要求或增大工作距离再试，或点下方到<b>选型验算页</b>精确排查。', [{label:'去选型验算',text:'去选型验算页'}]);
+          return;
+        }
+        var fams = {}; top.forEach(function(t){ fams[t.md.family]=(fams[t.md.family]||0)+1; });
+        var famName = Object.keys(fams).sort(function(a,b){ return famTier(a)-famTier(b); })[0];
+        var html = '🎯 按你的需求（'+(req.detect||'通用')+'，特征 '+req.minFeat+'mm，N='+req.N+'，需精度 ≤ '+(req.minFeat/req.N).toFixed(3)+'mm），<b>建议优先考虑 <code>'+esc(famName)+'</code> 系列</b>，候选型号：';
+        html += top.slice(0,3).map(function(t){ return modelCardHTML(t.m); }).join('');
+        html += '<div class="sc-line">⚠️ 此为梯队建议；<b>确切视野/物距/帧率校验</b>请在「选型验算」页完成。</div>';
+        bot(html, [{label:'去选型验算页',text:'去选型验算页'}, {label:'我要更精确',text:'帮我精确选型：缺陷检测 0.1mm 视野100x80 工作距离200'}]);
+        return;
+      }
+      // 信息不足，引导
+      bot('好的，我来帮你选型 👇 请告诉我：<br>① <b>检测什么</b>（如 缺陷/字符/OCR/有无/AI分类）<br>② <b>最小特征尺寸</b>（mm，如 0.1）<br>③ <b>视野范围</b>（宽×高 mm，如 100×80）<br>④ <b>工作距离</b>（mm，可选）<br>也可以直接说一句，例如：「<i>缺陷检测 0.1mm 视野100×80 工作距离200</i>」', [
+        {label:'缺陷 0.1/100×80/200', text:'缺陷检测 0.1mm 视野100×80 工作距离200'},
+        {label:'OCR 0.3/60×40/150', text:'OCR 字符 0.3mm 视野60×40 工作距离150'},
+        {label:'AI分类 0.2/120×90/300', text:'AI深度学习分类 0.2mm 视野120×90 工作距离300'},
+        {label:'去选型验算页', text:'去选型验算页'}
+      ]);
+      return;
+    }
+
+    // fallback
+    bot('我没完全理解 🤔 你可以问我：<br>• <b>怎么选型</b>（检测类型+特征+视野）<br>• <b>查型号</b>（如 SC3030）<br>• <b>有哪些系列</b><br>• <b>单像素精度/视野/曝光</b> 是什么<br>• <b>行业案例</b>', defaultQuick);
+  }
+
+  // 绑定事件
+  btn.addEventListener('click', function(){ panel.classList.toggle('sc-open'); if(panel.classList.contains('sc-open')){ setQuick(defaultQuick); input.focus(); } });
+  panel.querySelector('.sc-x').addEventListener('click', function(){ panel.classList.remove('sc-open'); });
+  sendBtn.addEventListener('click', function(){ handle(input.value); input.value=''; });
+  input.addEventListener('keydown', function(e){ if(e.key==='Enter'){ handle(input.value); input.value=''; } });
+
+  // 首次欢迎（不自动展开）
+  // 暴露测试/调试入口
+  window.__SC = { classify:classify, parseRequirements:parseRequirements, assistantSelect:assistantSelect,
+    modelCardHTML:modelCardHTML, seriesHTML:seriesHTML, searchCases:searchCases, handle:handle, goSelector:goSelector };
+}
+
+// 自动初始化（浏览器环境）
+if(typeof window!=='undefined'){
+  if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded', scInit); }
+  else { scInit(); }
+}
+// 供 Node 测试桩调用的纯函数（不依赖 DOM）
+if(typeof module!=='undefined' && module.exports){
+  module.exports = { classify:classify, detectType:detectType, parseRequirements:parseRequirements,
+    assistantSelect:assistantSelect, modelCardHTML:modelCardHTML, seriesHTML:seriesHTML, searchCases:searchCases };
+}
+
+})();
+
+</script>
+<!-- #9 暗色切换 + #10 留资入口（分享已移除） -->
+<button id="theme-toggle" aria-label="切换暗色/亮色模式" title="切换暗色/亮色模式" onclick="toggleTheme()">🌙</button>
+<div class="sc-actbar" aria-label="快捷操作">
+  <a class="sc-va" href="https://www.v-club.com/vAssistant" target="_blank" rel="noopener noreferrer" title="小V AI助手" aria-label="小V AI助手（新窗口打开）">V</a>
+  <button class="sc-act" title="留资咨询" aria-label="留资咨询" onclick="openLead()">📇</button>
+</div>
+
+<!-- #10 留资弹窗 -->
+<div class="sc-modal" id="lead-modal" role="dialog" aria-modal="true" aria-label="留资咨询">
+  <div class="sc-mcard">
+    <div class="sc-mhead"><h3>📇 留资咨询</h3><span class="sc-mx" onclick="closeLead()" aria-label="关闭" role="button">×</span></div>
+    <p class="sub">留下联系方式，获取专属选型方案与资料</p>
+    <div class="sc-field"><label for="lead-name">称呼 *</label><input id="lead-name" placeholder="如：张工"></div>
+    <div class="sc-field"><label for="lead-company">公司</label><input id="lead-company" placeholder="如：某某自动化"></div>
+    <div class="sc-field"><label for="lead-phone">手机号 *</label><input id="lead-phone" placeholder="11位手机号" inputmode="numeric"></div>
+    <div class="sc-field"><label for="lead-need">需求描述</label><textarea id="lead-need" rows="3" placeholder="如：缺陷检测，最小特征0.1mm，视野100×80"></textarea></div>
+    <div class="sc-err" id="lead-err" role="alert"></div>
+    <button class="sc-mbtn" onclick="submitLead()">提交咨询</button>
+  </div>
+</div>
+
+<script id="sc-enhance-js">
+(function(){
+  'use strict';
+  var LEAD_ENDPOINT='';            // 留资提交接口；留空则走 mailto
+  var LEAD_MAIL='support@example.com';
+
+  /* ---------- 纯函数（可单测） ---------- */
+  function nextTheme(t){ return t==='dark' ? 'light' : 'dark'; }
+  function validPhone(p){ return /^1[3-9]\d{9}$/.test(p||''); }
+  function buildMailto(d){
+    var subj='【智能相机选型咨询】'+(d.name||'');
+    var body='称呼：'+(d.name||'-')+'\n公司：'+(d.company||'-')+'\n手机：'+(d.phone||'-')+'\n需求：'+(d.need||'-');
+    return 'mailto:'+LEAD_MAIL+'?subject='+encodeURIComponent(subj)+'&body='+encodeURIComponent(body);
+  }
+
+  /* ---------- #9 暗色模式 ---------- */
+  function broadcastTheme(){
+    var t=document.documentElement.getAttribute('data-theme')||'light';
+    var frames=document.querySelectorAll('.tp.frame iframe');
+    for(var i=0;i<frames.length;i++){
+      try{ frames[i].contentWindow.postMessage({type:'theme', theme:t, value:t}, '*'); }catch(e){}
+    }
+  }
+  function applyTheme(t){
+    document.documentElement.setAttribute('data-theme', t);
+    try{ localStorage.setItem('sc-theme', t); }catch(e){}
+    var btn=document.getElementById('theme-toggle');
+    if(btn) btn.textContent = (t==='dark') ? '☀️' : '🌙';
+    broadcastTheme();
+  }
+  function toggleTheme(){
+    var cur=document.documentElement.getAttribute('data-theme')||'light';
+    applyTheme(nextTheme(cur));
+  }
+
+  /* ---------- #9 骨架屏 + 主题广播（重写 swTab） ---------- */
+  function swTab(n, el){
+    var items=document.querySelectorAll('.nav-item');
+    for(var i=0;i<items.length;i++){
+      var on = items[i]===el;
+      items[i].classList.toggle('on', on);
+      items[i].setAttribute('aria-selected', on?'true':'false');
+      items[i].setAttribute('tabindex', on?'0':'-1');
+    }
+    var ps=document.querySelectorAll('.tp');
+    for(var i=0;i<ps.length;i++) ps[i].classList.remove('on');
+    var t=document.getElementById('t'+n); if(t) t.classList.add('on');
+    if(n===2){
+      var grps=document.querySelectorAll('#br .ind-group');
+      for(var i=0;i<grps.length;i++) grps[i].style.display='none';
+    }
+    if(n===3||n===4||n===5){
+      var sk=document.getElementById('skel-t'+n);
+      var ifr=document.querySelector('#t'+n+' iframe');
+      if(sk && ifr && ifr.dataset.loaded!=='1') sk.classList.add('on');
+    }
+    broadcastTheme();
+  }
+
+  /* ---------- #9 无障碍：导航键盘 ---------- */
+  function initA11yNav(){
+    var nav=document.querySelector('.nav'); if(!nav) return;
+    nav.setAttribute('role','tablist');
+    var items=nav.querySelectorAll('.nav-item');
+    for(var i=0;i<items.length;i++){
+      (function(it,idx){
+        it.setAttribute('role','tab');
+        it.setAttribute('aria-controls','t'+(idx+1));
+        var on=it.classList.contains('on');
+        it.setAttribute('aria-selected', on?'true':'false');
+        it.setAttribute('tabindex', on?'0':'-1');
+      })(items[i], i);
+    }
+    nav.addEventListener('keydown', function(e){
+      var keys=['ArrowRight','ArrowLeft','Home','End'];
+      if(keys.indexOf(e.key)<0) return;
+      var list=Array.prototype.slice.call(nav.querySelectorAll('.nav-item'));
+      var idx=list.indexOf(document.activeElement);
+      if(idx<0) idx=0;
+      var ni=idx;
+      if(e.key==='ArrowRight') ni=(idx+1)%list.length;
+      else if(e.key==='ArrowLeft') ni=(idx-1+list.length)%list.length;
+      else if(e.key==='Home') ni=0;
+      else if(e.key==='End') ni=list.length-1;
+      e.preventDefault();
+      list[ni].focus(); list[ni].click();
+    });
+  }
+
+  /* ---------- #10 留资 ---------- */
+  function openLead(preset){
+    var m=document.getElementById('lead-modal'); if(!m) return;
+    if(preset && preset.need){ var ta=m.querySelector('#lead-need'); if(ta) ta.value=preset.need; }
+    m.classList.add('on');
+    setTimeout(function(){ var f=m.querySelector('#lead-name'); if(f&&f.focus) f.focus(); }, 60);
+  }
+  function closeLead(){ var m=document.getElementById('lead-modal'); if(m) m.classList.remove('on'); }
+  function submitLead(){
+    var m=document.getElementById('lead-modal'); if(!m) return;
+    var name=(m.querySelector('#lead-name').value||'').trim();
+    var company=(m.querySelector('#lead-company').value||'').trim();
+    var phone=(m.querySelector('#lead-phone').value||'').trim();
+    var need=(m.querySelector('#lead-need').value||'').trim();
+    var err=m.querySelector('#lead-err');
+    if(!name){ if(err) err.textContent='请填写您的称呼'; return; }
+    if(!validPhone(phone)){ if(err) err.textContent='请填写正确的11位手机号'; return; }
+    if(err) err.textContent='';
+    var data={name:name, company:company, phone:phone, need:need, ts:Date.now()};
+    try{ localStorage.setItem('sc-lead', JSON.stringify(data)); }catch(e){}
+    if(LEAD_ENDPOINT){
+      try{ fetch(LEAD_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)}); }catch(e){}
+    }else{
+      window.location.href=buildMailto(data);
+    }
+    closeLead();
+  }
+  window.__openLead=openLead;   // 供选型漏斗 CTA 调用
+
+  /* ---------- 初始化 ---------- */
+  function initEnhance(){
+    var saved=null; try{ saved=localStorage.getItem('sc-theme'); }catch(e){}
+    var pref=(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+    applyTheme(saved||pref);
+    [3,4,5].forEach(function(n){
+      var ifr=document.querySelector('#t'+n+' iframe');
+      var sk=document.getElementById('skel-t'+n);
+      if(!ifr) return;
+      var hide=function(){ ifr.dataset.loaded='1'; if(sk) sk.classList.remove('on'); };
+      try{ if(ifr.contentDocument && ifr.contentDocument.readyState==='complete'){ hide(); return; } }catch(e){}
+      if(ifr.addEventListener) ifr.addEventListener('load', hide);
+      setTimeout(hide, 3000);
+    });
+    initA11yNav();
+  }
+
+  /* 暴露到全局，供内联 onclick 与测试使用 */
+  window.swTab=swTab; window.toggleTheme=toggleTheme; window.applyTheme=applyTheme;
+  window.openLead=openLead; window.closeLead=closeLead; window.submitLead=submitLead;
+  window.broadcastTheme=broadcastTheme;
+  window.__enhance={ nextTheme:nextTheme, validPhone:validPhone, buildMailto:buildMailto,
+    toggleTheme:toggleTheme, applyTheme:applyTheme, openLead:openLead, closeLead:closeLead,
+    submitLead:submitLead, swTab:swTab, broadcastTheme:broadcastTheme,
+    initEnhance:initEnhance };
+
+  if(typeof document!=='undefined'){
+    if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded', initEnhance); }
+    else { initEnhance(); }
+  }
+})();
 </script>
 </body>
 </html>
