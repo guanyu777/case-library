@@ -598,7 +598,7 @@ const hikData = {
 
     name:'SC2000X系列 视觉传感器(AI)',url:'https://www.hikrobotics.com/cn/machinevision/visionproduct?typeId=38',
 
-    specs:{'定位':'AI入门(边缘学习)','分辨率':'130万~240万','传感器':'CMOS','快门':'全局','最大帧率':'75fps','AI能力':'⭐边缘学习:异常判断/种类识别/学习计数','通讯':'GigE千兆','防护':'IP65','应用':'防错检测/OCR/分类','软件':'SCMVS客户端','独有':'AI边缘学习模块(相机内训练)'},
+    specs:{'定位':'AI入门(边缘学习)','分辨率':'130万~240万','传感器':'CMOS','快门':'全局','最大帧率':'75fps','AI能力':'⭐边缘学习:异常判断/种类识别/学习计数','通讯':'100M Ethernet','防护':'IP65','应用':'防错检测/OCR/分类','软件':'SCMVS客户端','独有':'AI边缘学习模块(相机内训练)'},
 
     models:[
 
@@ -622,7 +622,7 @@ const hikData = {
 
     name:'SC3000/X系列 视觉传感器（主推SC3000X）',url:'https://www.hikrobotics.com/cn/machinevision/visionproduct?typeId=38&id=262',
 
-    specs:{'定位':'高性能AI视觉传感器（主推SC3000X系列）','分辨率范围':'130万~600万','传感器':'CMOS,全局快门','像元尺寸':'3.45μm(3016/3030)/3.2μm(3050)','靶面':'1/2.9″~1/1.45″','最大帧率':'100fps','AI能力':'⭐SC3000X主推：边缘学习 / 学习OCR / 深度学习（异常检测/OCR/HDR）','通讯':'100M Ethernet','防护':'IP67','功耗':'48W max','应用':'3C/汽车/锂电/半导体','独有':'RGBW四色光源/偏振/红外镜头罩/180°旋转尾线','软件':'SCMVS客户端','主推型号':'MV-SC3020X / 3030X / 3050X / 3060X（边缘学习·学习OCR·深度学习）'},
+    specs:{'定位':'高性能AI视觉传感器（主推SC3000X系列）','分辨率范围':'130万~600万','传感器':'CMOS,全局快门','像元尺寸':'3.45μm','靶面':'1/2.9″~1/1.45″','最大帧率':'100fps','AI能力':'⭐SC3000X主推：边缘学习 / 学习OCR / 深度学习（异常检测/OCR/HDR）','通讯':'100M Ethernet','防护':'IP67','功耗':'48W max','应用':'3C/汽车/锂电/半导体','独有':'RGBW四色光源/偏振/红外镜头罩/180°旋转尾线','软件':'SCMVS客户端','主推型号':'MV-SC3020X / 3030X / 3050X / 3060X（边缘学习·学习OCR·深度学习）'},
 
     models:[
 
@@ -888,7 +888,7 @@ const hikData = {
 
   sc6500: {
 
-    name:'SC6500系列 半导体晶圆OCR智能相机',url:'https://www.hikrobotics.com/en/news/newsdetail?id=88',
+    name:'SC6500系列 半导体晶圆OCR智能相机',url:'https://www.hikrobotics.com/cn/news/newsdetail?id=43',
 
     specs:{'定位':'半导体晶圆信息读取专用','分辨率范围':'81万~160万','传感器':'CMOS,全局快门','像元尺寸':'3.45μm','通讯':'GigE千兆','AI能力':'⭐VM完整版+140+算法+半导体SEMI标准OCR','存储':'8GB RAM/64GB','防护':'IP40','应用':'半导体晶圆ID/DM码/QR码/Barcode','独有':'红色LED/明暗视场组合/抗振动抗冲击'},
 
@@ -922,7 +922,7 @@ const hikLinks = {
 
   sc6000:{site:'https://www.hikrobotics.com/cn/machinevision/visionproduct?typeId=38',doc:'https://docs.qq.com/aio/DTHVtbHNpcHFVd0JI'},
 
-  sc6500:{site:'https://www.hikrobotics.com/en/news/newsdetail?id=88',doc:'https://docs.qq.com/aio/DTHVtbHNpcHFVd0JI'}
+  sc6500:{site:'https://www.hikrobotics.com/cn/news/newsdetail?id=43',doc:'https://docs.qq.com/aio/DTHVtbHNpcHFVd0JI'}
 
 };
 
@@ -1052,7 +1052,7 @@ function buildModelDetailCard(key, m, lks){
 
   const model=m[0],res=m[1]||'-',focalStr=m[6]||'-';
 
-  const colNames={1:'分辨率',2:'像元/传感器',3:'靶面/快门',4:'帧率(fps)',5:'黑白/彩色',6:'焦距',7:'调焦方式',8:'AI/能力'};
+  const colNames = (key==='sc2000x') ? {1:'分辨率',2:'传感器',3:'快门',4:'帧率(fps)',5:'黑白/彩色',6:'焦距',7:'AI/能力'} : (m.length>=9 ? {1:'分辨率',2:'像元/传感器',3:'靶面/快门',4:'帧率(fps)',5:'黑白/彩色',6:'焦距',7:'调焦方式',8:'AI/能力'} : {1:'分辨率',2:'像元/传感器',3:'靶面/快门',4:'帧率(fps)',5:'黑白/彩色',6:'焦距',7:'AI/能力'});
 
   let h=`<div class="model-detail-card"><div class="mdc-title">📷 ${model}</div><div class="mdc-body">`;
 
