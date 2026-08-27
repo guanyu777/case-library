@@ -236,8 +236,6 @@ const hikData = {
       ['MV-SC2016EM-08S-WBN','1408×1024','CMOS','-','60','黑白','8mm','手动','有无/计数/OCR'],
       ['MV-SC2016EM-12S-WBN','1408×1024','CMOS','-','60','黑白','12.4mm','手动','有无/计数/OCR'],
       ['MV-SC2016EM-15S-WBN','1408×1024','CMOS','-','60','黑白','14.8mm','手动','有无/计数/OCR'],
-      ['MV-SC2016EC-03S-MED','1408×1024','CMOS','-','40','彩色','3mm','手动','有无/计数/OCR'],
-      ['MV-SC2016EC-06S-MED','1408×1024','CMOS','-','40','彩色','6mm','手动','有无/计数/OCR'],
       ['MV-SC2016EC-08S-WBN','1408×1024','CMOS','-','60','彩色','8mm','手动','有无/计数/OCR'],
       ['MV-SC2016EC-08S-WBN-S','1408×1024','CMOS','-','60','彩色','8mm','手动','有无/计数/OCR'],
       ['MV-SC2016EC-12S-WBN','1408×1024','CMOS','-','60','彩色','12.4mm','手动','有无/计数/OCR'],
@@ -296,11 +294,9 @@ const hikData = {
     ]
   },
   sc3000: {
-    name:'SC3000系列 视觉传感器',url:'https://www.hikrobotics.com/cn/machinevision/visionproduct?typeId=38&id=262',
-    specs:{'定位':'高性能AI视觉传感器','分辨率范围':'130万~500万','传感器':'CMOS,全局快门','像元尺寸':'3.45μm(3016/3030)/3.2μm(3050)','靶面':'1/2.9″~1/1.45″','最大帧率':'100fps','AI能力':'⭐边缘学习:异常检测/OCR/HDR','通讯':'100M Ethernet','防护':'IP67','功耗':'48W max','应用':'3C/汽车/锂电/半导体','独有':'RGBW四色光源/偏振/红外镜头罩/180°旋转尾线','软件':'SCMVS客户端'},
+    name:'SC3000/X系列 视觉传感器（主推SC3000X）',url:'https://www.hikrobotics.com/cn/machinevision/visionproduct?typeId=38&id=262',
+    specs:{'定位':'高性能AI视觉传感器（主推SC3000X系列）','分辨率范围':'130万~500万','传感器':'CMOS,全局快门','像元尺寸':'3.45μm(3016/3030)/3.2μm(3050)','靶面':'1/2.9″~1/1.45″','最大帧率':'100fps','AI能力':'⭐SC3000X主推：边缘学习 / 学习OCR / 深度学习（异常检测/OCR/HDR）','通讯':'100M Ethernet','防护':'IP67','功耗':'48W max','应用':'3C/汽车/锂电/半导体','独有':'RGBW四色光源/偏振/红外镜头罩/180°旋转尾线','软件':'SCMVS客户端','主推型号':'MV-SC3020X / 3030X / 3050X / 3060X（边缘学习·学习OCR·深度学习）'},
     models:[
-      ['MV-SC3013XC-05M-MED','1216×1024','3.45μm','1/2.9″','100','彩色','5mm','机械自动','异常检测/OCR/HDR'],
-      ['MV-SC3013XC-06M-MED','1216×1024','3.45μm','1/2.9″','100','彩色','6mm','机械自动','异常检测/OCR/HDR'],
       ['MV-SC3013XM-08M-WBN','1216×1024','3.45μm','1/2.9″','60','黑白','8mm','机械自动','有无/计数/OCR'],
       ['MV-SC3013XC-08M-WBN','1216×1024','3.45μm','1/2.9″','60','彩色','8mm','机械自动','有无/计数/OCR'],
       ['MV-SC3013XM-12M-WBN','1216×1024','3.45μm','1/2.9″','60','黑白','12mm','机械自动','有无/计数/OCR'],
@@ -319,7 +315,6 @@ const hikData = {
       ['MV-SC3020XC-08M-WBN','1536×1264','-','-','100','彩色','8mm','机械自动','边缘学习/异常检测'],
       ['MV-SC3020XC-12M-WBN','1536×1264','-','-','100','彩色','12mm','机械自动','边缘学习/异常检测'],
       ['MV-SC3020XC-16M-WBN','1536×1264','-','-','100','彩色','16mm','机械自动','边缘学习/异常检测'],
-      ['MV-SC3030XC-05M-MED','2048×1536','3.45μm','1/1.7″','40','彩色','5mm','机械自动','边缘学习/异常检测/OCR/HDR'],
       ['MV-SC3030XM-08M-WBN','2048×1536','3.45μm','1/1.7″','40','黑白','8mm','机械自动','边缘学习/异常检测/OCR'],
       ['MV-SC3030XC-08M-WBN','2048×1536','3.45μm','1/1.7″','40','彩色','8mm','机械自动','边缘学习/异常检测/OCR'],
       ['MV-SC3030XM-12M-WBN','2048×1536','3.45μm','1/1.7″','40','黑白','12mm','机械自动','边缘学习/异常检测/OCR'],
@@ -457,7 +452,7 @@ const hikLinks = {
 const compData = [
   {
     id:'keyence',brand:'基恩士 KEYENCE',region:'intl',logo:'#e8600a',logoText:'K',
-    counterpart:'IV4→SC3000; VS→SC6000',
+    counterpart:'IV4→SC3000/X; VS→SC6000',
     reason:'VS系列对标SC6000(同为旗舰级,最高2500万像素);VS优势:ZoomTrax光学变焦19组镜头(免更换镜头)+ESD-Safe+PoE;海康优势:VM完整版140+视觉工具+30+通讯协议(FINS/KV/SLMP)+外接显示器+外接光源控制',
     url:'https://www.keyence.com.cn/products/vision/vision-sys/vs/',
     series:[
@@ -518,8 +513,8 @@ const compData = [
   },
   {
     id:'cognex',brand:'康耐视 Cognex',region:'intl',logo:'#2563eb',logoText:'C',
-    counterpart:'IS3900→SC6000; IS3800→SC5000X/SC6000; IS2800→SC3000; IS8900→SC2000X/SC3000; IS6900→SC6000; IS1740→SC6500; D900→SC5000X',
-    reason:'3900(25MP+Qualcomm AI)对标SC6000旗舰;3800对标SC5000X/SC6000;2800对标SC3000;8900超紧凑对标SC2000X;6900(GPU控制器型)对标SC6000;1740晶圆OCR对标SC6500半导体;D900对标SC5000X深度版。海康优势:VM平台+内置AI边缘学习+FINS/SLMP+30+协议;康耐视优势:ViDi深度学习+液态镜头1800M次+Qualcomm/NVIDIA AI芯片+全球30000+晶圆装机量',
+    counterpart:'IS3900→SC6000; IS3800→SC5000X/SC6000; IS2800→SC3000/X; IS8900→SC2000X/SC3000/X; IS6900→SC6000; IS1740→SC6500; D900→SC5000X',
+    reason:'3900(25MP+Qualcomm AI)对标SC6000旗舰;3800对标SC5000X/SC6000;2800对标SC3000/X;8900超紧凑对标SC2000X;6900(GPU控制器型)对标SC6000;1740晶圆OCR对标SC6500半导体;D900对标SC5000X深度版。海康优势:VM平台+内置AI边缘学习+FINS/SLMP+30+协议;康耐视优势:ViDi深度学习+液态镜头1800M次+Qualcomm/NVIDIA AI芯片+全球30000+晶圆装机量',
     url:'https://www.cognex.com/products/machine-vision/2d-machine-vision-systems',
     series:[
       {name:'In-Sight 3900(高性能AI旗舰 ⭐2026新品)',searchKeys:['is3900','is3901','is3905','is3916','is3925','3900','3901','3905','3916','3925'],
@@ -623,7 +618,7 @@ const compData = [
   },
   {
     id:'smartmore',brand:'思谋科技 SmartMore',region:'cn',logo:'#7c3aed',logoText:'S',
-    counterpart:'VN2000→SC2000X/SC3000; VN4000→SC3000X/SC5000X',
+    counterpart:'VN2000→SC2000X/SC3000/X; VN4000→SC3000X/SC5000X',
     reason:'思谋优势:液态调焦+Cube-A毫秒变焦+AI二分类+全协议(MELSEC/SLMP);海康对标:SC3000X+边缘学习+VM平台',
     url:'https://cn.smartmore.com/',
     series:[
@@ -640,7 +635,7 @@ const compData = [
   },
   {
     id:'opt',brand:'奥普特 OPT',region:'cn',logo:'#16a34a',logoText:'O',
-    counterpart:'SCB1→SC2000X/SC3000; SCA1→SC3000X/SC5000X; SCA2→SC5000X/SC6000',
+    counterpart:'SCB1→SC2000X/SC3000/X; SCA1→SC3000X/SC5000X; SCA2→SC5000X/SC6000',
     reason:'OPT全链条自研+HDMI直连是差异化优势;海康对标:更多AI模块(边缘学习)+更好通讯(FINS/KV/SLMP)+IP67 vs IP62',
     url:'https://www.optmv.com/',
     series:[
@@ -666,7 +661,7 @@ const compData = [
   },
   {
     id:'huarui',brand:'华睿科技 Huarui',region:'cn',logo:'#0d9488',logoText:'H',
-    counterpart:'SS3000→SC2000X; SS4000→SC3000; SS5000→SC3000X/SC5000X',
+    counterpart:'SS3000→SC2000X; SS4000→SC3000/X; SS5000→SC3000X/SC5000X',
     reason:'华睿SS5000电动调焦+AI芯片+4路分区光源;海康对标:全系全局快门(vs X86卷帘)+FINS/KV/SLMP+VM平台+IP67(vs IP65)',
     url:'https://www.huarui.com/',
     series:[
