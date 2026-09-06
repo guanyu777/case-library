@@ -125,6 +125,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Micr
 <div class="page-tabs">
   <div class="page-tab active" onclick="showPanel('sel',this)">① 智能选型器</div>
   <div class="page-tab" onclick="showPanel('ver',this)">② 选型验算器</div>
+  <div class="page-tab" onclick="showPanel('rev',this)">③ 镜头焦距反算器</div>
+  <div class="page-tab" onclick="showPanel('dof',this)">④ 景深估算</div>
 </div>
 
 <div class="page-content">
@@ -257,6 +259,101 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Micr
   <div id="ver-result" class="results"></div>
 </div>
 
+<!-- ============ ③ 焦距反算器 ============ -->
+<div class="panel" id="panel-rev">
+  <div class="col-panel"><div class="col-header">🔭 已知视野/距离/像元，反算镜头焦距</div><div class="col-body">
+    <div class="form-grid">
+      <div class="fld">
+        <label>所需视野宽 Fw (mm)</label>
+        <input id="rev-fw" type="number" step="1" min="1" value="100">
+        <span class="hint">被测区域横向长度</span>
+      </div>
+      <div class="fld">
+        <label>所需视野高 Fh (mm)</label>
+        <input id="rev-fh" type="number" step="1" min="1" value="80">
+        <span class="hint">被测区域纵向高度</span>
+      </div>
+      <div class="fld">
+        <label>工作距离 WD (mm)</label>
+        <input id="rev-wd" type="number" step="1" min="1" value="200">
+        <span class="hint">镜头前端到工件距离</span>
+      </div>
+      <div class="fld">
+        <label>传感器</label>
+        <select id="rev-sensor" onchange="syncSensor()"></select>
+        <span class="hint">来自 SC 系列常见传感器（含官方像元/靶面）</span>
+      </div>
+      <div class="fld">
+        <label>像元尺寸 (μm)</label>
+        <input id="rev-pxum" type="number" step="0.01" min="0.1" value="3.45">
+        <span class="hint">随传感器自动填写，可手动改</span>
+      </div>
+      <div class="fld">
+        <label>镜头接口</label>
+        <select id="rev-mount">
+          <option value="M12">M12-mount（一体镜头款 / SC3000 以下）</option>
+          <option value="C">C-Mount（SC5000X/SC6000/SC6500）</option>
+        </select>
+      </div>
+      <div class="fld">
+        <label>最小特征 mm（可选）</label>
+        <input id="rev-minfeat" type="number" step="0.001" min="0" value="0.1">
+        <span class="hint">用于校核「反算焦距下精度是否达标」</span>
+      </div>
+    </div>
+    <div class="row-inline" style="margin-top:6px">
+      <button class="btn btn-primary" onclick="runReverse()">🎯 计算推荐焦距</button>
+      <button class="btn btn-ghost" onclick="clearRev()">✕ 清空</button>
+    </div>
+    <div class="note">💡 公式：<b>焦距 f = WD × SensorH / Fh</b>（基于小孔成像）。结果按镜头接口筛出海康常用焦距档（短焦/标准/长焦各一档），并反算实际精度。若精度不足，会自动建议「缩短 WD」或「换更高分辨率传感器」。</div>
+  </div></div>
+  <div id="rev-result" class="results"></div>
+</div>
+
+<!-- ============ ④ 景深估算 ============ -->
+<div class="panel" id="panel-dof">
+  <div class="col-panel"><div class="col-header">📏 景深估算（基于薄透镜公式）</div><div class="col-body">
+    <div class="form-grid">
+      <div class="fld">
+        <label>镜头焦距 f (mm)</label>
+        <input id="dof-focal" type="number" step="0.5" min="2" value="12">
+      </div>
+      <div class="fld">
+        <label>对焦工作距离 s (mm)</label>
+        <input id="dof-s" type="number" step="1" min="10" value="300">
+        <span class="hint">镜头调到清晰的位置</span>
+      </div>
+      <div class="fld">
+        <label>光圈 F 数</label>
+        <input id="dof-F" type="number" step="0.1" min="1.4" value="2.8">
+        <span class="hint">定焦镜头常见 2.0/2.8/4.0；C口工业镜头可达 1.4</span>
+      </div>
+      <div class="fld">
+        <label>允许弥散圆 δ (mm)</label>
+        <input id="dof-delta" type="number" step="0.005" min="0.001" value="0.04">
+        <span class="hint">默认 0.04mm（≈ 像元 40μm）；像素小则取更小</span>
+      </div>
+      <div class="fld">
+        <label>靶面尺寸</label>
+        <select id="dof-sensor">
+          <option value="1/3">1/3″</option>
+          <option value="1/2.9" selected>1/2.9″（SC3016/SC6016/SC3050XM/SC6016V2）</option>
+          <option value="2/3">2/3″（SC5050/SC5000X 5MP）</option>
+          <option value="1/1.45">1/1.45″（SC6000 SC6050）</option>
+          <option value="1.1">1.1″（SC6000 SC6120/SC6250）</option>
+          <option value="1">1″（SC6000 SC6250）</option>
+        </select>
+      </div>
+    </div>
+    <div class="row-inline" style="margin-top:6px">
+      <button class="btn btn-primary" onclick="runDof()">📐 估算景深</button>
+      <button class="btn btn-ghost" onclick="clearDof()">✕ 清空</button>
+    </div>
+    <div class="note">💡 公式：前景深 Df = F·δ·s² / (f² + F·δ·s)；后景深 Dr = F·δ·s² / (f² − F·δ·s)（需 f² > F·δ·s）。结果越短焦 + 越小光圈，景深越大。</div>
+  </div></div>
+  <div id="dof-result" class="results"></div>
+</div>
+
 <div class="foot">本工具为选型辅助，所有视野/精度数据基于海康官方规格书「物距-视野」实测表；最终选型请以官方规格书与样机实测为准。</div>
 </div>
 
@@ -316,8 +413,12 @@ const clamp = (v,a,b)=>Math.max(a,Math.min(b,v));
 function showPanel(p, el){
   document.querySelectorAll('.page-tab').forEach(t=>t.classList.remove('active'));
   el.classList.add('active');
-  document.getElementById('panel-sel').classList.toggle('active', p==='sel');
-  document.getElementById('panel-ver').classList.toggle('active', p==='ver');
+  ['sel','ver','rev','dof'].forEach(k=>{
+    const pn = document.getElementById('panel-'+k);
+    if(pn) pn.classList.toggle('active', p===k);
+  });
+  if(p==='rev' && !document.getElementById('rev-sensor').options.length) fillSensors();
+  if(p==='dof' && !document.getElementById('dof-sensor').options.length) fillDofSensors();
 }
 function refreshDetectHint(){
   const d = DETECT[document.getElementById('sel-detect').value] || {};
@@ -492,6 +593,160 @@ function renderSelection(list, ctx){
 }
 
 // ==================== 验算器 ====================
+// ==================== ③ 焦距反算器 ====================
+// 常见传感器表(像元 + 靶面高度像素近似)
+const REV_SENSORS = [
+ {id:'SC1003',label:'SC1000 (640×480, 3.45μm, 定焦3mm)', px:3.45, res:[640,480]},
+ {id:'SC2004',label:'SC2000E 704×540 3.45μm', px:3.45, res:[704,540]},
+ {id:'SC2013',label:'SC2000X 1280×1024 3.45μm (4mm M12-mount)', px:3.45, res:[1280,1024]},
+ {id:'SC2016',label:'SC2000E 1408×1024 3.45μm', px:3.45, res:[1408,1024]},
+ {id:'SC2023',label:'SC2000X 1920×1280 3.45μm', px:3.45, res:[1920,1284]},
+ {id:'SC3016',label:'SC3000 1408×1024 3.45μm 1/2.9″', px:3.45, res:[1408,1024]},
+ {id:'SC3050M',label:'SC3000 2432×2048 3.45μm 1/1.45″', px:3.45, res:[2432,2048]},
+ {id:'SC5020',label:'SC5000X 1600×1216 3.45μm 1/2.3″', px:3.45, res:[1600,1216]},
+ {id:'SC5050',label:'SC5000X 2432×2048 3.45μm 2/3″', px:3.45, res:[2432,2048]},
+ {id:'SC5100',label:'SC5000X 4096×2816 2.0μm 1/1.8″', px:2.0, res:[4096,2816]},
+ {id:'SC5120',label:'SC5000X 4096×2944 2.4μm 1/1.8″', px:2.4, res:[4096,2944]},
+ {id:'SC6016',label:'SC6000 1408×1024 3.45μm 1/2.9″', px:3.45, res:[1408,1024]},
+ {id:'SC6050',label:'SC6000 2432×2048 3.45μm 1/1.45″', px:3.45, res:[2432,2048]},
+ {id:'SC6120',label:'SC6000 4096×2944 3.45μm 1.1″', px:3.45, res:[4096,2944]},
+ {id:'SC6250',label:'SC6000 5120×5120 2.5μm 1.1″', px:2.5, res:[5120,5120]},
+ {id:'SC6500P',label:'SC6500P 1408×576 3.45μm 1/3.4″ (waferID)', px:3.45, res:[1408,576]},
+];
+const REV_FOCALS = {
+ M12:[5,6,8,12,16],
+ C:[8,12,16,25,35,50,75]
+};
+function fillSensors(){
+ const sel = document.getElementById('rev-sensor');
+ REV_SENSORS.forEach(function(s,i){
+  const o = document.createElement('option');
+  o.value = s.id; o.textContent = s.label; o.dataset.px = s.px; o.dataset.rw = s.res[0]; o.dataset.rh = s.res[1];
+  sel.appendChild(o);
+ });
+ sel.value = 'SC2016';
+ syncSensor();
+}
+function syncSensor(){
+ const o = document.getElementById('rev-sensor').selectedOptions[0];
+ if(!o) return;
+ document.getElementById('rev-pxum').value = o.dataset.px;
+}
+function clearRev(){ document.getElementById('rev-result').innerHTML=''; }
+
+function runReverse(){
+ const fw = parseFloat(document.getElementById('rev-fw').value)||100;
+ const fh = parseFloat(document.getElementById('rev-fh').value)||80;
+ const wd = parseFloat(document.getElementById('rev-wd').value)||200;
+ const pxum = parseFloat(document.getElementById('rev-pxum').value)||3.45;
+ const mount = document.getElementById('rev-mount').value;
+ const minFeat = parseFloat(document.getElementById('rev-minfeat').value)||0;
+ const o = document.getElementById('rev-sensor').selectedOptions[0];
+ const rh = parseInt(o.dataset.rh)||1024;
+ const rw = parseInt(o.dataset.rw)||1408;
+ const sensorH_mm = pxum * 1e-3 * rh;
+ const sensorW_mm = pxum * 1e-3 * rw;
+ // 焦距 f = WD * Sensor / FOV, FOV 取高度(更严)反算
+ const fH = wd * sensorH_mm / fh;
+ const fW = wd * sensorW_mm / fw;
+ const fIdeal = Math.max(fH, fW); // 取较严者
+ // 在镜头列表中找最接近的 3 档(短焦/标准/长焦)
+ const list = REV_FOCALS[mount] || REV_FOCALS.M12;
+ const candidates = [];
+ for(let i=0;i<list.length;i++){
+  const f = list[i];
+  const fwCal = wd * sensorW_mm / f;
+  const fhCal = wd * sensorH_mm / f;
+  const pxCal = (pxum * 1e-3 * wd) / f; // mm/pixel
+  candidates.push({f, fw:fwCal, fh:fhCal, px:pxCal, kind: i===0?'短焦':(i===list.length-1?'长焦':'标准')});
+ }
+ // 找最接近 fIdeal 的
+ let bestIdx = 0, bestDiff = Math.abs(candidates[0].f - fIdeal);
+ for(let i=1;i<candidates.length;i++){
+  const d = Math.abs(candidates[i].f - fIdeal);
+  if(d < bestDiff){ bestDiff=d; bestIdx=i; }
+ }
+ const recIdx = bestIdx;
+ const rec = candidates[recIdx];
+ const short = candidates[0];
+ const mid = candidates[Math.floor((candidates.length-1)/2)] || candidates[1];
+ const longF = candidates[candidates.length-1];
+ // 精度校核
+ const precPass = minFeat>0 ? (rec.px*4 <= minFeat) : true;
+ const boxes = [
+  {label:'短焦 '+short.f+'mm', fw:short.fw, fh:short.fh, px:short.px, kind:'小工作距离/大视野'},
+  {label:'★推荐 '+rec.f+'mm', fw:rec.fw, fh:rec.fh, px:rec.px, kind:'平衡档(最接近理论值)'},
+  {label:'标准 '+mid.f+'mm', fw:mid.fw, fh:mid.fh, px:mid.px, kind:'折中视野'},
+  {label:'长焦 '+longF.f+'mm', fw:longF.fw, fh:longF.fh, px:longF.px, kind:'小特征/长工作距离'}
+ ];
+ const rows = boxes.map(function(b){
+  const ok = b.fw>=fw && b.fh>=fh;
+  const pxCls = minFeat>0 && (b.px*4>minFeat) ? 'fail' : 'pass';
+  return '<tr><td><b>'+b.label+'</b><br><span style="font-size:.7em;color:var(--st)">'+b.kind+'</span></td>'
+    + '<td>'+fmtNum(b.fw)+'×'+fmtNum(b.fh)+' mm</td>'
+    + '<td>'+(ok?'<span class="pass">覆盖</span>':'<span class="fail">不足</span>')+'</td>'
+    + '<td class="'+pxCls+'">'+fmtPx(b.px)+' mm/pix</td></tr>';
+ }).join('');
+ const diag = (rec.fw<fw||rec.fh<fh) ? '<div class="note warn">⚠️ 推荐焦距 '+rec.f+'mm 视野 <b>不足</b>（需 '+fw+'×'+fh+'mm），建议：① 增大工作距离 ② 换更高分辨率传感器 ③ 用更短焦距缩短视野</div>'
+   : (!precPass ? '<div class="note warn">⚠️ 精度未达 N=4 像素要求，建议：① 减小工作距离 ② 换更高分辨率传感器 ③ 减小最小特征要求</div>'
+   : '<div class="note">✅ 推荐焦距 <b>'+rec.f+'mm</b>：视野覆盖 ('+fmtNum(rec.fw)+'×'+fmtNum(rec.fh)+'mm)，单像素精度 '+fmtPx(rec.px)+'mm，满足您设定的需求。</div>');
+ const box = document.getElementById('rev-result');
+ box.innerHTML = '<div class="col-panel"><div class="col-header">🎯 焦距反算结果（理论值 '+fIdeal.toFixed(2)+'mm → 推荐 <b>'+rec.f+'mm</b>）</div><div class="col-body">'
+   + '<div class="table-scroll"><table class="param-table"><thead><tr><th>焦距档</th><th>实际视野</th><th>覆盖'+fw+'×'+fh+'</th><th>单像素精度</th></tr></thead><tbody>'+rows+'</tbody></table></div>'
+   + diag + '</div></div>';
+}
+
+// ==================== ④ 景深估算 ====================
+const DOF_SENSOR = {
+ '1/3':  {w:4.8, h:3.6},
+ '1/2.9':{w:5.6, h:4.2},
+ '2/3':  {w:8.8, h:6.6},
+ '1/1.45':{w:10.5,h:7.8},
+ '1.1':  {w:13.1,h:9.8},
+ '1':    {w:12.8,h:9.6}
+};
+function fillDofSensors(){
+ // 传感器选项在 HTML 中已硬编码,这里仅初始化一次
+}
+function clearDof(){ document.getElementById('dof-result').innerHTML=''; }
+function runDof(){
+ const f = parseFloat(document.getElementById('dof-focal').value)||12;
+ const s = parseFloat(document.getElementById('dof-s').value)||300;
+ const F = parseFloat(document.getElementById('dof-F').value)||2.8;
+ const d = parseFloat(document.getElementById('dof-delta').value)||0.04;
+ const key = document.getElementById('dof-sensor').value;
+ const sens = DOF_SENSOR[key];
+ if(!sens){ document.getElementById('dof-result').innerHTML='<div class="note warn">未选传感器</div>'; return; }
+ // 公式: Df = F·δ·s² / (f² + F·δ·s); Dr = F·δ·s² / (f² − F·δ·s)
+ const fsq = f*f;
+ const Fds = F * d * s;
+ const cond = fsq > Fds; // 后景深可计算条件
+ const Df = (Fds * s) / (fsq + Fds);
+ const Dr = cond ? (Fds * s) / (fsq - Fds) : null;
+ const total = Dr ? (Df+Dr) : null;
+ const far = s + (Dr||0);
+ const near = s - Df;
+ // 光圈越小(数字越大)、焦距越短、距离越远 → 景深越大
+ let guide = '';
+ if(total===null){
+  guide = '<div class="note warn">⚠️ f² ≤ F·δ·s，后景深无穷远(对焦面后所有物体都在景深内)，说明光圈/工作距离组合下<b>景深覆盖全程</b>。</div>';
+ } else if(total < 2){
+  guide = '<div class="note warn">⚠️ 总景深仅 '+total.toFixed(2)+'mm，<b>对工件平整度/高度公差要求高</b>。建议：① 缩小光圈(F 数加大)② 缩短焦距 ③ 拉大工作距离。</div>';
+ } else if(total > 50){
+  guide = '<div class="note">✅ 总景深 '+total.toFixed(1)+'mm，很宽，对工件高度波动不敏感。</div>';
+ } else {
+  guide = '<div class="note">✅ 总景深 '+total.toFixed(1)+'mm（'+near.toFixed(1)+' ~ '+far.toFixed(1)+'mm），可接受大多数检测场景。</div>';
+ }
+ const table = '<div class="table-scroll"><table class="param-table"><thead><tr><th>项</th><th>值</th><th>说明</th></tr></thead><tbody>'
+  + '<tr><td>对焦距离 s</td><td>'+s+' mm</td><td>镜头调到清晰位置</td></tr>'
+  + '<tr><td>前景深 Df</td><td>'+Df.toFixed(2)+' mm</td><td>对焦面前可清晰范围</td></tr>'
+  + '<tr><td>后景深 Dr</td><td>'+(Dr===null?'∞(全程景深)':Dr.toFixed(2)+' mm')+'</td><td>对焦面后可清晰范围</td></tr>'
+  + '<tr><td>总景深 DoF</td><td>'+(total===null?'∞':total.toFixed(2)+' mm')+'</td><td>近端 '+near.toFixed(1)+'mm / 远端 '+far.toFixed(1)+'mm</td></tr>'
+  + '<tr><td>靶面</td><td>'+key+' ('+sens.w+'×'+sens.h+'mm)</td><td>仅参与远端参考(超景深时无影响)</td></tr>'
+  + '</tbody></table></div>';
+ document.getElementById('dof-result').innerHTML = '<div class="col-panel"><div class="col-header">📐 景深估算结果</div><div class="col-body">'+table+guide+'</div></div>';
+}
+
 function fillModels(){
   const sel = document.getElementById('ver-model');
   sel.innerHTML = '<option value="">— 选择型号 —</option>';
@@ -561,6 +816,7 @@ function runVerify(){
 
 fillModels();
 fillFocals();
+fillSensors();
 
 // ---- 接收网页 AI 助手的预填消息（跨 iframe 联动）----
 window.addEventListener('message', function(e){
