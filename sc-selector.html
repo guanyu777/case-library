@@ -109,14 +109,14 @@ details.adv .grid{margin-top:10px}
 
   <!-- 选型步骤引导：重点是怎么选型 -->
   <div class="steps">
-    <div class="step"><span class="n">1</span><h3>确认检测需求</h3><p>勾选项目需要的检测类型（可多选）。涉及深度学习 / OCR / 医药检测会优先推荐 AI 相机。</p></div>
-    <div class="step"><span class="n">2</span><h3>填写安装条件</h3><p>输入工作距离、目标宽度、目标高度。这三项决定视野与精度，是选型核心。</p></div>
-    <div class="step"><span class="n">3</span><h3>查看推荐型号</h3><p>与海康官方工具同款规则：为每个型号选取刚好覆盖视野的最长焦距，按视野富余度升序排列，并给出分辨率、焦距、外形尺寸等关键参数。</p></div>
+    <div class="step"><span class="n">1</span><h3>确认检测需求</h3><p>勾选检测类型（可多选，取系列交集）。不同需求对应官方推荐系列——如缺陷检测仅 SC5000X/SC6000，深度学习仅 SC3000/SC5000X/SC6000。</p></div>
+    <div class="step"><span class="n">2</span><h3>填写安装条件</h3><p>输入工作距离、目标宽度、目标高度。这三项决定视野与精度，是选型核心；各型号官方最小/最大工作距离不满足的会自动剔除。</p></div>
+    <div class="step"><span class="n">3</span><h3>查看推荐型号</h3><p>与海康官方工具同款规则：为每个型号选取刚好覆盖视野的最长焦距，按视野富余度升序，只给最贴合的少量型号。</p></div>
   </div>
 
   <div class="card"><div class="card-h">① 检测需求（对应海康官方 12 类）</div><div class="card-b">
     <div class="chips" id="sel-detect"></div>
-    <div class="note" id="sel-detect-note">💡 可多选。未勾选时默认按「有无检测」推荐；选中「深度学习 / IVD医药检测」将强制推荐 AI 相机。</div>
+    <div class="note" id="sel-detect-note">💡 可多选，多选项取系列交集。未勾选时默认按「有无检测」推荐；选「深度学习」推荐 AI 相机。</div>
   </div></div>
 
   <div class="card"><div class="card-h">② 安装条件（选型核心三参数）</div><div class="card-b">
@@ -140,7 +140,7 @@ details.adv .grid{margin-top:10px}
       <button class="btn btn-p" onclick="runSelection()">🚀 智能选型</button>
       <button class="btn btn-g" onclick="document.getElementById('sel-result').innerHTML=''">✕ 清空结果</button>
     </div>
-    <div class="note">💡 推荐算法与海康官方选型工具一致（确定性几何计算，非打分）：对每个型号，在其镜头焦距档中选取「刚好覆盖目标视野的最长焦距」，按视野富余度升序推荐；-00C- C口款按官方口径以理论焦距（WD×传感器宽÷目标宽）单独列示。视野数据来自海康官方规格书实测物距-视野表。</div>
+    <div class="note">💡 选型口径与海康官方工具一致（确定性几何计算，非打分）：① 型号池 = 官方选型工具收录的 77 个型号；② 检测需求 → 官方推荐系列过滤；③ 官方最小/最大工作距离约束；④ 每型号选取「刚好覆盖目标视野的最长焦距」，按视野富余度升序，只展示最贴合的 12 个。-00C- C口款按官方口径以理论焦距（WD×传感器宽÷目标宽）单独列示。视野数据来自海康官方规格书实测物距-视野表。</div>
   </div></div>
 
   <div id="sel-result" class="res"></div>
@@ -179,6 +179,7 @@ const C0_DB=[{"m":"MV-SC5020XC-00C-NNN","b":"SC5020XC","rw":1600,"rh":1216,"fps"
 </script>
 
 <script>
+const OFF_POOL=[{"off":"SC1003C-03S-NR","cam":"MV-SC1003C-03S-WBN-NR","min":120,"max":120,"c0":false,"s":"SC1000"},{"off":"SC1003C-03S-SR","cam":"MV-SC1003C-03S-WBN-SR","min":240,"max":240,"c0":false,"s":"SC1000"},{"off":"SC1003M-03S-NR","cam":"MV-SC1003M-03S-WBN-NR","min":120,"max":120,"c0":false,"s":"SC1000"},{"off":"SC1003M-03S-SR","cam":"MV-SC1003M-03S-WBN-SR","min":240,"max":240,"c0":false,"s":"SC1000"},{"off":"SC1008M-05S-NR","cam":"MV-SC1008M-05S-WBN-NR","min":120,"max":120,"c0":false,"s":"SC1000"},{"off":"SC1008M-05S-SR","cam":"MV-SC1008M-05S-WBN-SR","min":240,"max":240,"c0":false,"s":"SC1000"},{"off":"SC2004EC-08S","cam":"MV-SC2004EC-08","min":80,"max":null,"c0":false,"s":"SC2000"},{"off":"SC2004EC-12S","cam":"MV-SC2004EC-12","min":200,"max":null,"c0":false,"s":"SC2000"},{"off":"SC2004EC-15S","cam":"MV-SC2004EC-15","min":270,"max":null,"c0":false,"s":"SC2000"},{"off":"SC2004EM-06S","cam":"MV-SC2004EM-06S-WBN-Mini","min":40,"max":120,"c0":false,"s":"SC2000"},{"off":"SC2004EM-08S","cam":"MV-SC2004EM-08","min":80,"max":null,"c0":false,"s":"SC2000"},{"off":"SC2004EM-12S","cam":"MV-SC2004EM-12","min":200,"max":null,"c0":false,"s":"SC2000"},{"off":"SC2004EM-15S","cam":"MV-SC2004EM-15","min":270,"max":null,"c0":false,"s":"SC2000"},{"off":"SC2016EC-08S","cam":"MV-SC2016EC-08","min":80,"max":null,"c0":false,"s":"SC2000"},{"off":"SC2016EC-12S","cam":"MV-SC2016EC-12","min":200,"max":null,"c0":false,"s":"SC2000"},{"off":"SC2016EC-15S","cam":"MV-SC2016EC-15","min":270,"max":null,"c0":false,"s":"SC2000"},{"off":"SC2016EM-06S","cam":"MV-SC2016EM-06S-WBN-Mini","min":40,"max":120,"c0":false,"s":"SC2000"},{"off":"SC2016EM-08S","cam":"MV-SC2016EM-08","min":80,"max":null,"c0":false,"s":"SC2000"},{"off":"SC2016EM-12S","cam":"MV-SC2016EM-12","min":200,"max":null,"c0":false,"s":"SC2000"},{"off":"SC2016EM-15S","cam":"MV-SC2016EM-15","min":270,"max":null,"c0":false,"s":"SC2000"},{"off":"SC3013XC-08M","cam":"MV-SC3013XC-08","min":25,"max":null,"c0":false,"s":"SC3000"},{"off":"SC3013XC-12M","cam":"MV-SC3013XC-12M-WBN","min":60,"max":null,"c0":false,"s":"SC3000"},{"off":"SC3013XC-16M","cam":"MV-SC3013XC-16M-WBN","min":100,"max":null,"c0":false,"s":"SC3000"},{"off":"SC3013XM-08M","cam":"MV-SC3013XM-08","min":25,"max":null,"c0":false,"s":"SC3000"},{"off":"SC3013XM-12M","cam":"MV-SC3013XM-12M-WBN","min":60,"max":null,"c0":false,"s":"SC3000"},{"off":"SC3013XM-16M","cam":"MV-SC3013XM-16M-WBN","min":100,"max":null,"c0":false,"s":"SC3000"},{"off":"SC3016C-06M","cam":"MV-SC3016C-06","min":5,"max":null,"c0":false,"s":"SC3000"},{"off":"SC3016C-12M","cam":"MV-SC3016C-12","min":70,"max":null,"c0":false,"s":"SC3000"},{"off":"SC3016C-15M","cam":"MV-SC3016C-15","min":80,"max":null,"c0":false,"s":"SC3000"},{"off":"SC3016M-06M","cam":"MV-SC3016M-06","min":5,"max":null,"c0":false,"s":"SC3000"},{"off":"SC3016M-12M","cam":"MV-SC3016M-12","min":70,"max":null,"c0":false,"s":"SC3000"},{"off":"SC3016M-15M","cam":"MV-SC3016M-15","min":80,"max":null,"c0":false,"s":"SC3000"},{"off":"SC3030XC-08M","cam":"MV-SC3030XC-08","min":25,"max":null,"c0":false,"s":"SC3000"},{"off":"SC3030XC-12M","cam":"MV-SC3030XC-12","min":60,"max":null,"c0":false,"s":"SC3000"},{"off":"SC3030XC-16M","cam":"MV-SC3030XC-16","min":100,"max":null,"c0":false,"s":"SC3000"},{"off":"SC3030XM-08M","cam":"MV-SC3030XM-08","min":25,"max":null,"c0":false,"s":"SC3000"},{"off":"SC3030XM-12M","cam":"MV-SC3030XM-12","min":60,"max":null,"c0":false,"s":"SC3000"},{"off":"SC3030XM-16M","cam":"MV-SC3030XM-16","min":100,"max":null,"c0":false,"s":"SC3000"},{"off":"SC3050M-08M","cam":"MV-SC3050M-08M-WBN V4","min":25,"max":null,"c0":false,"s":"SC3000"},{"off":"SC3050M-12M","cam":"MV-SC3050M-12M-WBN V4","min":60,"max":null,"c0":false,"s":"SC3000"},{"off":"SC3050M-16M","cam":"MV-SC3050M-16M-WBN V4","min":90,"max":null,"c0":false,"s":"SC3000"},{"off":"SC3050XC-08M","cam":"MV-SC3050XC-08","min":25,"max":null,"c0":false,"s":"SC3000"},{"off":"SC3050XC-12M","cam":"MV-SC3050XC-12","min":60,"max":null,"c0":false,"s":"SC3000"},{"off":"SC3050XC-16M","cam":"MV-SC3050XC-16","min":100,"max":null,"c0":false,"s":"SC3000"},{"off":"SC3050XM-08M","cam":"MV-SC3050XM-08","min":25,"max":null,"c0":false,"s":"SC3000"},{"off":"SC3050XM-12M","cam":"MV-SC3050XM-12","min":60,"max":null,"c0":false,"s":"SC3000"},{"off":"SC3050XM-16M","cam":"MV-SC3050XM-16","min":100,"max":null,"c0":false,"s":"SC3000"},{"off":"SC5020XC-06M","cam":"MV-SC5020XC-06","min":25,"max":null,"c0":false,"s":"SC5000X"},{"off":"SC5020XC-12M","cam":"MV-SC5020XC-12","min":60,"max":null,"c0":false,"s":"SC5000X"},{"off":"SC5020XC-16M","cam":"MV-SC5020XC-16","min":100,"max":null,"c0":false,"s":"SC5000X"},{"off":"SC5020XM-06M","cam":"MV-SC5020XM-06","min":25,"max":null,"c0":false,"s":"SC5000X"},{"off":"SC5020XM-12M","cam":"MV-SC5020XM-12","min":60,"max":null,"c0":false,"s":"SC5000X"},{"off":"SC5020XM-16M","cam":"MV-SC5020XM-16","min":100,"max":null,"c0":false,"s":"SC5000X"},{"off":"SC5050XC-08M","cam":"MV-SC5050XC-08","min":25,"max":null,"c0":false,"s":"SC5000X"},{"off":"SC5050XC-12M","cam":"MV-SC5050XC-12","min":60,"max":null,"c0":false,"s":"SC5000X"},{"off":"SC5050XC-16M","cam":"MV-SC5050XC-16","min":100,"max":null,"c0":false,"s":"SC5000X"},{"off":"SC5050XM-08M","cam":"MV-SC5050XM-08","min":25,"max":null,"c0":false,"s":"SC5000X"},{"off":"SC5050XM-12M","cam":"MV-SC5050XM-12","min":60,"max":null,"c0":false,"s":"SC5000X"},{"off":"SC5050XM-16M","cam":"MV-SC5050XM-16","min":100,"max":null,"c0":false,"s":"SC5000X"},{"off":"SC6016C-00C","cam":"MV-SC6016C-00C-NNN/V2","min":5,"max":null,"c0":true,"s":"SC6000"},{"off":"SC6016C-06M","cam":"MV-SC6016C-06","min":100,"max":null,"c0":false,"s":"SC6000"},{"off":"SC6016C-12M","cam":"MV-SC6016C-12","min":100,"max":null,"c0":false,"s":"SC6000"},{"off":"SC6016C-16M","cam":"MV-SC6016C-16","min":100,"max":null,"c0":false,"s":"SC6000"},{"off":"SC6016M-06M","cam":"MV-SC6016M-06","min":100,"max":null,"c0":false,"s":"SC6000"},{"off":"SC6016M-12M","cam":"MV-SC6016M-12","min":100,"max":null,"c0":false,"s":"SC6000"},{"off":"SC6016M-16M","cam":"MV-SC6016M-16","min":100,"max":null,"c0":false,"s":"SC6000"},{"off":"SC6050C-00C","cam":"MV-SC6050C-00C-NNN/V2","min":5,"max":null,"c0":true,"s":"SC6000"},{"off":"SC6050C-08M","cam":"MV-SC6050C-08","min":100,"max":null,"c0":false,"s":"SC6000"},{"off":"SC6050C-12M","cam":"MV-SC6050C-12","min":100,"max":null,"c0":false,"s":"SC6000"},{"off":"SC6050C-16M","cam":"MV-SC6050C-16","min":100,"max":null,"c0":false,"s":"SC6000"},{"off":"SC6050M-00C","cam":"MV-SC6050M-00C-NNN/V2","min":5,"max":null,"c0":true,"s":"SC6000"},{"off":"SC6050M-08M","cam":"MV-SC6050M-08","min":100,"max":null,"c0":false,"s":"SC6000"},{"off":"SC6050M-12M","cam":"MV-SC6050M-12","min":100,"max":null,"c0":false,"s":"SC6000"},{"off":"SC6050M-16M","cam":"MV-SC6050M-16","min":100,"max":null,"c0":false,"s":"SC6000"},{"off":"SC6120C-00C","cam":"MV-SC6120C-00C-NNN","min":5,"max":null,"c0":true,"s":"SC6000"},{"off":"SC6120M-00C","cam":"MV-SC6120M-00C-NNN","min":5,"max":null,"c0":true,"s":"SC6000"},{"off":"SC6250M-00C","cam":"MV-SC6250M-00C-NNN","min":5,"max":null,"c0":true,"s":"SC6000"}];
 // ==================== 数据准备 ====================
 const byModel = {};
 CAM_DB.forEach(c => { (byModel[c.m] = byModel[c.m] || []).push(c); });
@@ -216,19 +217,21 @@ function fmtNum(n){ return (Math.round(n*100)/100).toLocaleString(); }
 function clamp(v,a,b){ return Math.max(a,Math.min(b,v)); }
 
 // ==================== 检测需求（对齐海康官方 12 类） ====================
+// 系列集合（对齐海康官方 conditionList 的系列划分）
+const ALL_SERIES = ['SC1000','SC2000','SC3000','SC5000X','SC6000'];
+// 检测需求 → 官方推荐系列（取自官方接口 tool/sc/condition 的 conditionText 字段）
 const DETECT = {
-  '有无检测':   {ai:false, N:3, aiTag:false},
-  '正反检测':   {ai:false, N:3, aiTag:false},
-  '数量检测':   {ai:false, N:3, aiTag:false},
-  '类别判断':   {ai:false, N:4, aiTag:false},
-  '尺寸检测':   {ai:false, N:4, aiTag:false},
-  '定位引导':   {ai:false, N:3, aiTag:false},
-  '颜色检测':   {ai:false, N:3, aiTag:false},
-  '角度检测':   {ai:false, N:4, aiTag:false},
-  'OCR识别':    {ai:false, N:5, aiTag:false},
-  '缺陷检测':   {ai:false, N:4, aiTag:false},
-  '深度学习':   {ai:true,  N:4, aiTag:true},
-  'IVD医药检测':{ai:true,  N:4, aiTag:true}
+  '有无检测':   {ai:false, N:3, aiTag:false, s:['SC1000','SC2000','SC3000','SC5000X','SC6000']},
+  '正反检测':   {ai:false, N:3, aiTag:false, s:['SC1000','SC2000','SC3000','SC5000X','SC6000']},
+  '数量检测':   {ai:false, N:3, aiTag:false, s:['SC1000','SC2000','SC3000','SC5000X','SC6000']},
+  '类别判断':   {ai:false, N:4, aiTag:false, s:['SC1000','SC2000','SC3000','SC5000X','SC6000']},
+  '尺寸检测':   {ai:false, N:4, aiTag:false, s:['SC1000','SC2000','SC3000','SC5000X','SC6000']},
+  '定位引导':   {ai:false, N:3, aiTag:false, s:['SC3000','SC5000X','SC6000']},
+  '颜色检测':   {ai:false, N:3, aiTag:false, s:['SC1000','SC2000','SC3000','SC5000X','SC6000']},
+  '角度检测':   {ai:false, N:4, aiTag:false, s:['SC1000','SC2000','SC3000','SC5000X','SC6000']},
+  'OCR识别':    {ai:false, N:5, aiTag:false, s:['SC2000','SC3000','SC5000X','SC6000']},
+  '缺陷检测':   {ai:false, N:4, aiTag:false, s:['SC5000X','SC6000']},
+  '深度学习':   {ai:true,  N:4, aiTag:true,  s:['SC3000','SC5000X','SC6000']}
 };
 function buildDetectChips(){
   const box = document.getElementById('sel-detect');
@@ -241,9 +244,12 @@ function toggleChip(el){
   el.classList.toggle('on');
   const sel = [...document.querySelectorAll('#sel-detect .chip.on')].map(c=>c.dataset.v);
   const hasAI = sel.some(k=>DETECT[k].aiTag);
-  document.getElementById('sel-detect-note').innerHTML = hasAI
-    ? '💡 已选含 <b>深度学习 / IVD医药检测</b>，将优先推荐 <b>AI 相机</b>。'
-    : '💡 可多选。未勾选时默认按「有无检测」推荐；选中「深度学习 / IVD医药检测」将强制推荐 AI 相机。';
+  let series = null;
+  sel.forEach(k=>{ const s=DETECT[k]&&DETECT[k].s; if(s) series = series ? series.filter(x=>s.includes(x)) : s.slice(); });
+  const sTxt = series ? ' → 官方推荐系列：<b>'+series.join(' / ')+'</b>' : '';
+  document.getElementById('sel-detect-note').innerHTML = '💡 可多选，多选项取系列交集。'
+    + (hasAI ? '已选 <b>深度学习</b>，将推荐 AI 相机。' : '')
+    + (sTxt || '未勾选时默认按「有无检测」推荐。');
 }
 
 // ==================== 选型器 ====================
@@ -256,9 +262,15 @@ function showPanel(p, el){
   });
 }
 
+const SHOW_LIMIT = 12;   // 首屏展示条数（官方同款口径：只给最贴合的少量型号）
+
 function runSelection(){
   const sel = [...document.querySelectorAll('#sel-detect .chip.on')].map(c=>c.dataset.v);
   const dt = sel.length ? sel : ['有无检测'];
+  // 检测需求 → 官方系列（多选取交集）
+  let series = null;
+  dt.forEach(d=>{ const s=DETECT[d]&&DETECT[d].s; if(s) series = series ? series.filter(x=>s.includes(x)) : s.slice(); });
+  if(!series || !series.length) series = ALL_SERIES.slice();
   let needAI=false, N=3;
   dt.forEach(d=>{ const cfg=DETECT[d]||{}; if(cfg.ai) needAI=true; if(cfg.N) N=Math.max(N,cfg.N); });
   const aiMode = document.getElementById('sel-ai').value;
@@ -272,55 +284,59 @@ function runSelection(){
   const color = document.getElementById('sel-color').value;
   const reqPx = minFeat>0 ? minFeat/N : null;
 
-  // ===== 官方同款规则：每个型号选「刚好覆盖目标的最长焦距」，按视野富余升序 =====
   const sIdx = b => { const i = SERIES_ORDER.findIndex(s=>String(b).startsWith(s)); return i<0?99:i; };
-  const cands = [];
-  const hasIVD = dt.includes('IVD医药检测');
-  for(const model of ALL_MODELS){
-    const meta0 = byModel[model][0];
-    if(meta0.nwd) continue; // SC1000 定焦款工作距离固定，与官方选型工具口径一致不参与推荐（可在验算页使用）
-    const isMED = /-MED/.test(model);
-    if(isMED && !hasIVD) continue; // MED 医疗专用款仅在勾选 IVD 医药检测时推荐
+  const pool = (typeof OFF_POOL !== 'undefined') ? OFF_POOL : [];
+  const c0map = {};
+  ((typeof C0_DB !== 'undefined') ? C0_DB : []).forEach(c=>{ c0map[c.m]=c; });
+
+  const grp = {}, c0 = [];
+  for(const p of pool){
+    if(series.indexOf(p.s) < 0) continue;                       // ① 检测需求 → 系列过滤（官方 conditionList）
+    if(typeof p.min === 'number' && wd < p.min) continue;       // ② 官方最小工作距离约束
+    if(typeof p.max === 'number' && wd > p.max) continue;       //    官方最大工作距离约束（定焦款 min=max）
+    if(p.c0){
+      const c = c0map[p.cam]; if(!c) continue;
+      if(color!=='any' && c.c!==color) continue;
+      if(reqFps>0 && c.fps<reqFps) continue;
+      const fTh = wd * c.sw / reqFW;                            // 官方口径：焦距=WD×传感器宽÷目标宽
+      const fh = fTh>0 ? wd * c.sh / fTh : 0;
+      const px = reqFW / c.rw;
+      if(reqPx!==null && px > reqPx) continue;
+      c0.push({model:c.m, b:c.b, f:Math.round(fTh*100)/100, r:{fw:reqFW, fh:fh, px:px},
+        margin:Math.min(reqFW/reqFW, reqFH>0?fh/reqFH:1), fps:c.fps, c:c.c, ai:1,
+        rw:c.rw, rh:c.rh, dim:c.dim||'', c0:true, fTh:true, s:p.s});
+      continue;
+    }
+    const rows = byModel[p.cam]; if(!rows || !rows.length) continue;
+    const meta0 = rows[0];
     if(color!=='any' && meta0.c!==color) continue;
     if(reqFps>0 && meta0.fps<reqFps) continue;
-    if(needAI && meta0.ai!==1 && !isMED) continue;
-    let best = null;
-    for(const f of focalsOf(model)){
-      const r = interp(model, f, wd);
+    if(needAI && meta0.ai!==1) continue;
+    // ③ 官方口径：同一基础型号（含色彩，如 SC3013XC）的各焦距档合并，只出「刚好覆盖目标的最长焦距」那一个
+    for(const f of focalsOf(p.cam)){
+      const r = interp(p.cam, f, wd);
       if(!r) continue;
       if(r.fw < reqFW || r.fh < reqFH) continue;
       if(reqPx!==null && r.px > reqPx) continue;
       const margin = Math.min(r.fw/reqFW, r.fh/reqFH);
-      if(!best || margin < best.margin - 1e-9) best = {f, r, margin};
+      const g = grp[meta0.b];
+      if(!g || margin < g.margin - 1e-9){
+        grp[meta0.b] = {model:p.cam, b:meta0.b, f:f, r:r, margin:margin,
+          fps:meta0.fps, c:meta0.c, ai:meta0.ai, rw:meta0.rw, rh:meta0.rh,
+          dim:meta0.dim||'', c0:false, fTh:false, s:p.s};
+      }
     }
-    if(!best) continue;
-    cands.push({model, b:meta0.b, f:best.f, r:best.r, margin:best.margin,
-      fps:meta0.fps, c:meta0.c, ai:meta0.ai, rw:meta0.rw, rh:meta0.rh,
-      dim:meta0.dim||'', c0:false, fTh:false});
   }
-  // ===== -00C- C口无镜头款：焦距=WD×传感器宽/目标宽（官方同款理论计算，放最后） =====
-  const c0db = (typeof C0_DB !== 'undefined') ? C0_DB : [];
-  const c0 = [];
-  for(const c of c0db){
-    if(color!=='any' && c.c!==color) continue;
-    if(reqFps>0 && c.fps<reqFps) continue;
-    const fTh = wd * c.sw / reqFW;
-    const fh = wd * c.sh / fTh;
-    const px = reqFW / c.rw;
-    if(reqPx!==null && px > reqPx) continue;
-    c0.push({model:c.m, b:c.b, f:Math.round(fTh*100)/100, r:{fw:reqFW, fh:fh, px:px},
-      margin:Math.min(reqFW/reqFW, fh/reqFH), fps:c.fps, c:c.c, ai:1, rw:c.rw, rh:c.rh,
-      dim:c.dim||'', c0:true, fTh:true});
-  }
+  const cands = Object.keys(grp).map(k=>grp[k]);
   c0.sort((a,b)=> sIdx(a.b)-sIdx(b.b) || (a.model<b.model?-1:1));
   const all = cands.concat(c0);
   all.sort(function(a,b){
-    if(a.c0 !== b.c0) return a.c0 ? 1 : -1;          // 标准款在前，00C理论款在后
-    if(Math.abs(a.margin-b.margin) > 1e-9) return a.margin - b.margin;  // 视野富余升序
+    if(a.c0 !== b.c0) return a.c0 ? 1 : -1;
+    if(Math.abs(a.margin-b.margin) > 1e-9) return a.margin - b.margin;
     if(sIdx(a.b) !== sIdx(b.b)) return sIdx(a.b) - sIdx(b.b);
     return a.model < b.model ? -1 : 1;
   });
-  renderSelection(all, {reqFW,reqFH,wd,needAI,N,minFeat,reqFps,total:ALL_MODELS.length});
+  renderSelection(all, {reqFW,reqFH,wd,needAI,N,minFeat,reqFps,series,total:pool.length});
 }
 
 function renderSelection(list, ctx){
@@ -329,7 +345,9 @@ function renderSelection(list, ctx){
     box.innerHTML = '<div class="empty"><div class="big">🔍</div>当前条件（WD '+ctx.wd+'mm / 视野 '+fmtNum(ctx.reqFW)+'×'+fmtNum(ctx.reqFH)+'mm）下没有可完全匹配的型号。<br>建议：放宽精度/视野要求、增大工作距离，或选择更高分辨率系列（SC50/SC60）。</div>';
     return;
   }
-  const rows = list.map(function(c,i){
+  const shown = list.slice(0, SHOW_LIMIT);
+  const rest  = list.slice(SHOW_LIMIT);
+  const rows = shown.map(function(c,i){
     const rp = c.rw ? c.rw+'×'+c.rh : '—';
     const colorTxt = c.c==='C' ? '彩色' : (c.c==='M'?'黑白':'—');
     const fTxt = c.fTh ? c.f.toFixed(2)+' mm（理论）' : c.f+' mm';
@@ -342,11 +360,25 @@ function renderSelection(list, ctx){
       + '<td>'+fmtNum(c.r.fw)+' × '+fmtNum(c.r.fh)+'</td>'
       + '<td class="'+margCls+'">'+marg+'%</td></tr>';
   }).join('');
-  box.innerHTML = '<div class="card"><div class="card-h">📋 选型结果（共 '+list.length+' 个匹配，按视野富余升序 = 最贴合优先）</div><div class="card-b">'
+  const restRows = rest.map(function(c,i){
+    const rp = c.rw ? c.rw+'×'+c.rh : '—';
+    const colorTxt = c.c==='C' ? '彩色' : (c.c==='M'?'黑白':'—');
+    const fTxt = c.fTh ? c.f.toFixed(2)+' mm（理论）' : c.f+' mm';
+    const marg = Math.round(c.margin*100);
+    const margCls = marg<=115 ? 'pass' : (marg>=180 ? 'fail' : '');
+    return '<tr><td>'+c.model+(c.ai?' <span class="badge b-ai">AI</span>':'')+'</td>'
+      + '<td>'+rp+'</td><td>'+fTxt+'</td><td>'+c.fps+' fps</td><td>'+colorTxt+'</td>'
+      + '<td style="max-width:220px;font-size:.82em">'+(c.dim||'—').replace(/\n/g,'<br>')+'</td>'
+      + '<td>'+fmtNum(c.r.fw)+' × '+fmtNum(c.r.fh)+'</td>'
+      + '<td class="'+margCls+'">'+marg+'%</td></tr>';
+  }).join('');
+
+  box.innerHTML = '<div class="card"><div class="card-h">📋 选型结果（'+list.length+' 个匹配，取最贴合的 '+shown.length+' 个 · 按视野富余升序）</div><div class="card-b">'
     + '<div style="overflow-x:auto"><table class="tbl"><thead><tr><th>智能相机型号</th><th>分辨率</th><th>焦距</th><th>最大帧率</th><th>颜色</th><th>外形尺寸</th><th>目标宽×高@'+ctx.wd+'mm</th><th>视野富余</th></tr></thead>'
     + '<tbody>'+rows+'</tbody></table></div>'
-    + '<div class="note">※ 选型规则与海康官方工具一致：为每个型号选取「刚好覆盖目标视野的最长焦距」，按视野富余度升序排列（富余越小越贴合，★为首选）；视野富余≥180% 标红提示冗余。视野为 '+ctx.wd+'mm 工作距离下按官方物距-视野表线性插值。SC1000 定焦款（工作距离固定 120/240mm）与官方口径一致不参与推荐，请用②选型验算单独核算。※ 标注（理论）的为 -00C- C口无镜头款：焦距=WD×传感器宽÷目标宽，理论计算值仅供参考，实际请搭配镜头选型工具确认。'
-    + (list.length>60 ? '仅展示前 60 条。' : '')
+    + (rest.length ? '<details style="margin-top:10px"><summary style="cursor:pointer;font-size:.9em;color:var(--pri)">展开其余 '+rest.length+' 个匹配型号</summary><div style="overflow-x:auto;margin-top:8px"><table class="tbl"><tbody>'+restRows+'</tbody></table></div></details>' : '')
+    + '<div class="note">※ <b>口径与海康官方选型工具一致</b>：型号池取官方收录的 '+ctx.total+' 个型号；按「检测需求 → 推荐系列」过滤（如缺陷检测仅 SC5000X/SC6000、深度学习仅 SC3000/SC5000X/SC6000）；按官方各型号最小/最大工作距离约束剔除不可用型号；再为每个型号选取「刚好覆盖目标视野的最长焦距」，按视野富余升序（★为首选，≥180% 标红提示冗余）。'
+    + '※ 标注（理论）的为 -00C- C口无镜头款：焦距=WD×传感器宽÷目标宽，理论计算值仅供参考。'
     + (minFeatMsg(ctx)) + '</div></div></div>';
 }
 function minFeatMsg(ctx){
