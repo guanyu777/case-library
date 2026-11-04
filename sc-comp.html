@@ -330,7 +330,7 @@ mark.search-mark{background:#fef08a;color:inherit;padding:0 2px;border-radius:2p
 
 <div class="header"><div class="header-inner">
 
-  <div><h1>🏢 竞品资料检索</h1><div class="sub">型号/品牌搜索 · 基恩士·康耐视等</div></div>
+  <div><h1>🏢 竞品推荐对标（单物料）</h1><div class="sub">模糊搜索一个物料 · 仅推荐康耐视/基恩士型号 + 海康相比优势</div></div>
 
 </div></div>
 
@@ -342,7 +342,7 @@ mark.search-mark{background:#fef08a;color:inherit;padding:0 2px;border-radius:2p
 
   <div class="search-box">
 
-    <input type="text" id="comp-search" placeholder="输入竞品型号(如 IV4、VS、IS3805、SS4000、SS7000、VN4000)..." onkeydown="suggestKeydown(event,'comp')" oninput="_debounceSuggest('comp')" autocomplete="off">
+    <input type="text" id="comp-search" placeholder="模糊搜索物料：型号/系列/像素/关键词（如 SC3050、500万、IV4、IS3805、读码）…一次分析一个" onkeydown="suggestKeydown(event,'comp')" oninput="_debounceSuggest('comp')" autocomplete="off">
 
     <button class="btn-search" onclick="doCompSearch()">🔍 搜索</button>
 
@@ -352,7 +352,7 @@ mark.search-mark{background:#fef08a;color:inherit;padding:0 2px;border-radius:2p
 
   </div>
 
-  <div class="search-tip">💡 搜型号如 IV4、VS、IS3805、SS4000、SS5016、SS5050、VN4000 ｜ <span class="new-badge">🌟/★ 官网新增</span> 标记 = 本次官网巡检补充的型号 ｜ 华睿 SS4 已按指定对标海康 SC2000X ｜ 📊 <a href="竞品对标完整对照表.html" style="color:#c8102e;font-weight:600">全竞品完整对照表(124条·可筛选)</a></div>
+  <div class="search-tip">💡 💡 模糊搜索：型号片段 / 系列(SC3000、IV4、IS3800) / 像素(500万、2000万) / 关键词(读码、晶圆、电动调焦) ｜ 单物料推荐对标：仅康耐视/基恩士型号 + 海康相比优势；国产品牌仅检索参考、不作推荐 ｜ 📊 <a href="竞品对标完整对照表.html" style="color:#c8102e;font-weight:600">全竞品完整对照表(136条·可筛选)</a></div>
 
 
 
@@ -362,7 +362,7 @@ mark.search-mark{background:#fef08a;color:inherit;padding:0 2px;border-radius:2p
 
     <div class="big">🔍</div>
 
-    <p>输入竞品型号或品牌名称开始搜索<br>仅显示匹配的系列 + 海康对标型号(参考)</p>
+    <p>输入一个物料开始搜索：型号/系列/像素/关键词<br>输出仅含推荐对标（康耐视/基恩士型号 + 海康相比优势）</p>
 
   </div>
 
@@ -1866,689 +1866,214 @@ function findHikKey(qn){
 
 }
 
-function doCompSearch(){
-
-
-
-  const rawQ=document.getElementById('comp-search').value.trim();
-
-
-
-  const q=rawQ.toLowerCase();
-
-
-
-  if(!q)return;
-
-
-
-  document.getElementById('comp-empty').style.display='none';
-
-
-
-  const container=document.getElementById('comp-result');
-
-
-
-
-
-
-
-  // Normalize query for model matching
-
-
-
-  const qn=q.replace(/[^a-z0-9-\u4e00-\u9fa5]/g,'');
-
-
-
-
-
-
-
-  // Brand name lookup table
-
-
-
-  const brandNames={
-
-
-
-    keyence:['基恩士','keyence'], cognex:['康耐视','cognex'],
-
-
-
-    smartmore:['思谋','smartmore'], opt:['奥普特','opt'],
-
-
-
-    huarui:['华睿','huarui'], decheng:['德成','decheng']
-
-
-
-  };
-
-
-
-
-
-
-
-  let results=[]; // {comp, matchedSeries[], hikKey}
-
-
-
-
-
-
-
-  // Step 1: Try model-specific search first (e.g., "IV4", "VS", "SCB1")
-
-
-
-  compData.forEach(c=>{
-
-
-
-    let matchedSeries=[];
-
-
-
-    let hikKey=null;
-
-
-
-    c.series.forEach(s=>{
-
-
-
-      if(matchSeries(qn,s.searchKeys)){
-
-
-
-        matchedSeries.push(s);
-
-
-
-        if(!hikKey){
-
-
-
-          hikKey=findHikKey(qn);
-
-
-
-          if(!hikKey){
-
-
-
-            for(const sk of (s.searchKeys||[])){
-
-
-
-              if(counterpartMap[sk]){hikKey=counterpartMap[sk];break;}
-
-
-
-            }
-
-
-
-          }
-
-
-
-        }
-
-
-
-      }
-
-
-
-    });
-
-
-
-    if(matchedSeries.length>0){
-
-
-
-      if(!hikKey)hikKey='sc3000';
-
-
-
-      if(hikKey!=='__none__'&&hikKey!=='__ref__'&&!hikData[hikKey])hikKey='sc3000';
-
-
-
-      results.push({comp:c,matchedSeries,hikKey});
-
-
-
-    }
-
-
-
-  });
-
-
-
-
-
-
-
-  // Step 2: If no model match, try brand name search
-
-
-
-  if(results.length===0){
-
-
-
-    for(const [bid,names] of Object.entries(brandNames)){
-
-
-
-      if(names.some(n=>q.includes(n.toLowerCase()))){
-
-
-
-        const comp=compData.find(c=>c.id===bid);
-
-
-
-        if(comp){
-
-
-
-          const hk=brandHikMap[names[0]]||'sc3000';
-
-
-
-          results.push({comp,matchedSeries:comp.series.slice(),hikKey:hikData[hk]?hk:'sc3000'});
-
-
-
-        }
-
-
-
-        break;
-
-
-
-      }
-
-
-
-    }
-
-
-
-  }
-
-
-
-
-
-
-
-  if(results.length===0){
-
-
-
-    container.innerHTML='<div class="empty-state"><div class="big">🔍</div><p>未找到匹配的竞品<br>请尝试输入 IV4、VS、IS3805、SS4000、SS7000、SS5000Pro、VN4000、SCB1、DC-400 或品牌名</p></div>';
-
-
-
-    return;
-
-
-
-  }
-
-
-
-
-
-
-
-  // Render results
-
-
-
-  let html='';
-
-
-
-  results.forEach(r=>{
-
-
-
-    const c=r.comp;
-
-
-
-    // Header with search summary
-
-
-
-    html+=`<div class="comp-result-header">
-
-
-
-      <span class="badge badge-comp">🏢 ${c.brand}</span>
-
-
-
-      <span class="region ${c.region==='cn'?'region-cn':'region-intl'}" style="font-size:.6em;padding:1px 4px;border-radius:3px;${c.region==='cn'?'background:#fee2e2;color:#991b1b':'background:#dbeafe;color:#1e40af'}">${c.region==='cn'?'🇨🇳 国产':'🌐 国外'}</span>
-
-
-
-      <span class="badge badge-hik">${r.hikKey==='__none__'?'🎯 暂无对标(形态差异)':r.hikKey==='__ref__'?'🎯 仅定位参考(形态差异)':'🎯 海康对标(参考): '+hikData[r.hikKey].name}</span>
-
-
-
-      <span class="badge badge-vs">📊 ${r.matchedSeries.length}个系列</span>
-
-
-
-    </div>`+
-
-    (()=>{const cp=c.counterpart;return cp?'<div class="comp-counterpart-line">🎯 品牌对标总览:'+cp+'</div>':'';})();
-
-
-
-
-
-
-
-    // Side-by-side: competitor vs Hik
-
-
-
-    html+=`<div class="compare-grid"><div class="compare-col">`;
-
-
-
-    html+=`<span class="col-label comp-label">🏢 ${c.brand} 参数</span>`;
-
-
-
-
-
-
-
-    // Render each matched series
-
-
-
-    r.matchedSeries.forEach(s=>{
-
-
-
-      html+=`<div class="comp-series-card" style="margin-top:6px">
-
-
-
-        <div class="card-title">📦 ${s.name}${s.isNew?' <span class="new-badge">🌟官网新增</span>':''}</div>`+
-
-        (s.counterpart?'<div class="comp-counterpart-line">🎯 对标关系:'+s.counterpart+'</div>':'')+(s.reason?'<div class="comp-reason">💡 对标说明:'+s.reason+'</div>':'');
-
-      html+='<div class="card-body">';
-
-
-
-
-
-
-
-      // Series specs (if available)
-
-
-
-      if(s.specs){
-
-
-
-        html+=`<div class="table-scroll" style="margin-bottom:6px"><table class="param-table" style="min-width:300px">
-
-
-
-        <thead><tr><th>参数项</th><th>值</th></tr></thead><tbody>`;
-
-
-
-        for(const [k,v] of Object.entries(s.specs)){
-
-
-
-          html+=`<tr${k.includes('AI')||k.includes('核心')||k.includes('独有')?' class="key-row"':''}><td>${k}</td><td>${v}</td></tr>`;
-
-
-
-        }
-
-
-
-        html+=`</tbody></table></div>`;
-
-
-
-      }
-
-
-
-
-
-
-
-      // Model table
-
-
-
-      html+=`<div class="table-scroll"><table class="model-list-table">
-
-
-
-      <thead><tr><th>型号</th>`;
-
-
-
-      // Dynamic headers based on model array length
-
-
-
-      const numCols=s.models[0]?.length||0;
-
-
-
-      const colNames=s.colNames||['型号','分辨率/规格','传感器/靶面','像元/快门','快门/帧率','帧率','镜头/变焦','工作距/光源','AI/能力','通讯/电源','防护','重量/备注'];
-
-
-
-      for(let i=1;i<numCols;i++)html+=`<th>${colNames[i]||'参数'+i}</th>`;
-
-
-
-      html+=`</tr></thead><tbody>`;
-
-
-
-      s.models.forEach(m=>{
-
-
-
-        html+=`<tr><td class="model-name">${m[0]}${NEW_MODELS[m[0]]?' <span class="new-badge">★官网新增</span>':''}</td>`;
-
-
-
-        for(let i=1;i<m.length;i++)html+=`<td>${m[i]||'-'}</td>`;
-
-
-
-        html+=`</tr>`;
-
-
-
-      });
-
-
-
-      html+=`</tbody></table></div>`;
-
-
-
-      html+=`</div></div>`;
-
-
-
-    });
-
-
-
-
-
-
-
-    // VS analysis
-
-
-
-    html+=`<div class="vs-row"><strong>vs 海康:</strong> ${c.reason}</div>`;
-
-
-
-    // Competitor website link
-
-
-
-    html+=`<div class="links-row"><a class="link-site" href="${c.url}" target="_blank" style="font-size:.7em">🏠 ${c.brand}官网</a></div>`;
-
-
-
-    html+=`</div>`; // end comp-col
-
-
-
-
-
-
-
-    // Hik counterpart column
-
-
-
-    const hikD=hikData[r.hikKey];
-
-
-
-    if(hikD){
-
-
-
-      html+=`<div class="compare-col">
-
-
-
-        <span class="col-label hik-label">🔶 海康对标(参考): ${hikD.name}</span>
-
-
-
-        <div class="hik-counter">
-
-
-
-          <div class="counter-title">🔶 ${hikD.name}</div>
-
-
-
-          <div class="table-scroll"><table>
-
-
-
-          <tr><td>定位</td><td>${hikD.specs['定位']||'-'}</td></tr>
-
-
-
-          <tr><td>分辨率范围</td><td>${hikD.specs['分辨率范围']||hikD.specs['分辨率']||'-'}</td></tr>
-
-
-
-          <tr><td>传感器</td><td>${hikD.specs['传感器']||'-'}</td></tr>
-
-
-
-          <tr><td>快门</td><td>${hikD.specs['快门']||'-'}</td></tr>
-
-
-
-          <tr><td>最大帧率</td><td>${hikD.specs['最大帧率']||'-'}</td></tr>
-
-
-
-          <tr><td>AI能力</td><td>${hikD.specs['AI能力']||'-'}</td></tr>
-
-
-
-          <tr><td>通讯</td><td>${hikD.specs['通讯']||'-'}</td></tr>
-
-
-
-          <tr><td>防护</td><td>${hikD.specs['防护']||'-'}</td></tr>
-
-
-
-          <tr><td>独有优势</td><td>${hikD.specs['独有']||'-'}</td></tr>
-
-
-
-          </table></div>
-
-
-
-          ${(()=>{const hm=hikD.models||[];if(!hm.length)return '';const nc=hm[0].length;const hk=nc===9?['型号','分辨率','传感器/像元','靶面/快门','帧率','色彩','焦距','调焦方式','能力']:['型号','分辨率','像元','靶面/快门','帧率','色彩','焦距','AI软件能力'];let t='<div class="table-scroll" style="margin-top:6px;max-height:460px;overflow:auto"><table><thead><tr>'+hk.slice(0,nc).map(h=>'<th>'+h+'</th>').join('')+'</tr></thead><tbody>';hm.forEach(m=>{t+='<tr>'+m.map((c,i)=>'<td'+(i===0?' class="model-name"':'')+'>'+(c||'-')+'</td>').join('')+'</tr>';});return t+'</tbody></table></div><div style="font-size:.68em;color:#6b7280;margin-top:2px">共 '+hm.length+' 款·逐型号对标见左侧竞品卡「🎯 对标关系」与本对照表</div>';})()}
-
-          <div class="links-row" style="margin-top:6px">
-
-
-
-            <a class="link-site" href="${hikD.url}" target="_blank" style="font-size:.68em">🏠 海康官网产品页</a>
-
-
-
-            <a class="link-doc" href="${(hikLinks[r.hikKey]||{}).doc||'#'}" target="_blank" style="font-size:.68em">💻 软件下载</a>
-
-
-
-          </div>
-
-
-
-        </div>
-
-
-
-      </div>`;
-
-
-
-    }
-
-
-
-    html+=`</div>`; // end compare-grid
-
-
-
-  });
-
-
-
-
-
-
-
-  container.innerHTML=html;
-
-
-
-
-
-
-
-  // Highlight search text in results
-
-
-
-  setTimeout(()=>{
-
-
-
-    if(qn.length>=2){
-
-
-
-      const re=new RegExp('('+qn.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi');
-
-
-
-      document.querySelectorAll('#comp-result .model-name, #comp-result td').forEach(el=>{
-
-
-
-        if(el.children.length===0){
-
-
-
-          const t=el.textContent;
-
-
-
-          if(re.test(t)){
-
-
-
-            el.innerHTML=t.replace(re,'<mark class="search-mark">$1</mark>');
-
-
-
-          }
-
-
-
-        }
-
-
-
-      });
-
-
-
-    }
-
-
-
-  },50);
-
-
-
+// ==================== 单物料推荐对标模式（2026-11-04） ====================
+// 规则：模糊搜索一次只分析一个物料；仅推荐康耐视/基恩士具体型号 + 海康相比该竞品的优势；
+//       国产品牌仅可检索对标参考、绝不作推荐；不输出品牌总览/对标关系图。
+let _matCands=[]; let _matSel=0;
+
+function qnn(s){return String(s||'').toLowerCase().replace(/[^a-z0-9-一-龥]/g,'');}
+
+function expandQueries(qn){
+  const out=[qn];
+  let m=/^(\d+(?:\.\d+)?)万$/.exec(qn);
+  if(m){const v=parseFloat(m[1])/100;out.push(String(v)+'mp');}
+  m=/^(\d+(?:\.\d+)?)mp$/.exec(qn);
+  if(m){const v=parseFloat(m[1])*100;out.push(String(v)+'万');}
+  m=/^(\d+(?:\.\d+)?)mm$/.exec(qn);
+  if(m){const n=m[1];out.push((n.length<2?'0'+n:n)+'m');out.push(n+'m');}
+  return out;
 }
 
+function hayMatch(qn,text){
+  if(!text)return false;
+  const hay=qnn(text).replace(/-/g,'');
+  return expandQueries(qn).some(q=>q&&hay.indexOf(q.replace(/-/g,''))>=0);
+}
 
+function rowHikKey(m){
+  const mn=qnn(m&&m[0]).replace(/-/g,'');
+  if(!mn)return null;
+  let best=null,bl=0;
+  for(const k in counterpartMap){
+    const kk=k.replace(/-/g,'');
+    if(kk.length>bl&&(mn.indexOf(kk)>=0||(kk.indexOf(mn)>=0&&mn.length>=4))){bl=kk.length;best=k;}
+  }
+  return best?counterpartMap[best]:null;
+}
 
+function hikKeyOfSeries(s){
+  const votes={};
+  (s.models||[]).forEach(m=>{const k=rowHikKey(m);if(k)votes[k]=(votes[k]||0)+1;});
+  let best=null,bn=0;
+  for(const k in votes)if(votes[k]>bn){bn=votes[k];best=k;}
+  if(best)return best;
+  for(const sk of (s.searchKeys||[])){const k=findHikKey(sk);if(k&&k!=='__none__'&&k!=='__ref__')return k;}
+  return null;
+}
 
+function foreignSeriesForHik(hikKey){
+  const out=[];
+  compData.forEach(c=>{
+    if(c.id!=='cognex'&&c.id!=='keyence')return;
+    c.series.forEach(s=>{
+      const rows=(s.models||[]).filter(m=>rowHikKey(m)===hikKey);
+      if(!rows.length){
+        if((s.searchKeys||[]).some(sk=>findHikKey(sk)===hikKey))rows.push(...(s.models||[]));
+      }
+      if(rows.length)out.push({c:c,s:s,rows:rows});
+    });
+  });
+  return out;
+}
+
+function hikAdvText(s,c,hikD){
+  for(const src of [s&&s.reason,c&&c.reason]){
+    if(!src)continue;
+    const m=/海康优势[:：]([^。；;]*)/.exec(src);
+    if(m&&m[1].trim())return m[1].trim();
+  }
+  for(const src of [s&&s.reason,c&&c.reason]){
+    if(!src)continue;
+    const segs=src.split(/[；;。]/);
+    for(const x of segs){
+      const t=x.trim();
+      if(!t||t.indexOf('海康')<0)continue;
+      const m2=/海康(.+)$/.exec(t);
+      if(m2&&m2[1].trim().length>=4)return '海康'+m2[1].trim();
+    }
+  }
+  return (hikD&&hikD.specs&&(hikD.specs['独有']||hikD.specs['独有优势']))||'';
+}
+
+function buildCandidates(qnRaw){
+  const qn=qnn(qnRaw);
+  const compStrong=[],compWeak=[],hikStrong=[];
+  compData.forEach(c=>c.series.forEach(s=>{
+    const keyHit=(s.searchKeys||[]).some(sk=>matchSeries(qn,[sk])||hayMatch(qn,sk));
+    const nameHit=hayMatch(qn,s.name);
+    const rows=(s.models||[]).filter(m=>hayMatch(qn,m.join(' ')));
+    if(keyHit||nameHit||rows.length){compStrong.push({type:'comp',c:c,s:s,rows:rows.length?rows:(s.models||[]).slice()});return;}
+    if(hayMatch(qn,(s.counterpart||'')+' '+(s.reason||''))){compWeak.push({type:'comp',c:c,s:s,rows:(s.models||[]).slice()});}
+  }));
+  for(const key in hikData){
+    const d=hikData[key];
+    const rows=(d.models||[]).filter(m=>hayMatch(qn,m.join(' ')));
+    if(hayMatch(qn,key)||hayMatch(qn,d.name)||rows.length){hikStrong.push({type:'hik',hikKey:key,hik:d,rows:rows.length?rows:(d.models||[]).slice()});}
+  }
+  let cands=compStrong.concat(hikStrong);
+  if(!cands.length)cands=compWeak;
+  if(!cands.length){
+    const hk=findHikKey(qn);
+    if(hk&&hikData[hk])cands=[{type:'hik',hikKey:hk,hik:hikData[hk],rows:(hikData[hk].models||[]).slice()}];
+  }
+  return cands;
+}
+
+function renderModelTable(s,rows){
+  const colNames=s.colNames||['型号','分辨率/规格','传感器/靶面','像元/快门','快门/帧率','帧率','镜头/变焦','工作距/光源','AI/能力','通讯/电源','防护','重量/备注'];
+  const nc=(rows[0]||(s.models||[])[0]||[]).length||0;
+  let t='<div class="table-scroll"><table class="model-list-table"><thead><tr><th>型号</th>';
+  for(let i=1;i<nc;i++)t+='<th>'+(colNames[i]||('参数'+i))+'</th>';
+  t+='</tr></thead><tbody>';
+  rows.forEach(m=>{
+    t+='<tr><td class="model-name">'+m[0]+(NEW_MODELS[m[0]]?' <span class="new-badge">★官网新增</span>':'')+'</td>';
+    for(let i=1;i<m.length;i++)t+='<td>'+(m[i]||'-')+'</td>';
+    t+='</tr>';
+  });
+  return t+'</tbody></table></div>';
+}
+
+function renderRecBlocks(blocks,showCounterpart){
+  let h='';
+  if(!blocks.length){
+    return '<div style="margin:8px 0;padding:8px 10px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;font-size:.82em;color:#6b7280">该物料暂无康耐视/基恩士对标型号（形态差异或仅定位参考）</div>';
+  }
+  blocks.forEach(b=>{
+    const hk=hikKeyOfSeries(b.s);
+    const hikD=hikData[hk];
+    const adv=hikAdvText(b.s,b.c,hikD);
+    h+='<div class="comp-series-card" style="margin-top:8px">'
+      +'<div class="card-title">🎯 '+b.c.brand+'｜'+b.s.name+((b.s.isNew)?' <span class="new-badge">🌟官网新增</span>':'')+'</div>'
+      +(showCounterpart&&b.s.counterpart?'<div class="comp-counterpart-line">🔗 海康对标：'+b.s.counterpart+'</div>':'')
+      +'<div class="comp-reason" style="margin:4px 0 6px"><strong>💪 海康相比优势：</strong>'+(adv||'（详见海康对标系列规格）')+'</div>'
+      +renderModelTable(b.s,b.rows)
+      +'</div>';
+  });
+  return h;
+}
+
+function renderDomesticRefs(){
+  const seen={},lines=[];
+  _matCands.forEach(x=>{
+    if(x.type!=='comp'||x.c.region!=='cn')return;
+    const key=x.c.id+'|'+x.s.name;
+    if(seen[key])return;seen[key]=1;
+    const names=(x.s.models||[]).map(m=>m[0]);
+    const nm=names.length>10?(names.slice(0,10).join('、')+' 等'+names.length+'款'):names.join('、');
+    lines.push('<div style="margin:4px 0;font-size:.8em;color:#374151">• '+x.c.brand+'｜'+x.s.name+' → 🔗 对标：'+(x.s.counterpart||'-')+'<br><span style="color:#6b7280">型号：'+nm+'</span></div>');
+  });
+  if(!lines.length)return '';
+  return '<div style="margin:12px 0 4px;font-weight:700">🔍 可对标参考（国产·检索命中，不作推荐）</div>'+lines.join('');
+}
+
+function renderMaterial(){
+  const container=document.getElementById('comp-result');
+  if(!_matCands.length){container.innerHTML='';return;}
+  const cand=_matCands[_matSel];
+  let html='';
+  if(_matCands.length>1){
+    html+='<div style="margin:6px 0;font-size:.78em;color:#6b7280">🔍 命中 '+_matCands.length+' 个物料，一次只分析一个（点击切换）：';
+    _matCands.forEach((cd,i)=>{
+      const lbl=cd.type==='hik'?('海康 '+cd.hik.name):(cd.c.brand.split(' ')[0]+' '+cd.s.name.replace(/\s*\(.*?\)\s*/g,''));
+      html+='<button onclick="_matPick('+i+')" style="margin:2px 4px 2px 0;padding:3px 8px;border-radius:12px;border:1px solid '+(i===_matSel?'#c8102e':'#d1d5db')+';background:'+(i===_matSel?'#fef2f2':'#fff')+';color:'+(i===_matSel?'#c8102e':'#374151')+';cursor:pointer;font-size:.95em">'+lbl+'</button>';
+    });
+    html+='</div>';
+  }
+  if(cand.type==='hik'){
+    const hikD=cand.hik;
+    html+='<div class="comp-result-header"><span class="badge badge-hik">🔶 海康物料：'+hikD.name+'</span><span class="badge badge-vs">📊 命中型号 '+(cand.rows&&cand.rows.length?cand.rows.length+' 款':'全系列')+'</span></div>';
+    html+='<div style="margin:10px 0 4px;font-weight:700">🎯 推荐对标（仅康耐视/基恩士）</div>';
+    html+=renderRecBlocks(foreignSeriesForHik(cand.hikKey),false);
+    html+=renderDomesticRefs();
+  }else{
+    const c=cand.c,s=cand.s;
+    const hk=hikKeyOfSeries(s);
+    const hikD=hikData[hk];
+    html+='<div class="comp-result-header"><span class="badge badge-comp">🏢 '+c.brand+'｜'+s.name+'</span>'+(hikD?'<span class="badge badge-hik">🔶 海康对标：'+hikD.name+'</span>':'')+'</div>';
+    if(c.region!=='cn'){
+      html+='<div style="margin:10px 0 4px;font-weight:700">🎯 推荐对标（仅康耐视/基恩士）</div>';
+      html+=renderRecBlocks([{c:c,s:s,rows:cand.rows}],true);
+    }else{
+      html+='<div style="margin:10px 0 4px;font-weight:700">🎯 推荐对标（仅康耐视/基恩士）</div>';
+      html+=renderRecBlocks(foreignSeriesForHik(hk),false);
+    }
+    html+=renderDomesticRefs();
+  }
+  container.innerHTML=html;
+}
+
+function _matPick(i){_matSel=i;renderMaterial();}
+
+function doCompSearch(){
+  const rawQ=document.getElementById('comp-search').value.trim();
+  if(!rawQ)return;
+  document.getElementById('comp-empty').style.display='none';
+  _matCands=buildCandidates(rawQ);
+  _matSel=0;
+  const container=document.getElementById('comp-result');
+  if(!_matCands.length){
+    container.innerHTML='<div class="empty-state"><div class="big">🔍</div><p>未找到匹配的物料<br>可尝试：系列(SC3000/IV4/IS3800)、像素(500万/2000万)、型号片段、关键词(读码/晶圆/电动调焦)</p></div>';
+    return;
+  }
+  renderMaterial();
+}
 
 function clearCompSearch(){
-
-
-
   document.getElementById('comp-search').value='';
-
-
-
   document.getElementById('comp-result').innerHTML='';
-
-
-
-  document.getElementById('comp-empty').style.display='block';
-
-
-
+  document.getElementById('comp-empty').style.display='';
+  _matCands=[];_matSel=0;
 }
-
-
-
-
-
-
-
-// ==================== FUZZY SEARCH (COMPETITOR ONLY) ====================
-
-
-
-let _suggestIndex = null;
 
 function buildSuggestIndex(){
 
