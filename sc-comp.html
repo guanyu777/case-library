@@ -1,0 +1,2238 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>型号对标</title>
+
+<style>
+
+:root{
+
+  --br:#e8600a;--nv:#0A1628;--bg:#f3f4f6;--card:#fff;
+
+  --tx:#1a1a2e;--st:#6b7280;--bd:#d1d5db;
+
+  --gr:#16a34a;--rd:#dc2626;--bl:#2563eb
+
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+
+html{scroll-behavior:smooth}
+
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--tx);line-height:1.5;min-height:100vh}
+
+.header{background:var(--nv);color:#fff;padding:10px 20px;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.15)}
+
+.header-inner{max-width:1600px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px 10px}
+
+.header-inner > div{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;min-width:0}
+
+.header h1{font-size:1.0em;font-weight:700;white-space:nowrap}
+
+.header .sub{font-size:.7em;color:#94a3b8;white-space:nowrap}
+
+.page-tabs{display:flex;gap:0;background:#fff;border-bottom:2px solid var(--bd);position:sticky;top:64px;z-index:90}
+
+.page-tab{flex:1;max-width:500px;padding:12px 20px;text-align:center;cursor:pointer;font-size:.92em;font-weight:700;color:var(--st);border-bottom:3px solid transparent;transition:all .15s;background:#fafafa;user-select:none}
+
+.page-tab:hover{color:var(--br);background:#fff7ed}
+
+.page-tab.active{color:var(--br);border-bottom-color:var(--br);background:#fff}
+
+.page-content{max-width:1600px;margin:0 auto;padding:12px 20px}
+
+.page-panel{display:none}
+
+.page-panel.active{display:block}
+
+.col-panel{background:var(--card);border-radius:10px;box-shadow:0 1px 5px rgba(0,0,0,.06);overflow:hidden;margin-bottom:14px}
+
+.col-header{background:var(--nv);color:#fff;padding:10px 16px;font-weight:700;font-size:.88em;display:flex;align-items:center;gap:8px}
+
+.col-body{padding:12px}
+
+.search-box{display:flex;gap:6px;margin-bottom:10px;position:relative}
+
+.suggest-dropdown{position:absolute;top:100%;left:0;right:0;background:#fff;border:2px solid var(--br);border-top:none;border-radius:0 0 8px 8px;max-height:320px;overflow-y:auto;z-index:200;box-shadow:0 6px 20px rgba(0,0,0,.15);display:none}
+
+.suggest-dropdown.show{display:block}
+
+.suggest-item{padding:7px 14px;cursor:pointer;font-size:.78em;border-bottom:1px solid #f0f0f0;display:flex;align-items:center;gap:8px;transition:background .1s}
+
+.suggest-item:hover,.suggest-item.active{background:#fff7ed}
+
+.suggest-item:last-child{border-bottom:none}
+
+.suggest-tag{display:inline-block;padding:1px 6px;border-radius:4px;font-size:.85em;font-weight:700;white-space:nowrap;flex-shrink:0}
+
+.suggest-tag.hik{background:#e8600a;color:#fff}
+
+.suggest-tag.comp{background:#2563eb;color:#fff}
+
+.suggest-model{font-family:'Consolas','Courier New',monospace;font-weight:700;color:var(--nv);font-size:.95em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+.suggest-info{color:var(--st);font-size:.85em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1}
+
+.suggest-series{color:var(--br);font-size:.8em;white-space:nowrap;flex-shrink:0}
+
+.search-box input{flex:1;padding:9px 12px;border:2px solid var(--bd);border-radius:8px;font-size:.86em;outline:none;transition:border-color .15s;background:#fafafa}
+
+.search-box input:focus{border-color:var(--br);background:#fff}
+
+.search-box input::placeholder{color:#bbb}
+
+.search-box button{padding:9px 14px;border:none;border-radius:8px;font-size:.8em;font-weight:600;cursor:pointer;white-space:nowrap;transition:opacity .15s}
+
+.search-box button:hover{opacity:.85}
+
+.btn-search{background:var(--br);color:#fff}
+
+.btn-clear{background:#e5e7eb;color:var(--tx)}
+
+.search-tip{font-size:.68em;color:var(--st);margin-bottom:8px}
+
+
+
+/* TABS */
+
+.series-tabs{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px}
+
+.series-tab{padding:5px 11px;border:1.5px solid var(--bd);border-radius:6px;background:#fff;cursor:pointer;font-size:.76em;font-weight:600;color:var(--st);transition:all .15s;white-space:nowrap}
+
+.series-tab:hover{border-color:var(--br);color:var(--br)}
+
+.series-tab.active{background:var(--br);color:#fff;border-color:var(--br)}
+
+.series-tab.matched{background:#fef3c7;border-color:#ca8a04;color:#92400e}
+
+
+
+/* TABLE */
+
+.table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-top:4px}
+
+.param-table{width:100%;border-collapse:collapse;font-size:.72em;min-width:580px}
+
+.param-table th{background:#1e293b;color:#fff;padding:5px 6px;text-align:center;font-weight:600;white-space:nowrap;font-size:.92em}
+
+.param-table th:first-child{text-align:left;min-width:85px}
+
+.param-table td{padding:4px 6px;border-bottom:1px solid #e5e7eb;text-align:center;vertical-align:middle}
+
+.param-table td:first-child{text-align:left;font-weight:600;white-space:nowrap;color:var(--nv)}
+
+.param-table tr:nth-child(even){background:#fafcfd}
+
+.param-table tr:hover{background:#f3f4f6}
+
+.param-table .model-cell{font-family:'Consolas','Courier New',monospace;font-size:.7em;color:var(--br);font-weight:700;max-width:130px;word-break:break-all}
+
+.param-table .yes{color:var(--gr);font-weight:700}
+
+.param-table .no{color:#bbb}
+
+.param-table .rd{color:var(--rd);font-weight:700}
+
+
+
+/* KEY ROW */
+
+.param-table tr.key-row td{background:#fef7ed}
+
+.param-table tr.key-row td:first-child{color:var(--br);font-weight:800}
+
+
+
+/* SEARCH HIGHLIGHT */
+
+.param-table tr.search-hit td{background:#fffbeb !important}
+
+.param-table th.search-hit-col{background:#fef9c3 !important;color:#92400e !important;border-bottom:3px solid #e8600a !important}
+
+
+
+/* LINK BUTTONS */
+
+.links-row{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px;padding-top:6px;border-top:1px solid var(--bd)}
+
+.links-row a{display:inline-flex;align-items:center;gap:2px;padding:4px 9px;font-size:.7em;border-radius:5px;text-decoration:none;font-weight:600;white-space:nowrap;transition:opacity .15s}
+
+.links-row a:hover{opacity:.8}
+
+.link-spec{background:#dbeafe;color:#1e40af}
+
+.link-3d{background:#fef3c7;color:#92400e}
+
+.link-manual{background:#f3e8ff;color:#6b21a8}
+
+.link-site{background:#dcfce7;color:#166534}
+
+.link-doc{background:#fff7ed;color:#c2410c;border:1px solid #fdba74;font-size:.73em;padding:5px 10px}
+
+
+
+/* EMPTY / NOT FOUND */
+
+.empty-state{text-align:center;padding:30px 20px;color:var(--st)}
+
+.empty-state .big{font-size:2em;margin-bottom:6px;opacity:.6}
+
+
+
+/* COMP RESULT */
+
+.comp-counterpart-line{font-size:.78em;color:#075985;background:#f0f9ff;border-left:3px solid #0ea5e9;padding:5px 10px;margin:6px 0;border-radius:0 4px 4px 0;line-height:1.55;word-break:break-word}
+.comp-reason{font-size:.75em;color:#57534e;background:#fafaf9;border-left:3px solid #d6d3d1;padding:5px 10px;margin:4px 0 6px;border-radius:0 4px 4px 0;line-height:1.6;word-break:break-word}
+.comp-result-header{background:#fff7ed;border:1px solid #fdba74;border-radius:8px;padding:10px 14px;margin-bottom:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+
+.comp-result-header .badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:6px;font-size:.74em;font-weight:700}
+
+.badge-comp{background:#fee2e2;color:#991b1b}
+
+.badge-hik{background:#fff7ed;color:#c2410c;border:1px solid #fdba74}
+
+.badge-vs{background:#fef9c3;color:#92400e}
+
+
+
+.comp-series-card{border:1px solid var(--bd);border-radius:8px;margin-bottom:10px;overflow:hidden}
+
+.comp-series-card .card-title{background:#f8fafc;padding:8px 12px;font-weight:700;font-size:.82em;color:var(--nv);border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:6px}
+
+.comp-series-card .card-body{padding:10px 12px}
+
+
+
+/* COMP + HIK SIDE-BY-SIDE */
+
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
+
+.compare-col{min-width:0}
+
+.compare-col .col-label{font-size:.73em;font-weight:700;margin-bottom:6px;padding:3px 8px;border-radius:4px;display:inline-block}
+
+.comp-label{background:#fef2f2;color:#991b1b}
+
+.hik-label{background:#fff7ed;color:#c2410c}
+
+
+
+/* HIK COUNTERPART CARD */
+
+.hik-counter{border:2px dashed var(--br);border-radius:8px;padding:10px 12px;background:#fffdf7}
+
+.hik-counter .counter-title{font-weight:700;color:var(--br);margin-bottom:6px;font-size:.82em}
+
+.hik-counter table{font-size:.7em;width:100%;border-collapse:collapse}
+
+.hik-counter td{padding:3px 5px;border-bottom:1px solid #fcd9b8}
+
+.hik-counter td:first-child{font-weight:600;color:var(--st);white-space:nowrap;width:35%}
+
+.hik-counter .mval{font-family:'Consolas','Courier New',monospace;color:var(--br);font-weight:700}
+
+
+
+/* MODEL TABLE */
+
+.model-list-table{width:100%;border-collapse:collapse;font-size:.69em;margin-top:6px}
+
+.model-list-table th{background:#334155;color:#fff;padding:4px 5px;text-align:center;font-weight:600;white-space:nowrap}
+
+.model-list-table td{padding:3px 5px;border-bottom:1px solid #e5e7eb;text-align:center}
+
+.model-list-table tr:nth-child(even){background:#f8fafc}
+
+.model-list-table .model-name{font-family:'Consolas','Courier New',monospace;font-size:.68em;color:var(--br);font-weight:700;text-align:left}
+
+.new-badge{display:inline-block;margin-left:4px;padding:1px 6px;border-radius:4px;font-size:.82em;font-weight:700;font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;white-space:nowrap;vertical-align:middle;background:#dcfce7;color:#15803d;border:1px solid #86efac}
+
+.search-tip .new-badge{background:#dcfce7;color:#15803d}
+
+
+
+/* VS ANALYSIS ROW */
+
+.vs-row{background:#fef2f2;border:1px solid #fecaca;border-radius:6px;padding:7px 10px;margin-top:8px;font-size:.73em}
+
+.vs-row strong{color:var(--rd)}
+
+
+
+/* SEARCH HIT HIGHLIGHT (text level) */
+
+mark.search-mark{background:#fef08a;color:inherit;padding:0 2px;border-radius:2px}
+
+
+
+/* RESPONSIVE */
+
+@media(max-width:900px){
+
+  .compare-grid{grid-template-columns:1fr}
+
+  .header{padding:6px 10px}
+
+  .header h1{font-size:.82em}
+
+  .header .sub{font-size:.6em}
+
+  .page-tab{font-size:.72em;padding:8px 8px}
+
+  .col-body{padding:6px !important}
+
+  .search-box input{font-size:.76em;padding:6px 8px}
+
+  .search-box button{padding:6px 10px;font-size:.7em}
+
+  .search-tip{font-size:.6em;margin-bottom:4px}
+
+  .series-tabs{gap:2px;margin-bottom:4px}
+
+  .series-tab{padding:4px 6px;font-size:.65em}
+
+  .param-table{font-size:.6em}
+
+  .model-list-table{font-size:.58em}
+
+  .links-row{gap:2px;margin-top:4px;padding-top:4px}
+
+  .links-row a{padding:3px 6px;font-size:.65em}
+
+  .comp-result-header{padding:6px 8px;font-size:.7em}
+
+  .card-title{padding:5px 8px;font-size:.7em}
+
+  .card-body{padding:6px 8px}
+
+  .vs-row{padding:4px 6px;font-size:.65em;margin-top:4px}
+
+  .empty-state{padding:20px 12px}
+
+  .empty-state .big{font-size:2em}
+
+  .empty-state p{font-size:.75em}
+
+}
+
+
+/* ===== 一对一型号参数对标（2026-11-04） ===== */
+.pair-wrap{margin:10px 0 6px}
+.pair-head{font-size:.9em;font-weight:700;color:#374151;margin:6px 0 10px}
+.pair-grid{display:grid;grid-template-columns:1fr 44px 1fr;gap:10px;align-items:stretch}
+.pair-card{border:1px solid #e5e7eb;border-radius:10px;padding:12px 14px;min-width:0}
+.pair-foreign{border-top:3px solid #64748b;background:#f8fafc}
+.pair-hik{border-top:3px solid #c8102e;background:#fffafa}
+.pair-card-tag{display:inline-block;font-size:.72em;font-weight:700;padding:2px 10px;border-radius:12px;color:#fff;background:#64748b;margin-bottom:8px;letter-spacing:.02em}
+.pair-hik .pair-card-tag{background:#c8102e}
+.pair-model{font-size:1.05em;font-weight:800;color:#111827;word-break:break-all;line-height:1.35}
+.pair-hik .pair-model{color:#c8102e}
+.pair-sub{font-size:.78em;color:#6b7280;margin:4px 0 10px}
+.pair-params{margin:0;display:grid;grid-template-columns:auto 1fr;gap:6px 10px;font-size:.8em}
+.pair-params dt{color:#6b7280;white-space:nowrap;font-weight:600}
+.pair-params dd{margin:0;color:#1f2937;word-break:break-word;line-height:1.55}
+.pair-vs{display:flex;align-items:center;justify-content:center;font-weight:800;color:#9ca3af;font-size:.85em}
+.adv-box{margin-top:14px;border:1px solid #f0c36d;border-radius:10px;overflow:hidden}
+.adv-title{background:#fff7e8;color:#8a5a00;font-weight:700;padding:9px 12px;font-size:.88em;border-bottom:1px solid #f0c36d}
+.adv-row{display:flex;gap:8px;align-items:flex-start;padding:8px 12px;border-bottom:1px solid #f3f4f6;font-size:.82em}
+.adv-row:last-child{border-bottom:0}
+.adv-no{flex:0 0 18px;height:18px;line-height:18px;text-align:center;border-radius:50%;background:#c8102e;color:#fff;font-size:.85em;font-weight:700}
+.adv-key{flex:0 0 88px;font-weight:700;color:#c8102e}
+.adv-val{flex:1;color:#374151;line-height:1.55}
+@media(max-width:760px){.pair-grid{grid-template-columns:1fr;gap:8px}.pair-vs{padding:2px 0}.adv-key{flex:0 0 74px}.adv-row{flex-wrap:wrap}}
+.suggest-head{padding:7px 14px;background:#fff7ed;border-bottom:1px solid #fed7aa;font-size:.72em;color:#9a3412;font-weight:700}
+.suggest-empty{padding:10px 14px;font-size:.76em;color:#6b7280;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.quick-chip{display:inline-block;padding:2px 9px;border:1px solid #f0c36d;border-radius:12px;background:#fffbeb;color:#8a5a00;cursor:pointer;font-size:.95em}
+.quick-chip:hover{background:#fde68a}
+.match-hint{margin:0 0 10px;padding:8px 12px;border:1px dashed #f0c36d;border-radius:8px;background:#fffbeb;color:#8a5a00;font-size:.78em;line-height:1.6}
+.empty-chips{margin-top:10px;display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+.empty-chips .quick-chip{font-size:1em}
+@media(max-width:760px){.suggest-head{font-size:.68em}.suggest-series{display:none}.match-hint{font-size:.72em}}
+
+/* ===== 极简界面（2026-11-04）：仅一个检索框 ===== */
+.intro{font-size:.78em;color:#6b7280;margin:0 0 10px;letter-spacing:.02em}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.wrap{max-width:920px;margin:0 auto;padding:34px 16px 48px}
+.search-box{margin:0}
+.search-box input{min-width:0;padding:12px 16px;font-size:.95em;border-radius:10px;background:#fff;border-color:#e2e8f0;box-shadow:0 1px 3px rgba(15,23,42,.05)}
+.search-box button{flex:0 0 auto;padding:12px 22px;font-size:.88em;border-radius:10px}
+.suggest-head{font-size:.7em}
+.match-hint{margin:14px 0 10px;padding:7px 12px;font-size:.76em;border-style:solid;border-color:#fde3b0;background:#fffdf7}
+.adv-title{font-size:.82em;padding:8px 12px}
+.pair-wrap{margin:0}
+@media(max-width:760px){.wrap{padding:18px 10px 32px}.search-box input{padding:10px 12px;font-size:.88em}.search-box button{padding:10px 14px;font-size:.8em}}
+</style>
+
+</head>
+
+<body>
+<h1 class="sr-only">型号参数一对一对比</h1>
+<main class="wrap">
+  <div class="intro">友商型号 → 海康型号 · 一对一参数对标</div>
+  <div class="search-box">
+    <input type="text" id="comp-search" placeholder="搜索型号或关键词" onkeydown="suggestKeydown(event,'comp')" oninput="_debounceSuggest('comp')" autocomplete="off">
+    <button class="btn-search" onclick="doCompSearch()">搜索</button>
+    <div class="suggest-dropdown" id="comp-suggest"></div>
+  </div>
+  <div id="comp-empty"></div>
+  <div id="comp-result"></div>
+</main>
+
+<script>
+
+// ==================== DATA ====================
+
+// Hikvision data (for counterpart cross-reference)
+
+const hikData = {
+
+  sc1000: {
+
+    name:'SC1000系列 视觉传感器',url:'https://www.hikrobotics.com/cn/machinevision/visionproduct?id=320&typeId=38',
+
+    specs:{'定位':'入门经济型','分辨率范围':'30万~80万','传感器':'CMOS','快门':'全局','最大帧率':'15fps','AI能力':'有无/计数/识别','通讯':'100M Ethernet','防护':'IP67','应用':'基础有无检测/颜色识别/读码','软件':'SCMVS客户端'},
+
+    models:[
+
+      ['MV-SC1003M-03S-WBN-SR','640×480','CMOS','-','15','黑白','3.1mm','手动','有无/计数/识别'],
+
+      ['MV-SC1003M-03S-WBN-NR','640×480','CMOS','-','15','黑白','3.1mm','手动','有无/计数/识别'],
+
+      ['MV-SC1003C-03S-WBN-SR','640×480','CMOS','-','15','彩色','3.1mm','手动','有无/计数/识别'],
+
+      ['MV-SC1003C-03S-WBN-NR','640×480','CMOS','-','15','彩色','3.1mm','手动','有无/计数/识别'],
+
+      ['MV-SCA002M-03S-WBN-SR','640×480','CMOS','-','15','黑白','3.1mm','手动','有无/计数'],
+
+      ['MV-SCA002M-03S-WBN-NR','640×480','CMOS','-','15','黑白','3.1mm','手动','有无/计数'],
+
+      ['MV-SCA002C-03S-WBN-SR','640×480','CMOS','-','15','彩色','3.1mm','手动','有无/计数'],
+
+      ['MV-SCA002C-03S-WBN-NR','640×480','CMOS','-','15','彩色','3.1mm','手动','有无/计数'],
+
+      ['MV-SCA004M-05S-WBN-SR','1024×768','CMOS','-','15','黑白','4.9mm','手动','有无/计数/测量'],
+
+      ['MV-SCA004M-05S-WBN-NR','1024×768','CMOS','-','15','黑白','4.9mm','手动','有无/计数/测量'],
+
+      ['MV-SC1008M-05S-WBN-SR','1024×768','CMOS','-','15','黑白','4.9mm','手动','有无/计数/测量'],
+
+      ['MV-SC1008M-05S-WBN-NR','1024×768','CMOS','-','15','黑白','4.9mm','手动','有无/计数/测量'],
+
+      ['MV-SCi3XC-H-WX_S','640×480','CMOS','-','15','彩色','3.1mm','手动','有无/计数/识别'],
+
+      ['MV-SCi3XC-H-WX_N','640×480','CMOS','-','15','彩色','3.1mm','手动','有无/计数/识别'],
+
+    ]
+
+  },
+
+  sc2000: {
+
+    name:'SC2000E系列 视觉传感器(手动调焦)',url:'https://www.hikrobotics.com/cn/machinevision/visionproduct?id=280&typeId=38',
+
+    specs:{'定位':'性价比进阶型','分辨率范围':'40万~240万','传感器':'CMOS','快门':'全局','最大帧率':'75fps','AI能力':'OCR/有无/计数/定位','通讯':'100M Ethernet','防护':'IP67','应用':'通用缺陷检测/定位引导/OCR','软件':'SCMVS客户端'},
+
+    models:[
+
+      ['MV-SC2013XM-05M-WBN','1280×1024','CMOS','-','55','黑白','5mm','电动','OCR/有无/计数'],
+
+      ['MV-SC2013XM-12M-WBN','1280×1024','CMOS','-','55','黑白','12mm','电动','OCR/有无/计数'],
+
+      ['MV-SC2013XM-16M-WBN','1280×1024','CMOS','-','55','黑白','16mm','电动','OCR/有无/计数'],
+
+      ['MV-SC2013XC-05M-WBN','1280×1024','CMOS','-','55','彩色','5mm','电动','OCR/有无/计数'],
+
+      ['MV-SC2013XC-12M-WBN','1280×1024','CMOS','-','55','彩色','12mm','电动','OCR/有无/计数'],
+
+      ['MV-SC2013XC-16M-WBN','1280×1024','CMOS','-','55','彩色','16mm','电动','OCR/有无/计数'],
+
+      ['MV-SC2023XM-05M-WBN','1920×1280','CMOS','-','75','黑白','5mm','电动','OCR/有无/计数'],
+
+      ['MV-SC2023XM-12M-WBN','1920×1280','CMOS','-','75','黑白','12mm','电动','OCR/有无/计数'],
+
+      ['MV-SC2023XM-16M-WBN','1920×1280','CMOS','-','75','黑白','16mm','电动','OCR/有无/计数'],
+
+      ['MV-SC2023XC-05M-WBN','1920×1280','CMOS','-','75','彩色','5mm','电动','OCR/有无/计数'],
+
+      ['MV-SC2023XC-12M-WBN','1920×1280','CMOS','-','75','彩色','12mm','电动','OCR/有无/计数'],
+
+      ['MV-SC2023XC-16M-WBN','1920×1280','CMOS','-','75','彩色','16mm','电动','OCR/有无/计数'],
+
+      ['MV-SC2004EM-06S-WBN-Mini','704×540','CMOS','-','60','黑白','6.72mm','手动','有无/计数'],
+
+      ['MV-SC2004EM-08S-WBN','704×540','CMOS','-','60','黑白','8mm','手动','有无/计数'],
+
+      ['MV-SC2004EC-12S-WBN','704×540','CMOS','-','60','彩色','12.4mm','手动','有无/计数'],
+
+      ['MV-SC2004EC-08S-WBN','704×540','CMOS','-','60','彩色','8mm','手动','有无/计数'],
+
+      ['MV-SC2004EM-15S-WBN','704×540','CMOS','-','60','黑白','14.8mm','手动','有无/计数'],
+
+      ['MV-SC2004EM-12S-WBN','704×540','CMOS','-','60','黑白','12.4mm','手动','有无/计数'],
+
+      ['MV-SC2004EC-15S-WBN','704×540','CMOS','-','60','彩色','14.8mm','手动','有无/计数'],
+
+      ['MV-SC2016EM-06S-WBN-Mini','1408×1024','CMOS','-','60','黑白','6.72mm','手动','有无/计数/OCR'],
+
+      ['MV-SC2016EM-06S-WBN-S','1408×1024','CMOS','-','60','黑白','6.72mm','手动','有无/计数/OCR'],
+
+      ['MV-SC2016EM-08S-WBN','1408×1024','CMOS','-','60','黑白','8mm','手动','有无/计数/OCR'],
+
+      ['MV-SC2016EM-12S-WBN','1408×1024','CMOS','-','60','黑白','12.4mm','手动','有无/计数/OCR'],
+
+      ['MV-SC2016EM-15S-WBN','1408×1024','CMOS','-','60','黑白','14.8mm','手动','有无/计数/OCR'],
+
+      ['MV-SC2016EC-08S-WBN','1408×1024','CMOS','-','60','彩色','8mm','手动','有无/计数/OCR'],
+
+      ['MV-SC2016EC-08S-WBN-S','1408×1024','CMOS','-','60','彩色','8mm','手动','有无/计数/OCR'],
+
+      ['MV-SC2016EC-12S-WBN','1408×1024','CMOS','-','60','彩色','12.4mm','手动','有无/计数/OCR'],
+
+      ['MV-SC2016EC-15S-WBN','1408×1024','CMOS','-','60','彩色','14.8mm','手动','有无/计数/OCR'],
+
+      ['MV-SCB003EM-06S-WBN','704×540','CMOS','-','60','黑白','6.72mm','手动','有无/计数'],
+
+      ['MV-SCB003EM-08S-WBN','704×540','CMOS','-','60','黑白','8mm','手动','有无/计数'],
+
+      ['MV-SCB003EM-12S-WBN','704×540','CMOS','-','60','黑白','12.4mm','手动','有无/计数'],
+
+      ['MV-SCB003EM-15S-WBN','704×540','CMOS','-','60','黑白','14.8mm','手动','有无/计数'],
+
+      ['MV-SCB003EC-08S-WBN','704×540','CMOS','-','60','彩色','8mm','手动','有无/计数'],
+
+      ['MV-SCB003EC-12S-WBN','704×540','CMOS','-','60','彩色','12.4mm','手动','有无/计数'],
+
+      ['MV-SCB003EC-15S-WBN','704×540','CMOS','-','60','彩色','14.8mm','手动','有无/计数'],
+
+      ['MV-SCB007EM-06S-WBN','1408×1024','CMOS','-','60','黑白','6.72mm','手动','有无/计数/OCR'],
+
+      ['MV-SCB007EM-08S-WBN','1408×1024','CMOS','-','60','黑白','8mm','手动','有无/计数/OCR'],
+
+      ['MV-SCB007EM-12S-WBN','1408×1024','CMOS','-','60','黑白','12.4mm','手动','有无/计数/OCR'],
+
+      ['MV-SCB007EM-15S-WBN','1408×1024','CMOS','-','60','黑白','14.8mm','手动','有无/计数/OCR'],
+
+      ['MV-SCB007EC-08S-WBN','1408×1024','CMOS','-','60','彩色','8mm','手动','有无/计数/OCR'],
+
+      ['MV-SCB007EC-12S-WBN','1408×1024','CMOS','-','60','彩色','12.4mm','手动','有无/计数/OCR'],
+
+      ['MV-SCB007EC-15S-WBN','1408×1024','CMOS','-','60','彩色','14.8mm','手动','有无/计数/OCR'],
+
+      ['MV-SCB006XM-05M-WBN','1920×1080','CMOS','-','30','黑白','5mm','电动','有无/计数'],
+
+      ['MV-SCB006XM-12M-WBN','1920×1080','CMOS','-','30','黑白','12mm','电动','有无/计数'],
+
+      ['MV-SCB006XM-16M-WBN','1920×1080','CMOS','-','30','黑白','16mm','电动','有无/计数'],
+
+      ['MV-SCB006XC-05M-WBN','1920×1080','CMOS','-','30','彩色','5mm','电动','有无/计数'],
+
+      ['MV-SCB006XC-12M-WBN','1920×1080','CMOS','-','30','彩色','12mm','电动','有无/计数'],
+
+      ['MV-SCB006XC-16M-WBN','1920×1080','CMOS','-','30','彩色','16mm','电动','有无/计数'],
+
+      ['MV-SCB008XM-05M-WBN','1920×1280','CMOS','-','75','黑白','5mm','电动','有无/计数/OCR'],
+
+      ['MV-SCB008XM-12M-WBN','1920×1280','CMOS','-','75','黑白','12mm','电动','有无/计数/OCR'],
+
+      ['MV-SCB008XM-16M-WBN','1920×1280','CMOS','-','75','黑白','16mm','电动','有无/计数/OCR'],
+
+      ['MV-SCB008XC-05M-WBN','1920×1280','CMOS','-','75','彩色','5mm','电动','有无/计数/OCR'],
+
+      ['MV-SCB008XC-12M-WBN','1920×1280','CMOS','-','75','彩色','12mm','电动','有无/计数/OCR'],
+
+      ['MV-SCB008XC-16M-WBN','1920×1280','CMOS','-','75','彩色','16mm','电动','有无/计数/OCR'],
+
+      ['HY-ZXJ6168C-W','1408×1024','CMOS','-','60','彩色','8mm','手动','有无/计数'],
+
+      ['HK-TD032-8-WBN','1408×1024','CMOS','-','60','黑白','8mm','手动','有无/计数'],
+
+      ['HK-TD032-12-WBN','1408×1024','CMOS','-','60','黑白','12.4mm','手动','有无/计数'],
+
+      ['HK-TD032-15-WBN','1408×1024','CMOS','-','60','黑白','14.8mm','手动','有无/计数'],
+
+      ['MV-SCP16M-H-WX-08S-WBN','1408×1024','CMOS','-','60','黑白','8mm','手动','有无/计数/OCR'],
+
+      ['MV-SCP16M-H-WX-12S-WBN','1408×1024','CMOS','-','60','黑白','12.4mm','手动','有无/计数/OCR'],
+
+      ['MV-SCP16M-H-WX-15S-WBN','1408×1024','CMOS','-','60','黑白','14.8mm','手动','有无/计数/OCR'],
+
+      ['MV-SCP16C-H-WX-08S-WBN','1408×1024','CMOS','-','60','彩色','8mm','手动','有无/计数/OCR'],
+
+      ['MV-SCP16C-H-WX-12S-WBN','1408×1024','CMOS','-','60','彩色','12.4mm','手动','有无/计数/OCR'],
+
+      ['MV-SCP16C-H-WX-15S-WBN','1408×1024','CMOS','-','60','彩色','14.8mm','手动','有无/计数/OCR'],
+
+      ['MV-SCP16C-H-WX-08S-WBN-S','1408×1024','CMOS','-','60','彩色','8mm','手动','有无/计数/OCR'],
+
+      ['HY-ZXJ6163C-W','1408×1024','CMOS','-','40','彩色','3mm','手动','有无/计数'],
+
+      ['HY-ZXJ6166C-W','1408×1024','CMOS','-','40','彩色','6mm','手动','有无/计数'],
+
+    ]
+
+  },
+
+  sc2000x: {
+
+    name:'SC2000X系列 视觉传感器(AI)',url:'https://www.hikrobotics.com/cn/machinevision/visionproduct?typeId=38',
+
+    specs:{'定位':'AI入门(边缘学习)','分辨率':'130万~240万','传感器':'CMOS','快门':'全局','最大帧率':'75fps','AI能力':'⭐边缘学习:异常判断/种类识别/学习计数','通讯':'100M Ethernet','防护':'IP65','应用':'防错检测/OCR/分类','软件':'SCMVS客户端','独有':'AI边缘学习模块(相机内训练)'},
+
+    models:[
+
+      ['MV-SC2013XC-05M-WBN','1280×1024','CMOS','全局','55','彩色','5mm','异常判断/种类识别'],
+      ['MV-SC2013XM-05M-WBN','1280×1024','CMOS','全局','55','黑白','5mm','异常判断/种类识别'],
+
+      ['MV-SC2013XM-12M-WBN','1280×1024','CMOS','全局','55','黑白','12mm','异常判断/种类识别'],
+
+      ['MV-SC2023XC-05M-WBN','1920×1280','CMOS','全局','75','彩色','5mm','异常判断/种类识别/学习计数'],
+
+      ['MV-SC2023XC-12M-WBN','1920×1280','CMOS','全局','75','彩色','12mm','异常判断/种类识别/学习计数'],
+
+      ['MV-SC2023XM-12M-WBN','1920×1280','CMOS','全局','75','黑白','12mm','异常判断/种类识别/学习计数'],
+
+      ['MV-SC2023XC-16M-WBN','1920×1280','CMOS','全局','75','彩色','16mm','异常判断/种类识别/学习计数'],
+
+      ['MV-SC2013XM-16M-WBN','1280×1024','CMOS','全局','55','黑白','16mm','异常判断/种类识别'],
+
+      ['MV-SC2013XC-12M-WBN','1280×1024','CMOS','全局','55','彩色','12mm','异常判断/种类识别'],
+
+      ['MV-SC2013XC-16M-WBN','1280×1024','CMOS','全局','55','彩色','16mm','异常判断/种类识别'],
+
+      ['MV-SC2023XM-05M-WBN','1920×1280','CMOS','全局','75','黑白','5mm','异常判断/种类识别/学习计数'],
+
+      ['MV-SC2023XM-16M-WBN','1920×1280','CMOS','全局','75','黑白','16mm','异常判断/种类识别/学习计数'],
+
+      ['MV-SCB006XM-05M-WBN','1920×1080','CMOS','全局','30','黑白','5mm','异常判断/种类识别'],
+
+      ['MV-SCB006XM-12M-WBN','1920×1080','CMOS','全局','30','黑白','12mm','异常判断/种类识别'],
+
+      ['MV-SCB006XM-16M-WBN','1920×1080','CMOS','全局','30','黑白','16mm','异常判断/种类识别'],
+
+      ['MV-SCB006XC-05M-WBN','1920×1080','CMOS','全局','30','彩色','5mm','异常判断/种类识别'],
+
+      ['MV-SCB006XC-12M-WBN','1920×1080','CMOS','全局','30','彩色','12mm','异常判断/种类识别'],
+
+      ['MV-SCB006XC-16M-WBN','1920×1080','CMOS','全局','30','彩色','16mm','异常判断/种类识别'],
+
+      ['MV-SCB008XM-05M-WBN','1920×1280','CMOS','全局','75','黑白','5mm','异常判断/种类识别/学习计数'],
+
+      ['MV-SCB008XM-12M-WBN','1920×1280','CMOS','全局','75','黑白','12mm','异常判断/种类识别/学习计数'],
+
+      ['MV-SCB008XM-16M-WBN','1920×1280','CMOS','全局','75','黑白','16mm','异常判断/种类识别/学习计数'],
+
+      ['MV-SCB008XC-05M-WBN','1920×1280','CMOS','全局','75','彩色','5mm','异常判断/种类识别/学习计数'],
+
+      ['MV-SCB008XC-12M-WBN','1920×1280','CMOS','全局','75','彩色','12mm','异常判断/种类识别/学习计数'],
+
+      ['MV-SCB008XC-16M-WBN','1920×1280','CMOS','全局','75','彩色','16mm','异常判断/种类识别/学习计数'],
+
+    ]
+
+  },
+
+  sc3000: {
+
+    name:'SC3000系列 视觉传感器(主推SC3000X)',url:'https://www.hikrobotics.com/cn/machinevision/visionproduct?typeId=38&id=262',
+
+    specs:{'定位':'高性能AI视觉传感器（主推SC3000X系列）','分辨率范围':'130万~600万','传感器':'CMOS,全局快门','像元尺寸':'3.45μm','靶面':'1/2.9″~1/1.45″','最大帧率':'100fps','AI能力':'⭐SC3000X主推：边缘学习 / 学习OCR / 深度学习（异常检测/OCR/HDR）','通讯':'100M Ethernet','防护':'IP67','功耗':'48W max','应用':'3C/汽车/锂电/半导体','独有':'RGBW四色光源/偏振/红外镜头罩/180°旋转尾线','软件':'SCMVS客户端','主推型号':'MV-SC3020X / 3030X / 3050X / 3060X（边缘学习·学习OCR·深度学习）'},
+
+    models:[
+
+      ['MV-SC3013XM-08M-WBN','1216×1024','3.45μm','1/2.9″','60','黑白','8mm','机械自动','有无/计数/OCR'],
+
+      ['MV-SC3013XC-08M-WBN','1216×1024','3.45μm','1/2.9″','60','彩色','8mm','机械自动','有无/计数/OCR'],
+
+      ['MV-SC3013XM-12M-WBN','1216×1024','3.45μm','1/2.9″','60','黑白','12mm','机械自动','有无/计数/OCR'],
+
+      ['MV-SC3013XC-12M-WBN','1216×1024','3.45μm','1/2.9″','60','彩色','12mm','机械自动','有无/计数/OCR'],
+
+      ['MV-SC3013XM-16M-WBN','1216×1024','3.45μm','1/2.9″','60','黑白','16mm','机械自动','有无/计数'],
+
+      ['MV-SC3013XC-16M-WBN','1216×1024','3.45μm','1/2.9″','60','彩色','16mm','机械自动','有无/计数'],
+
+      ['MV-SC3016M-06M-WBN','1408×1024','-','-','60','黑白','6mm','机械自动','有无/计数/OCR'],
+
+      ['MV-SC3016C-06M-WBN','1408×1024','-','-','60','彩色','6mm','机械自动','有无/计数/OCR'],
+
+      ['MV-SC3016M-12M-WBN','1408×1024','-','-','60','黑白','12mm','机械自动','有无/计数/OCR'],
+
+      ['MV-SC3016C-12M-WBN','1408×1024','-','-','60','彩色','12mm','机械自动','有无/计数/OCR'],
+
+      ['MV-SC3016M-15M-WBN','1408×1024','-','-','60','黑白','14.8mm','机械自动','有无/计数'],
+
+      ['MV-SC3016C-15M-WBN','1408×1024','-','-','60','彩色','14.8mm','机械自动','有无/计数'],
+
+      ['MV-SC3020XM-08M-WBN','1536×1264','-','-','100','黑白','16mm','机械自动','边缘学习/异常检测'],
+
+      ['MV-SC3020XM-12M-WBN','1536×1264','-','-','100','黑白','12mm','机械自动','边缘学习/异常检测'],
+
+      ['MV-SC3020XM-16M-WBN','1536×1264','-','-','100','黑白','8mm','机械自动','边缘学习/异常检测'],
+
+      ['MV-SC3020XC-08M-WBN','1536×1264','-','-','100','彩色','8mm','机械自动','边缘学习/异常检测'],
+
+      ['MV-SC3020XC-12M-WBN','1536×1264','-','-','100','彩色','12mm','机械自动','边缘学习/异常检测'],
+
+      ['MV-SC3020XC-16M-WBN','1536×1264','-','-','100','彩色','16mm','机械自动','边缘学习/异常检测'],
+
+      ['MV-SC3030XM-08M-WBN','2048×1536','3.45μm','1/1.7″','40','黑白','8mm','机械自动','边缘学习/异常检测/OCR'],
+
+      ['MV-SC3030XC-08M-WBN','2048×1536','3.45μm','1/1.7″','40','彩色','8mm','机械自动','边缘学习/异常检测/OCR'],
+
+      ['MV-SC3030XM-12M-WBN','2048×1536','3.45μm','1/1.7″','40','黑白','12mm','机械自动','边缘学习/异常检测/OCR'],
+
+      ['MV-SC3030XC-12M-WBN','2048×1536','3.45μm','1/1.7″','40','彩色','12mm','机械自动','边缘学习/异常检测/OCR'],
+
+      ['MV-SC3030XM-16M-WBN','2048×1536','3.45μm','1/1.7″','40','黑白','16mm','机械自动','边缘学习/异常检测'],
+
+      ['MV-SC3030XC-16M-WBN','2048×1536','3.45μm','1/1.7″','40','彩色','16mm','机械自动','边缘学习/异常检测'],
+
+      ['MV-SC3050XM-08M-WBN','2432×2048','3.45μm','1/1.45″','40','黑白','8mm','机械自动','⭐深度学习/边缘学习/OCR/HDR'],
+
+      ['MV-SC3050XM-08M-WBN-S','2432×2048','3.45μm','1/1.45″','40','黑白','8mm','机械自动','⭐深度学习/边缘学习/OCR/HDR'],
+
+      ['MV-SC3050XC-08M-WBN','2432×2048','3.45μm','1/1.45″','40','彩色','8mm','机械自动','⭐深度学习/边缘学习/OCR/HDR'],
+
+      ['MV-SC3050XC-08M-WBN-S','2432×2048','3.45μm','1/1.45″','40','彩色','8mm','机械自动','⭐深度学习/边缘学习/OCR/HDR'],
+
+      ['MV-SC3050XM-12M-WBN','2432×2048','3.45μm','1/1.45″','40','黑白','12mm','机械自动','⭐深度学习/边缘学习'],
+
+      ['MV-SC3050XM-12M-WBN-S','2432×2048','3.45μm','1/1.45″','40','黑白','12mm','机械自动','⭐深度学习/边缘学习'],
+
+      ['MV-SC3050XC-12M-WBN','2432×2048','3.45μm','1/1.45″','40','彩色','12mm','机械自动','⭐深度学习/边缘学习'],
+
+      ['MV-SC3050XC-12M-WBN-S','2432×2048','3.45μm','1/1.45″','40','彩色','12mm','机械自动','⭐深度学习/边缘学习'],
+
+      ['MV-SC3050XM-16M-WBN','2432×2048','3.45μm','1/1.45″','40','黑白','16mm','机械自动','⭐深度学习/边缘学习'],
+
+      ['MV-SC3050XM-16M-WBN-S','2432×2048','3.45μm','1/1.45″','40','黑白','16mm','机械自动','⭐深度学习/边缘学习'],
+
+      ['MV-SC3050XC-16M-WBN','2432×2048','3.45μm','1/1.45″','40','彩色','16mm','机械自动','⭐深度学习/边缘学习'],
+
+      ['MV-SC3050XC-16M-WBN-S','2432×2048','3.45μm','1/1.45″','40','彩色','16mm','机械自动','⭐深度学习/边缘学习'],
+
+      ['MV-SC3050M-08M-WBN V4','2432×2048','3.45μm','1/1.45″','50','黑白','8mm','机械自动','⭐深度学习/边缘学习/OCR'],
+
+      ['MV-SC3050M-12M-WBN V4','2432×2048','3.45μm','1/1.45″','50','黑白','12mm','机械自动','⭐深度学习/边缘学习'],
+
+      ['MV-SC3050M-16M-WBN V4','2432×2048','3.45μm','1/1.45″','50','黑白','16mm','机械自动','⭐深度学习/边缘学习'],
+
+      ['MV-SC3060XM-08M-WBN','3200×1920','-','-','20','黑白','8mm','机械自动','边缘学习/异常检测'],
+
+      ['MV-SC3060XM-12M-WBN','3200×1920','-','-','20','黑白','12mm','机械自动','边缘学习/异常检测'],
+
+      ['MV-SC3060XM-16M-WBN','3200×1920','-','-','20','黑白','16mm','机械自动','边缘学习/异常检测'],
+
+      ['MV-SC3060XC-08M-WBN','3200×1920','-','-','20','彩色','8mm','机械自动','边缘学习/异常检测'],
+
+      ['MV-SC3060XC-12M-WBN','3200×1920','-','-','20','彩色','12mm','机械自动','边缘学习/异常检测'],
+
+      ['MV-SC3060XC-16M-WBN','3200×1920','-','-','20','彩色','16mm','机械自动','边缘学习/异常检测'],
+
+      ['MV-SCC005XM-08M-WBN','1216×1024','-','-','60','黑白','8mm','机械自动','有无/计数/OCR'],
+
+      ['MV-SCC005XC-08M-WBN','1216×1024','-','-','60','彩色','8mm','机械自动','有无/计数/OCR'],
+
+      ['MV-SCC005XM-12M-WBN','1216×1024','-','-','60','黑白','12mm','机械自动','有无/计数/OCR'],
+
+      ['MV-SCC005XC-12M-WBN','1216×1024','-','-','60','彩色','12mm','机械自动','有无/计数/OCR'],
+
+      ['MV-SCC005XM-16M-WBN','1216×1024','-','-','60','黑白','16mm','机械自动','有无/计数'],
+
+      ['MV-SCC005XC-16M-WBN','1216×1024','-','-','60','彩色','16mm','机械自动','有无/计数'],
+
+      ['MV-SCC009XM-08M-WBN','2048×1536','-','-','40','黑白','8mm','机械自动','边缘学习/异常检测/OCR'],
+
+      ['MV-SCC009XC-08M-WBN','2048×1536','-','-','40','彩色','8mm','机械自动','边缘学习/异常检测/OCR'],
+
+      ['MV-SCC009XM-12M-WBN','2048×1536','-','-','40','黑白','12mm','机械自动','边缘学习/异常检测/OCR'],
+
+      ['MV-SCC009XC-12M-WBN','2048×1536','-','-','40','彩色','12mm','机械自动','边缘学习/异常检测/OCR'],
+
+      ['MV-SCC009XM-16M-WBN','2048×1536','-','-','40','黑白','16mm','机械自动','边缘学习/异常检测'],
+
+      ['MV-SCC009XC-16M-WBN','2048×1536','-','-','40','彩色','16mm','机械自动','边缘学习/异常检测'],
+
+      ['CY-CB50XC-12MW','2432×2048','-','-','40','彩色','16mm','机械自动','深度学习/边缘学习'],
+
+      ['CY-CB50XC-16MW','2432×2048','-','-','40','彩色','12mm','机械自动','深度学习/边缘学习'],
+
+      ['MV-SCT16C-H-WX-06M-WBN','1408×1024','-','-','60','彩色','6mm','机械自动','有无/计数/OCR'],
+
+      ['MV-SCT16C-H-WX-12M-WBN','1408×1024','-','-','60','彩色','12.4mm','机械自动','有无/计数/OCR'],
+
+      ['MV-SCT16C-H-WX-15M-WBN','1408×1024','-','-','60','彩色','14.8mm','机械自动','有无/计数'],
+
+      ['MV-SCT5XC-H-WX-08M-WBN','2432×2048','-','-','40','彩色','8mm','机械自动','深度学习/边缘学习'],
+
+      ['MV-SCT5XC-H-WX-12M-WBN','2432×2048','-','-','40','彩色','12mm','机械自动','深度学习/边缘学习'],
+
+      ['MV-SCT5XC-H-WX-16M-WBN','2432×2048','-','-','40','彩色','16mm','机械自动','深度学习/边缘学习'],
+
+      ['SC016M-12M-01','1408×1024','-','-','60','黑白','12mm','机械自动','有无/计数/OCR'],
+
+      ['MV-TD1216XC-60M-WBN','1216×1024','-','-','60','彩色','12mm','机械自动','有无/计数/OCR'],
+
+    ]
+
+  },
+
+  sc5000x: {
+
+    name:'SC5000X系列 智能相机',url:'https://www.hikrobotics.com/cn/machinevision/visionproduct?typeId=38&id=284',
+
+    specs:{'定位':'AI深度学习智能相机','分辨率范围':'200万~1200万','传感器':'CMOS','快门':'全局(5020/5050)/卷帘(5060)','最大帧率':'100fps','AI能力':'⭐VM算法平台(160+算法)+AI深度学习+全监督检测+边缘学习','通讯':'GigE千兆','防护':'IP67','功耗':'10W(典型)','应用':'复杂缺陷检测/装配验证/OCR/锂电/汽车','独有':'C-Mount镜头/模块化光源/180°旋转尾线/FINS/KV/SLMP','软件':'VM V4.4.50(基础+深度学习+行业方案包)'},
+
+    models:[
+
+      ['MV-SC5020XM-00C-NNN','1600×1216','3.45μm','1/2.3″','100','黑白','C口(无镜头)','VM+AI深度学习'],
+
+      ['MV-SC5020XC-00C-NNN','1600×1216','3.45μm','1/2.3″','100','彩色','C口(无镜头)','VM+AI深度学习'],
+
+      ['MV-SC5020XM-06M-WBN','1600×1216','3.45μm','1/2.3″','100','黑白','6mm','VM+AI深度学习'],
+
+      ['MV-SC5020XC-06M-WBN','1600×1216','3.45μm','1/2.3″','100','彩色','6mm','VM+AI深度学习'],
+
+      ['MV-SC5020XM-12M-WBN','1600×1216','3.45μm','1/2.3″','100','黑白','12mm','VM+AI深度学习'],
+
+      ['MV-SC5020XC-12M-WBN','1600×1216','3.45μm','1/2.3″','100','彩色','12mm','VM+AI深度学习'],
+
+      ['MV-SC5020XM-16M-WBN','1600×1216','3.45μm','1/2.3″','100','黑白','16mm','VM+AI深度学习'],
+
+      ['MV-SC5020XC-16M-WBN','1600×1216','3.45μm','1/2.3″','100','彩色','16mm','VM+AI深度学习'],
+
+      ['MV-SC5050XM-00C-NNN','2432×2048','3.45μm','2/3″','60','黑白','C口(无镜头)','VM+AI深度学习/全监督'],
+
+      ['MV-SC5050XC-00C-NNN','2432×2048','3.45μm','2/3″','60','彩色','C口(无镜头)','VM+AI深度学习/全监督'],
+
+      ['MV-SC5050XM-08M-WBN','2432×2048','3.45μm','2/3″','60','黑白','8mm','VM+AI深度学习/全监督'],
+
+      ['MV-SC5050XC-08M-WBN','2432×2048','3.45μm','2/3″','60','彩色','8mm','VM+AI深度学习/全监督'],
+
+      ['MV-SC5050XM-12M-WBN','2432×2048','3.45μm','2/3″','60','黑白','12mm','VM+AI深度学习/全监督'],
+
+      ['MV-SC5050XC-12M-WBN','2432×2048','3.45μm','2/3″','60','彩色','12mm','VM+AI深度学习/全监督'],
+
+      ['MV-SC5050XM-16M-WBN','2432×2048','3.45μm','2/3″','60','黑白','16mm','VM+AI深度学习/全监督'],
+
+      ['MV-SC5050XC-16M-WBN','2432×2048','3.45μm','2/3″','60','彩色','16mm','VM+AI深度学习/全监督'],
+
+      ['MV-SC5050XM-PPB-12M-WBN','2432×2048','3.45μm','2/3″','60','黑白','12mm','VM+AI深度学习/全监督'],
+
+      ['MV-SC5050XM-PPM-16M-WBN','2432×2048','3.45μm','2/3″','60','黑白','16mm','VM+AI深度学习/全监督'],
+
+      ['MV-SC5050XM-PPB-16M-WBN','2432×2048','3.45μm','2/3″','60','黑白','16mm','VM+AI深度学习/全监督'],
+
+      ['MV-SC5060XM-08M-WBN','3200×1920','2.0μm','1/1.8″','15','黑白','8mm','VM+AI深度学习/OCR'],
+
+      ['MV-SC5060XC-08M-WBN','3200×1920','2.0μm','1/1.8″','15','彩色','8mm','VM+AI深度学习/OCR'],
+
+      ['MV-SC5060XM-12M-WBN','3200×1920','2.0μm','1/1.8″','15','黑白','12mm','VM+AI深度学习/OCR'],
+
+      ['MV-SC5060XC-12M-WBN','3200×1920','2.0μm','1/1.8″','15','彩色','12mm','VM+AI深度学习/OCR'],
+
+      ['MV-SC5060XM-16M-WBN','3200×1920','2.0μm','1/1.8″','15','黑白','16mm','VM+AI深度学习'],
+
+      ['MV-SC5060XC-16M-WBN','3200×1920','2.0μm','1/1.8″','15','彩色','16mm','VM+AI深度学习'],
+
+      ['MV-SC5060XM-00C-NNN','3200×1920','2.0μm','1/1.8″','15','黑白','C口(无镜头)','VM+AI深度学习'],
+
+      ['MV-SC5060XC-00C-NNN','3200×1920','2.0μm','1/1.8″','15','彩色','C口(无镜头)','VM+AI深度学习'],
+
+      ['MV-SC5100XM-08M-WBN','4096×2816','2.0μm','1/1.8″','10','黑白','8mm','VM+AI深度学习'],
+
+      ['MV-SC5100XC-08M-WBN','4096×2816','2.0μm','1/1.8″','10','彩色','8mm','VM+AI深度学习'],
+
+      ['MV-SC5100XM-12M-WBN','4096×2816','2.0μm','1/1.8″','10','黑白','12mm','VM+AI深度学习'],
+
+      ['MV-SC5100XC-12M-WBN','4096×2816','2.0μm','1/1.8″','10','彩色','12mm','VM+AI深度学习'],
+
+      ['MV-SC5100XM-16M-WBN','4096×2816','2.0μm','1/1.8″','10','黑白','16mm','VM+AI深度学习'],
+
+      ['MV-SC5100XC-16M-WBN','4096×2816','2.0μm','1/1.8″','10','彩色','16mm','VM+AI深度学习'],
+
+      ['MV-SC5100XM-00C-NNN','4096×2816','2.0μm','1/1.8″','10','黑白','C口(无镜头)','VM+AI深度学习'],
+
+      ['MV-SC5100XC-00C-NNN','4096×2816','2.0μm','1/1.8″','10','彩色','C口(无镜头)','VM+AI深度学习'],
+
+      ['MV-SC5120XM-00C-NNN','4096×2944','-','-','30','黑白','C口(无镜头)','VM+AI深度学习'],
+
+      ['MV-SC5120XC-00C-NNN','4096×2944','-','-','30','彩色','C口(无镜头)','VM+AI深度学习'],
+
+      ['YTH-INA050M-16M-WBN-MF','2432×2048','3.45μm','2/3″','60','黑白','16mm','VM+AI深度学习'],
+
+      ['MV-SC5520XC-00C-MAX','4096×2944','-','-','30','彩色','C口(无镜头)','VM+AI深度学习'],
+
+      ['MV-XC-3550-08W','2432×2048','3.45μm','2/3″','60','黑白','8mm','VM+AI深度学习'],
+
+    ]
+
+  },
+
+  sc6000: {
+
+    name:'SC6000系列 AI智能相机',url:'https://www.hikrobotics.com/cn/machinevision/visionproduct?typeId=38',
+
+    specs:{'定位':'旗舰AI智能相机','晶圆专用能力':'不具备(晶圆专用客户端与晶圆ID大模型仅SC6500P-AI-WID具备)','分辨率范围':'160万~2500万','传感器':'CMOS','快门':'全局','最大帧率':'60fps','AI能力':'⭐VM完整版+140+视觉工具+30+通讯协议','通讯':'GigE千兆','防护':'IP67','功耗':'14.4W max','应用':'半导体/精密制造/复杂缺陷/OCR/装配','独有':'C-Mount+外接显示器+外接光源控制/2500万像素','软件':'VM完整版(基础+深度学习+行业方案包)'},
+
+    models:[
+
+      ['MV-SC6016M-00C-NNN/V2','1408×1024','3.45μm','1/2.9″','120','黑白','C口(无镜头)','VM完整版+全监督+深度学习'],
+
+      ['MV-SC6016C-00C-NNN/V2','1408×1024','3.45μm','1/2.9″','120','彩色','C口(无镜头)','VM完整版+全监督+深度学习'],
+
+      ['MV-SC6016M-12M-XBN','1408×1024','3.45μm','1/2.9″','120','黑白','12mm','VM完整版+深度学习'],
+
+      ['MV-SC6016C-16M-XBN','1408×1024','3.45μm','1/2.9″','120','彩色','16mm','VM完整版+深度学习'],
+
+      ['MV-SC6050M-00C-NNN/V2','2432×2048','3.45μm','2/3″','80','黑白','C口(无镜头)','VM完整版+全监督+深度学习'],
+
+      ['MV-SC6050C-00C-NNN/V2','2432×2048','3.45μm','2/3″','80','彩色','C口(无镜头)','VM完整版+全监督+深度学习'],
+
+      ['MV-SC6050M-08M-XBN','2432×2048','3.45μm','2/3″','80','黑白','8mm','VM完整版+深度学习/OCR'],
+
+      ['MV-SC6050C-16M-XBN','2432×2048','3.45μm','2/3″','80','彩色','16mm','VM完整版+AI深度学习/OCR'],
+
+      ['MV-SC6250M-00C-NNN','5120×5120','2.5μm','1″','20','黑白','C口(无镜头)','2500万像素/VM完整版'],
+
+      ['MV-SC6120C-00C-NNN','4096×2944','-','-','45','彩色','C口(无镜头)','VM完整版+全监督+深度学习'],
+
+      ['MV-SC6250C-00C-NNN','4608×5120','2.5μm','1″','16','彩色','C口(无镜头)','2500万像素/VM完整版'],
+
+    ]
+
+  },
+
+  sc6500: {
+
+    name:'SC6500P-AI-WID 半导体晶圆OCR智能相机',url:'https://www.hikrobotics.com/cn/news/newsdetail?id=43',
+
+    specs:{'定位':'半导体晶圆信息读取专用','晶圆专用能力':'晶圆专用客户端+晶圆ID大模型(SEMI标准OCR·36,000片/时@≥99.9%)','分辨率范围':'81万~160万','传感器':'CMOS,全局快门','像元尺寸':'3.45μm','通讯':'GigE千兆','AI能力':'⭐VM完整版+140+算法+半导体SEMI标准OCR','存储':'8GB RAM/64GB','防护':'IP40','应用':'半导体晶圆ID/DM码/QR码/Barcode','独有':'红色LED/明暗视场组合/抗振动抗冲击'},
+
+    models:[
+
+      ['MV-SC6500-AI-WID','1408×1024','3.45μm','1/2.9″','60','黑白','12mm','自动调节','半导体SEMI标准OCR/DM/QR/Barcode'],
+
+      ['MV-SC6500P-AI-WID-RBN','1408×576','3.45μm','1/3.4″','120','黑白','M12','自动调节','⭐晶圆ID专用/81万像素/条光RGB'],
+
+      ['MV-SC6500P-AI-WID-IBN','1408×576','3.45μm','1/3.4″','120','黑白','M12','自动调节','⭐晶圆ID专用/81万像素/组合近红外光源'],
+
+    ]
+
+  }
+
+};
+
+
+
+// Link rules by series
+
+const hikLinks = {
+
+  sc1000:{site:'https://www.hikrobotics.com/cn/machinevision/visionproduct?id=320&typeId=38',doc:'https://docs.qq.com/aio/DSGNFcXVjd1NOV0FH?p=Nyh20mJze6d8arv6Hc7QK2'},
+
+  sc2000:{site:'https://www.hikrobotics.com/cn/machinevision/visionproduct?id=280&typeId=38',doc:'https://docs.qq.com/aio/DSGNFcXVjd1NOV0FH?p=Nyh20mJze6d8arv6Hc7QK2'},
+
+  sc2000x:{site:'https://www.hikrobotics.com/cn/machinevision/visionproduct?typeId=38',doc:'https://docs.qq.com/aio/DSGNFcXVjd1NOV0FH?p=Nyh20mJze6d8arv6Hc7QK2'},
+
+  sc3000:{site:'https://www.hikrobotics.com/cn/machinevision/visionproduct?typeId=38&id=262',doc:'https://docs.qq.com/aio/DSGNFcXVjd1NOV0FH?p=Nyh20mJze6d8arv6Hc7QK2'},
+
+  sc5000x:{site:'https://www.hikrobotics.com/cn/machinevision/visionproduct?typeId=38&id=284',doc:'https://docs.qq.com/aio/DTHVtbHNpcHFVd0JI'},
+
+  sc6000:{site:'https://www.hikrobotics.com/cn/machinevision/visionproduct?typeId=38',doc:'https://docs.qq.com/aio/DTHVtbHNpcHFVd0JI'},
+
+  sc6500:{site:'https://www.hikrobotics.com/cn/news/newsdetail?id=43',doc:'https://docs.qq.com/aio/DTHVtbHNpcHFVd0JI'}
+
+};
+
+
+
+// Competitor data — each series has searchKeys for precise matching
+
+hikData.sc3000x = hikData.sc3000;  // SC3000/X 共用数据别名：VN4000/SCS3等对标SC3000X时指向真实SC3000X型号数据
+
+const compData = [
+
+  {
+
+    id:'keyence',brand:'基恩士 KEYENCE',region:'intl',logo:'#e8600a',logoText:'K',
+
+    counterpart:'IV4→SC3000X(2026-09新品AI旗舰); IV3→SC2000X; VS-L/S/C(160~500)→SC6000(L/S系)/SC5000X(C口); VS-1500/2500(12/25MP)→SC6000(SC6120C/SC6250C)',
+
+    reason:'IV4为基恩士2026-09新品AI旗舰视觉传感器(65工具·IP67·PoE·千兆,官方不公布帧率,仅公布最高250个/秒·4ms处理)→海康SC3000X(边缘学习+VM算法平台,官方60fps可背书;窄视野IV4-400配SC3013XM-16M最长焦,标准/宽视野配SC3013XM-08M);IV3(主力AI·1280×960·65工具)→海康SC2000X(约1.3MP一体式·55/75fps可背书;IV3装偏光镜后失去IP67,海康SC2000X配偏振罩仍保持IP65);VS(旗舰最高25MP·ZoomTrax光学变焦19组镜头免换镜头+ESD-Safe)→海康SC6000/SC5000X(VM完整版140+视觉工具+30+通讯协议FINS/KV/SLMP+外接显示器+USB扩展,覆盖12/16/25MP且45fps档帧率更优)',
+
+    url:'https://www.keyence.com.cn/products/vision/vision-sys/vs/',
+
+    series:[
+
+      {name:'IV4 系列(AI旗舰视觉传感器)',searchKeys:['iv4'],
+
+        counterpart:'IV4-400CA/MA→MV-SC3013XM/XC-16M-WBN; IV4-500CA/MA→MV-SC3013XM/XC-08M-WBN; IV4-600CA/MA→MV-SC3013XM/XC-08M-WBN',
+
+        reason:'IV4为基恩士2026-09新品AI旗舰视觉传感器(65工具·IP67·PoE·千兆,官方不公布帧率,仅公布最高250个/秒·4ms处理);海康SC3000X系列带边缘学习(异常检测/分类)+VM算法平台,官方60fps可背书;窄视野IV4-400配SC3013XM-16M(最长焦),标准/宽视野配SC3013XM-08M。核心参数差异：全局快门(同)',colNames:['型号','规格(官方数据)','帧率','AI能力'],
+
+        models:[
+
+        ['IV4-400CA/MA','窄视野·1280×960·1/2.9英寸·安装400mm起·视场58×44~464×348mm·IP67·PoE Class4/6·千兆·2026-09中国发布','—(官方未公布帧率;官方仅公布最高250个/秒·4ms处理)','AI旗舰:AI辅助判别/现场学习·65工具(判别最多64)·128程序(SD卡)/32'],
+
+        ['IV4-500CA/MA','标准·1280×960·1/2.9英寸·安装50mm起·视场22×16~1184×888mm·IP67·PoE Class4/6·千兆·2026-09中国发布','—(官方未公布帧率;官方仅公布最高250个/秒·4ms处理)','AI旗舰:AI辅助判别/现场学习·65工具(判别最多64)·128程序(SD卡)/32'],
+
+        ['IV4-600CA/MA','宽视野·1280×960·1/2.9英寸·安装50mm起·视场51×38~2730×2044mm·IP67·PoE Class4/6·千兆·2026-09中国发布','—(官方未公布帧率;官方仅公布最高250个/秒·4ms处理)','AI旗舰:AI辅助判别/现场学习·65工具(判别最多64)·128程序(SD卡)/32'],
+
+      ]},
+
+      {name:'IV3 系列',searchKeys:['iv3'],
+
+        counterpart:'IV3-400CA/MA→MV-SC2013XC-16M-WBN; IV3-500CA/MA→MV-SC2013XC-05M-WBN; IV3-600CA/MA→MV-SC2013XC-05M-WBN',
+
+        reason:'IV3为基恩士主力AI视觉传感器(1280×960·65工具·官方不公布帧率);海康SC2000X系列同为约1.3MP一体式,带异常判断/种类识别,官方55/75fps可背书;IV3装偏光镜后失去IP67,海康SC2000X配偏振罩仍保持IP65;窄视野IV3-400配SC2013XC-16M(最长焦)。核心参数差异：全局快门(同)',colNames:['型号','规格(官方数据)','帧率','AI能力'],
+
+        models:[
+
+        ['IV3-400CA/MA','窄视野·1280×960·1/2.9英寸·安装400mm起·视场58×44~464×348mm·IP67·PoE Class3/4/6·千兆·约300g','—(官方未公布)','AI分类模式+AI拍摄·65工具(判别最多64)·128程序(SD卡)/32'],
+
+        ['IV3-500CA/MA','标准·1280×960·1/2.9英寸·安装50mm起·视场22×16~1184×888mm·IP67·PoE Class3/4/6·千兆·约300g','—(官方未公布)','AI分类模式+AI拍摄·65工具(判别最多64)·128程序(SD卡)/32'],
+
+        ['IV3-600CA/MA','宽视野·1280×960·1/2.9英寸·安装50mm起·视场51×38~2730×2044mm·IP67·PoE Class3/4/6·千兆·约300g','—(官方未公布)','AI分类模式+AI拍摄·65工具(判别最多64)·128程序(SD卡)/32'],
+
+      ]},
+
+
+      {name:'VS系列 一体式智能相机(AI×光学变焦ZoomTrax)',searchKeys:['vs','vs-l','vs-s','vs-c'],
+
+        counterpart:'VS-L160MX/CX→MV-SC6016C-00C-NNN/V2; VS-L320MX/CX→MV-SC6050C-00C-NNN/V2; VS-L500MX/CX→MV-SC6050C-00C-NNN/V2 等13种型号(逐型号对标见表)',
+
+        reason:'VS系列对标SC6000(同为旗舰级,最高2500万像素);VS优势:ZoomTrax光学变焦(免换镜头)+ESD-Safe+官方帧率85/83/81/48fps;海康优势:VM完整版140+视觉工具+30+通讯协议(FINS/KV/SLMP)+外接显示器+USB扩展,SC6000覆盖12/16/25MP且45fps档帧率更优。核心参数差异：全局快门(同)；C口对C口；分辨率最接近(2048×1536 vs 2432×2048)；友商62fps vs 海康60fps(持平)；C口对C口；5MP对5MP；友商55fps vs 海康60fps(海康优势)；C口对C口；友商15MP/40fps vs 海康12MP/45fps(海康帧率优、分辨率略低)',colNames:['型号','规格(官方数据)','帧率','AI能力'],
+
+        specs:{
+
+          '产品定位':'AI×光学变焦一体式智能相机,一键优质成像',
+
+          '核心创新':'⭐ZoomTrax光学变焦:19组镜头,软件一键变焦,无需更换镜头',
+
+          'AI能力':'双AI引擎:①AI检测(2500万像素高精度) ②AI分割/分类/OCR(仅需数十张训练图)',
+
+          '分辨率范围':'1.6MP~25MP(5档可选)',
+
+          '快门':'全局',
+
+          '防护':'IP67',
+
+          '电源':'PoE(IEEE802.3at Class4) 或 24VDC',
+
+          '通讯':'Ethernet 1000BASE-T',
+
+          'I/O':'1In/3Out/2In-Out(可切换),M12接口',
+
+          '光源':'内置LED+专属照明I/F,支持LumiTrax/Multi-Spectrum',
+
+          '存储':'microSD最大64GB',
+
+          '环境':'ESD-Safe(IEC61340-5-1),抗震10-500Hz,耐冲击50G',
+
+          '认证':'CE/FCC/NRTL/KC/UKCA',
+
+          '独有优势':'光学变焦免更换镜头/OLED显示屏/操作按钮×3/角度监视器'
+
+        },
+
+        models:[
+
+        ['VS-L160MX/CX','1.6MP·变焦×8.75·安装150-5000mm·内存3GB/7GB·约700g·IP67·PoE/24VDC','85','AI×规则混合判别·数十张样本训练·ZoomTrax辅助选型'],
+
+        ['VS-L320MX/CX','3.2MP·变焦×6.0·安装150-5000mm·内存3GB/7GB·约700g·IP67·PoE/24VDC','83','AI×规则混合判别·数十张样本训练·ZoomTrax辅助选型'],
+
+        ['VS-L500MX/CX','5MP·变焦×5.0·安装150-5000mm·内存3GB/7GB·约700g·IP67·PoE/24VDC','81','AI×规则混合判别·数十张样本训练·ZoomTrax辅助选型'],
+
+        ['VS-L1500MX/CX','15MP 4400×3296(0.037-1000ms曝光)·安装150-5000mm·内存3GB/7GB·约700g·IP67·PoE/24VDC','48','AI×规则混合判别·数十张样本训练·ZoomTrax辅助选型'],
+
+        ['VS-S160MX/CX','1.6MP·变焦×3.5·安装50-500mm·内存3GB/7GB·约570g·IP67·PoE/24VDC','85','AI×规则混合判别·数十张样本训练·ZoomTrax辅助选型'],
+
+        ['VS-S320MX/CX','3.2MP·变焦×2.4·安装50-500mm·内存3GB/7GB·约570g·IP67·PoE/24VDC','83','AI×规则混合判别·数十张样本训练·ZoomTrax辅助选型'],
+
+        ['VS-S500MX/CX','5MP·变焦×2.0·安装50-500mm·内存3GB/7GB·约570g·IP67·PoE/24VDC','81','AI×规则混合判别·数十张样本训练·ZoomTrax辅助选型'],
+
+        ['VS-S1500MX/CX','15MP 4400×3296·安装50-500mm·内存3GB/7GB·约570g·IP67·PoE/24VDC','48','AI×规则混合判别·数十张样本训练·ZoomTrax辅助选型'],
+
+        ['VS-C160MX/CX','1.6MP 1440×1072·C口·1/2.9英寸·3.45μm·内存3GB/7GB·约420g·IP67·PoE/24VDC','83','AI×规则混合判别·数十张样本训练·ZoomTrax辅助选型'],
+
+        ['VS-C320MX/CX','3.2MP 2048×1536·C口·1/1.8英寸·3.45μm·内存3GB/7GB·约420g·IP67·PoE/24VDC','62','AI×规则混合判别·数十张样本训练·ZoomTrax辅助选型'],
+
+        ['VS-C500MX/CX','5MP 2448×2048·C口·2/3英寸·3.45μm·内存3GB/7GB·约420g·IP67·PoE/24VDC','55','AI×规则混合判别·数十张样本训练·ZoomTrax辅助选型'],
+
+        ['VS-C1500MX/CX','15MP 4400×3296·C口·1.1英寸·2.5μm·内存7GB·约420g·IP67·PoE/24VDC','40','AI×规则混合判别·数十张样本训练·ZoomTrax辅助选型'],
+
+        ['VS-C2500MX/CX','⭐25MP 5120×5120·C口·1.1英寸·2.5μm·内存7GB·约420g·IP67·PoE/24VDC','28','AI×规则混合判别·数十张样本训练·ZoomTrax辅助选型'],
+
+      ]}
+
+    ]
+
+  },
+
+  {
+
+    id:'cognex',brand:'康耐视 Cognex',region:'intl',logo:'#2563eb',logoText:'C',
+
+    counterpart:'IS3900(Qualcomm AI旗舰)→SC6000; IS3800(1.3MP→SC3013X/3MP→SC3030X/5MP→SC3050X/8MP→SC3060,12/16MP→SC6120C/SC6250C); IS2800/2801/2802→SC2000X; IS8900→SC2000E(2004E-Mini)/IS8902→SC2000X, IS8905/8912→SC5050X/SC5120; D900→SC5000X; IS1740/1741(红LED)→SC6500P-AI-WID-RBN, IS1742(红外LED)→SC6500P-AI-WID-IBN',
+
+    reason:'康耐视 In-Sight 对标(按分辨率/AI档拆分):IS3900(Qualcomm AI旗舰)→SC6000;IS3800系列→SC3000X(1.3MP→SC3013X,3MP→SC3030X,5MP→SC3050X,8MP→SC3060,12MP→SC6120C,16MP→SC6250C);IS2800系列(0.3~2MP入门)→SC2000X;IS8900→SC2000E(2004E-Mini)/IS8902→SC2000X,IS8905/8912→SC5000X;D900(深度学习专用)→SC5000X;IS1740/1741(红LED)→SC6500P-AI-WID-RBN,IS1742(红外LED)→SC6500P-AI-WID-IBN。Cognex优势:液态镜头自动对焦+VisionSuite生态+官方帧率;海康优势:VM完整版140余种视觉算法、30余种通讯协议(FINS/KV/SLMP)、官方参数公开可逐项核验、国产化供应与价格;晶圆专用客户端与晶圆ID大模型仅SC6500P-AI-WID具备(36,000片/时@≥99.9%),常规SC6000系列不具备该专用客户端与大模型',
+
+    url:'https://www.cognex.com/products/machine-vision/2d-machine-vision-systems',
+
+    series:[
+
+      {name:'In-Sight 3900(高性能AI旗舰 ⭐2026新品)',searchKeys:['is3900','is3901','is3905','is3916','is3925','3900','3901','3905','3916','3925'],
+
+        counterpart:'IS3901M/C→MV-SC6016C-00C-NNN/V2; IS3905M/C→MV-SC6050C-00C-NNN/V2; IS3916M/C→MV-SC6120C-00C-NNN; IS3925M/C→MV-SC6250C-00C-NNN',
+
+        reason:'康耐视 In-Sight 对标(按分辨率/AI档拆分):IS3900(Qualcomm AI旗舰)→SC6000;IS3800系列→SC3000X(1.3MP→SC3013X,3MP→SC3030X,5MP→SC3050X,8MP→SC3060,12MP→SC6120C,16MP→SC6250C);IS2800系列(0.3~2MP入门)→SC2000X;IS8900→SC2000E(2004E-Mini)/IS8902→SC2000X,IS8905/8912→SC5000X;D900(深度学习专用)→SC5000X;IS1740/1741(红LED)→SC6500P-AI-WID-RBN,IS1742(红外LED)→SC6500P-AI-WID-IBN。Cognex优势:液态镜头自动对焦+VisionSuite生态+官方帧率;海康优势:VM完整版140余种视觉算法、30余种通讯协议(FINS/KV/SLMP)、官方参数公开可逐项核验、国产化供应与价格;晶圆专用客户端与晶圆ID大模型仅SC6500P-AI-WID具备(36,000片/时@≥99.9%),常规SC6000系列不具备该专用客户端与大模型。核心参数差异：全局快门(同)',colNames:['型号','规格(官方数据)','帧率','AI能力'],
+
+        specs:{
+
+          '产品定位':'⭐高性能AI旗舰,Qualcomm驱动,4X处理速度,5000件/分钟',
+
+          'AI能力':'Edge AI+Advanced AI(分割/分类/OCR/装配验证),无需外接PC',
+
+          '处理器':'Qualcomm高性能AI芯片,嵌入式边缘推理',
+
+          '分辨率范围':'1.6MP~25MP,实时处理25MP高分辨率图像',
+
+          '内存存储':'8GB RAM + 128GB Flash(处理内存翻倍,8X存储)',
+
+          '通信':'⭐双以太网(2.5Gb),PROFINET/EtherNet/IP/EtherCAT/SLMP/ModbusTCP/MQTT',
+
+          '成像技术':'⭐HDR+(单次采集优化对比度)+SurfaceFX(表面缺陷提取)+多色照明',
+
+          '镜头':'C口/康耐视高速液态镜头自动对焦',
+
+          '防护':'IP67(选配)',
+
+          '认证':'CE/FCC/RoHS'
+
+        },
+
+        models:[
+
+        ['IS3901M/C','1.6MP 1440×1080·1/2.3英寸全局快门·液态镜头自动对焦·IP67','125','嵌入式AI(深度学习+传统视觉工具)·Qualcomm Dragonwing平台'],
+
+        ['IS3905M/C','5MP 2448×2048·2/3英寸全局快门·Qualcomm Dragonwing平台·IP67','32','嵌入式AI(深度学习+传统视觉工具)·Qualcomm Dragonwing平台'],
+
+        ['IS3916M/C','16MP 5320×3032·1.1英寸全局快门·2×千兆网口·8GB程序内存·IP67','28','嵌入式AI(深度学习+传统视觉工具)·Qualcomm Dragonwing平台'],
+
+        ['IS3925M/C','⭐25MP 5320×4600·1.2英寸全局快门·128GB图像存储·Edge AI工具·IP67','21','嵌入式AI(深度学习+传统视觉工具)·Qualcomm Dragonwing平台'],
+
+      ]},
+
+      {name:'In-Sight 3800(中高端AI视觉系统)',searchKeys:['is3800','is3801','is3803','is3805','is3808','is3812','is3816','3800','3801','3803','3805','3808','3812','3816'],
+
+        counterpart:'IS3801M/C→MV-SC3013XM-08M-WBN; IS3803M/C→MV-SC3030XM-08M-WBN; IS3805M/C→MV-SC3050XM-08M-WBN; IS3808M/C→MV-SC3060XM-08M-WBN(8MP对标SC3060); IS3812M/C→MV-SC6120C-00C-NNN; IS3816M/C→MV-SC6250C-00C-NNN',
+
+        reason:'康耐视 In-Sight 对标(按分辨率/AI档拆分):IS3900(Qualcomm AI旗舰)→SC6000;IS3800系列→SC3000X(1.3MP→SC3013X,3MP→SC3030X,5MP→SC3050X,8MP→SC3060,12MP→SC6120C,16MP→SC6250C);IS2800系列(0.3~2MP入门)→SC2000X;IS8900→SC2000E(2004E-Mini)/IS8902→SC2000X,IS8905/8912→SC5000X;D900(深度学习专用)→SC5000X;IS1740/1741(红LED)→SC6500P-AI-WID-RBN,IS1742(红外LED)→SC6500P-AI-WID-IBN。Cognex优势:液态镜头自动对焦+VisionSuite生态+官方帧率;海康优势:VM完整版140余种视觉算法、30余种通讯协议(FINS/KV/SLMP)、官方参数公开可逐项核验、国产化供应与价格;晶圆专用客户端与晶圆ID大模型仅SC6500P-AI-WID具备(36,000片/时@≥99.9%),常规SC6000系列不具备该专用客户端与大模型。核心参数差异：全局快门(同)；C口对C口；友商3MP/47fps vs 海康5MP/60fps(海康分辨率帧率双优)；友商液态镜头 vs 海康需手选镜头；C口对C口；友商8MP/24fps vs 海康12MP/30fps(海康双优)',colNames:['型号','规格(官方数据)','帧率','AI能力'],
+
+        models:[
+
+        ['IS3801M/C','1.6MP 1440×1080·1/2.3英寸全局快门·2×千兆网口·IP67','125/52','边缘学习+深度学习·AI高速处理'],
+
+        ['IS3803M/C','3MP 2048×1536·1/1.8英寸全局快门·液态镜头·IP67','47/30','边缘学习+深度学习·AI高速处理'],
+
+        ['IS3805M/C','5MP 2448×2048·2/3英寸全局快门·IP67','32/21','边缘学习+深度学习·AI高速处理'],
+
+        ['IS3808M/C','8MP 2840×2840·2/3英寸全局快门·2.74μm·IP67','24/12','边缘学习+深度学习·AI高速处理'],
+
+        ['IS3812M/C','12MP 4096×3000·1/1.1英寸全局快门·2.74μm·IP67','22/11','边缘学习+深度学习·AI高速处理'],
+
+        ['IS3816M/C','16MP 5320×3032·1.1英寸全局快门·7.2GB程序内存·IP67','18/8','边缘学习+深度学习·AI高速处理'],
+
+      ]},
+
+      {name:'In-Sight 2800(入门AI视觉系统)',searchKeys:['is2800','is2801','is2802','is2805','2800','2801','2802','2805'],
+
+        counterpart:'IS2800→MV-SC2013XM-05M-WBN; IS2801→MV-SC2013XM-12M-WBN; IS2802→MV-SC2023XC-05M-WBN(IS2800系列统一对标SC2000X)',
+
+        reason:'康耐视 In-Sight 对标(按分辨率/AI档拆分):IS3900(Qualcomm AI旗舰)→SC6000;IS3800系列→SC3000X(1.3MP→SC3013X,3MP→SC3030X,5MP→SC3050X,8MP→SC3060,12MP→SC6120C,16MP→SC6250C);IS2800系列(0.3~2MP入门)→SC2000X;IS8900→SC2000E(2004E-Mini)/IS8902→SC2000X,IS8905/8912→SC5000X;D900(深度学习专用)→SC5000X;IS1740/1741(红LED)→SC6500P-AI-WID-RBN,IS1742(红外LED)→SC6500P-AI-WID-IBN。Cognex优势:液态镜头自动对焦+VisionSuite生态+官方帧率;海康优势:VM完整版140余种视觉算法、30余种通讯协议(FINS/KV/SLMP)、官方参数公开可逐项核验、国产化供应与价格;晶圆专用客户端与晶圆ID大模型仅SC6500P-AI-WID具备(36,000片/时@≥99.9%),常规SC6000系列不具备该专用客户端与大模型。核心参数差异：—；分辨率最接近(1440×1080 vs 1408×1024)；友商卷帘快门 vs 海康全局快门(海康优势)；同为集成光源IP67',colNames:['型号','规格(官方数据)','帧率','AI能力'],
+
+        models:[
+
+        ['IS2800','0.3MP 720×540·卷帘快门·IP67','45','预训练AI(异常检测/分类/OCR)'],
+
+        ['IS2801','1.6MP 1440×1080·卷帘快门·IP67','45','预训练AI(异常检测/分类/OCR)'],
+
+        ['IS2802','2MP 1920×1080·卷帘快门·IP67','45','预训练AI(异常检测/分类/OCR)'],
+
+      ]},
+
+      {name:'In-Sight D900(深度学习专用)',searchKeys:['d900','d905','d902'],
+
+        counterpart:'D905M/C→MV-SC5050XC-00C-NNN; D902M/C→MV-SC5020XC-00C-NNN',
+
+        reason:'康耐视 In-Sight 对标(按分辨率/AI档拆分):IS3900(Qualcomm AI旗舰)→SC6000;IS3800系列→SC3000X(1.3MP→SC3013X,3MP→SC3030X,5MP→SC3050X,8MP→SC3060,12MP→SC6120C,16MP→SC6250C);IS2800系列(0.3~2MP入门)→SC2000X;IS8900→SC2000E(2004E-Mini)/IS8902→SC2000X,IS8905/8912→SC5000X;D900(深度学习专用)→SC5000X;IS1740/1741(红LED)→SC6500P-AI-WID-RBN,IS1742(红外LED)→SC6500P-AI-WID-IBN。Cognex优势:液态镜头自动对焦+VisionSuite生态+官方帧率;海康优势:VM完整版140余种视觉算法、30余种通讯协议(FINS/KV/SLMP)、官方参数公开可逐项核验、国产化供应与价格;晶圆专用客户端与晶圆ID大模型仅SC6500P-AI-WID具备(36,000片/时@≥99.9%),常规SC6000系列不具备该专用客户端与大模型。核心参数差异：全局快门(同)',colNames:['型号','规格(官方数据)','帧率','AI能力'],
+
+        models:[
+
+        ['D905M/C','5MP 2448×2048·深度学习专用·IP67','26/16','深度学习(In-Sight ViDi:Detect/Read/Check)'],
+
+        ['D902M/C','2MP 1920×1200·深度学习专用·液态镜头·IP67','51/34','深度学习(In-Sight ViDi:Detect/Read/Check)'],
+
+      ]},
+
+      {name:'In-Sight 8900(超紧凑AI视觉系统,21 CFR Part 11合规)',searchKeys:['is8900','is8902','is8905','is8912','8900','8902','8905','8912'],
+
+        counterpart:'IS8900→MV-SC2004EM-06S-WBN-Mini; IS8902→MV-SC2023XC-05M-WBN; IS8905→MV-SC5050XC-00C-NNN; IS8912→MV-SC5120XC-00C-NNN',
+
+        reason:'康耐视 In-Sight 对标(按分辨率/AI档拆分):IS3900(Qualcomm AI旗舰)→SC6000;IS3800系列→SC3000X(1.3MP→SC3013X,3MP→SC3030X,5MP→SC3050X,8MP→SC3060,12MP→SC6120C,16MP→SC6250C);IS2800系列(0.3~2MP入门)→SC2000X;IS8900→SC2000E(2004E-Mini)/IS8902→SC2000X,IS8905/8912→SC5000X;D900(深度学习专用)→SC5000X;IS1740/1741(红LED)→SC6500P-AI-WID-RBN,IS1742(红外LED)→SC6500P-AI-WID-IBN。Cognex优势:液态镜头自动对焦+VisionSuite生态+官方帧率;海康优势:VM完整版140余种视觉算法、30余种通讯协议(FINS/KV/SLMP)、官方参数公开可逐项核验、国产化供应与价格;晶圆专用客户端与晶圆ID大模型仅SC6500P-AI-WID具备(36,000片/时@≥99.9%),常规SC6000系列不具备该专用客户端与大模型。核心参数差异：分辨率最接近(800×600 vs 704×540)；友商IP40/142fps vs 海康IP65/60fps(友商速度优势)；友商分体生态 vs 海康一体式；同2MP档(1920×1200 vs 1920×1280)；友商86(M)/49(C)fps vs 海康75fps(海康黑白优势)；IP40 vs IP65(海康防护优势)；友商超紧凑205g；同5MP档(2448×2048 vs 2432×2048)；友商47(M)/29(C)fps vs 海康60fps(海康优势)；IP40 vs IP67(海康防护优势)；海康VM 160+算法+DL(海康AI优势)；分辨率最接近(4096×3000 vs 4096×2944)；友商21(M)/10(C)fps vs 海康30fps(海康优势)；IP40 vs IP67(海康防护优势)；海康VM 160+算法(海康AI优势)',colNames:['型号','规格(官方数据)','帧率','AI能力'],
+
+        specs:{
+
+          '产品定位':'超紧凑全嵌入式AI视觉系统,专为OEM和受监管行业(制药/医疗器械)',
+
+          '合规性':'⭐21 CFR Part 11(审核日志+单点登录SSO)',
+
+          'AI能力':'Edge AI(分割/分类/OCR)+规则工具',
+
+          '成像技术':'HDR+(生产线速度提高80%)+液态镜头1800M次寿命',
+
+          '内存':'4GB SoM + 512MB SDRAM',
+
+          '通信':'TCP/IP/PROFINET/EtherNet/IP/SLMP/ModbusTCP/(S)FTP/RS-232C',
+
+          '接口':'M12电源/以太网 + M8 I/O',
+
+          '防护':'IP40,0-40°C,205g超紧凑',
+
+          '认证':'CE/FCC/KCC/TÜV SÜD NRTL/RoHS'
+
+        },
+
+        models:[
+
+        ['IS8900','0.5MP 800×600(SVGA)·液态镜头·4GB+512MB·IP40·1光耦入2高速出·工作0-40°C·205g','142(M)/100(C)','AI(分割/分类/OCR)+传统视觉工具'],
+
+        ['IS8902','2MP 1920×1200·1/2.3英寸全局快门·IP40·205g','86(M)/49(C)','AI(分割/分类/OCR)+传统视觉工具'],
+
+        ['IS8905','5MP 2448×2048·1/1.8英寸全局快门·IP40·205g','47(M)/29(C)','AI(分割/分类/OCR)+传统视觉工具'],
+
+        ['IS8912','12MP 4096×3000·1/1.1英寸全局快门·IP40·205g','21(M)/10(C)','AI(分割/分类/OCR)+传统视觉工具'],
+
+      ]},
+
+
+      {name:'In-Sight 1740/1741 晶圆读码器(红色LED ⭐对标SC6500P-AI-WID-RBN)',searchKeys:['is1740','is1741','1740','1741'],colNames:['型号','规格(官方数据)','帧率','AI能力'],
+
+        specs:{
+
+          '产品定位':'⭐半导体晶圆ID专用读码器,全球30000+装机量,100%可追溯',
+
+          '照明系统':'⭐12种内置照明模式(明视场+暗视场),辅助照明端口扩展',
+
+          '读取能力':'OCR+SEMI T7 DataMatrix+条码,T7+OCR双备援读取策略',
+
+          '自主学习':'⭐读取失败后自动调节光源和图像滤波器,自适应优化并保存',
+
+          '存储':'128MB Flash + 256MB SDRAM,最多50个工件文件',
+
+          '通信':'Ethernet 10/100 + RS-232C',
+
+          '协议':'In-Sight/Native Mode/LKx5/Electroglas/TEL/TSK',
+
+          '环境':'0-45°C,洁净室兼容',
+
+          '认证':'⭐SEMI S2/CE/UL/FCC/RoHS/EN 62471'
+
+        },
+
+        counterpart:'IS1740/1741(红色LED)→MV-SC6500P-AI-WID-RBN; IS1742(红外LED)→MV-SC6500P-AI-WID-IBN',
+
+        reason:'康耐视In-Sight 1740系列晶圆读码器按光源颜色对标海康SC6500P-AI-WID对应光源版本:IS1740(0.36MP·红色LED 615-640nm·41fps)/IS1741(0.79MP·红色LED 622nm·17fps)→MV-SC6500P-AI-WID-RBN(红色款);IS1742(0.79MP·红外LED 870-890nm·17fps)→MV-SC6500P-AI-WID-IBN(红外款),光源颜色一一对应(R=红色/I=红外)。海康优势:120fps官方帧率+晶圆ID专用AI(36,000片/时@≥99.9%)+VM 140+30+协议+国产化供应;康耐视优势:液态镜头自动对焦+VisionSuite生态+全球30000+装机量',
+
+        models:[
+
+        ['IS1740','0.36MP 752×480·红色LED 615-640nm·SEMI S2','41','OCR+SEMI-T7 DM码·自主学习照明/滤波(无通用AI分类/检测)'],
+
+        ['IS1741','0.79MP 1024×768·红色LED 622nm·SEMI S2','17','OCR+SEMI-T7 DM码·自主学习照明/滤波(无通用AI分类/检测)'],
+
+      ]},
+
+      {name:'In-Sight 1742 晶圆读码器(红外LED 870-890nm ⭐对标SC6500P-AI-WID-IBN)',searchKeys:['is1742','1742'],colNames:['型号','规格(官方数据)','帧率','AI能力'],
+
+        specs:{
+
+          '产品定位':'⭐半导体晶圆ID专用读码器,全球30000+装机量,100%可追溯',
+
+          '照明系统':'⭐12种内置照明模式(明视场+暗视场),辅助照明端口扩展',
+
+          '读取能力':'OCR+SEMI T7 DataMatrix+条码,T7+OCR双备援读取策略',
+
+          '自主学习':'⭐读取失败后自动调节光源和图像滤波器,自适应优化并保存',
+
+          '存储':'128MB Flash + 256MB SDRAM,最多50个工件文件',
+
+          '通信':'Ethernet 10/100 + RS-232C',
+
+          '协议':'In-Sight/Native Mode/LKx5/Electroglas/TEL/TSK',
+
+          '环境':'0-45°C,洁净室兼容',
+
+          '认证':'⭐SEMI S2/CE/UL/FCC/RoHS/EN 62471'
+
+        },
+
+        counterpart:'IS1742(红外LED 870-890nm)→MV-SC6500P-AI-WID-IBN',
+
+        reason:'IS1742(0.79MP 1024×768·红外LED 870-890nm·17fps·OCR+SEMI-T7 DM码)对标海康MV-SC6500P-AI-WID-IBN(1408×576·120fps·红外光源款·晶圆ID专用AI 36,000片/时@≥99.9%);按光源颜色对应(红外对红外),帧率与晶圆专用AI海康占优;康耐视液态自动对焦+VisionSuite生态+自主学习照明/滤波为差异化',
+
+        models:[
+
+        ['IS1742','0.79MP 1024×768·红外LED 870-890nm·SEMI S2','17','OCR+SEMI-T7 DM码·自主学习照明/滤波(无通用AI分类/检测)'],
+
+      ]},
+
+
+    ]
+
+  },
+
+  {
+
+    id:'smartmore',brand:'思谋科技 SmartMore',region:'cn',logo:'#7c3aed',logoText:'S',
+
+    counterpart:'VN2000→SC2000X(无内置AI边缘学习,海康占优); VN4000-1xx(1MP)→SC2013XM; VN4000-2xx(2.3MP)→SC2023XM; VN4000CL(5MP彩色)→SC3050X(彩色对彩色·焦距对焦距)',
+
+    reason:'思谋优势:液态调焦+4路独立16种补光方案+少样本AI二分类/OCR+全协议(MELSEC/SLMP);VN2000(VN2000-100/103)仅基础工具无内置AI→海康SC2000X异常判断/种类识别占优;VN4000-1xx(1280×800黑白·8/12/16mm)→MV-SC2013XM(05/12/16M);VN4000-2xx(1920×1200黑白·8/12/16mm)→MV-SC2023XM(05/12/16M);VN4000CL 5MP(2600×1952彩色)→SC3050X系列(彩色对彩色·焦距对焦距);思谋官网VN4000标\\\'手动调焦·WD100-1000mm\\\'与\\\'液态自动对焦\\\'并存,选型需确认;海康胜在帧率官方可背书/IP67/协议广度/VM平台',
+
+    url:'https://cn.smartmore.com/',
+
+    series:[
+
+            {name:'VN2000 ViNeo(紧凑型) · 官网补全型号',searchKeys:['vn2000'],
+
+        counterpart:'VN2000-100-000→MV-SC2013XM-05M-WBN; VN2000-100-001→MV-SC2013XM-05M-WBN; VN2000-100-002→MV-SC2013XM-05M-WBN 等12种型号(逐型号对标见表)',
+
+        reason:'思谋优势:液态调焦+4路独立16种补光方案+少样本AI二分类/OCR+全协议(MELSEC/SLMP);VN2000(VN2000-100/103)仅基础工具无内置AI→海康SC2000X异常判断/种类识别占优;VN4000-1xx(1280×800黑白·8/12/16mm)→MV-SC2013XM(05/12/16M);VN4000-2xx(1920×1200黑白·8/12/16mm)→MV-SC2023XM(05/12/16M);VN4000CL 5MP(2600×1952彩色)→SC3050X系列(彩色对彩色·焦距对焦距);思谋官网VN4000标\'手动调焦·WD100-1000mm\'与\'液态自动对焦\'并存,选型需确认;海康胜在帧率官方可背书/IP67/协议广度/VM平台。核心参数差异：友商无内置AI(仅基础算子) vs 海康AI异常判断/种类识别·VisionTrain离线训练(海康优势)·全局快门(同)',colNames:['型号','规格(官方数据)','帧率','AI能力'],
+
+        models:[
+
+        ['VN2000-100-000','1280×800·全局快门·3μm·1/4英寸·液态调焦·100M网络·5W·约100g·IP67','60','有无/计数/正反/位置修正(基础算子·无内置AI)'],
+
+        ['VN2000-100-001','1280×800·全局快门·3μm·1/4英寸·液态调焦·100M网络·5W·约100g·IP67','60','有无/计数/正反/位置修正(基础算子·无内置AI)'],
+
+        ['VN2000-100-002','1280×800·全局快门·3μm·1/4英寸·液态调焦·100M网络·5W·约100g·IP67','60','有无/计数/正反/位置修正(基础算子·无内置AI)'],
+
+        ['VN2000-100-003','1280×800·全局快门·3μm·1/4英寸·液态调焦·100M网络·5W·约100g·IP67','60','有无/计数/正反/位置修正(基础算子·无内置AI)'],
+
+        ['VN2000-100-030','1280×800·全局快门·3μm·1/4英寸·液态调焦·100M网络·5W·约100g·IP67','60','有无/计数/正反/位置修正(基础算子·无内置AI)'],
+
+        ['VN2000-100-032','1280×800·全局快门·3μm·1/4英寸·液态调焦·100M网络·5W·约100g·IP67','60','有无/计数/正反/位置修正(基础算子·无内置AI)'],
+
+        ['VN2000-100-033','1280×800·全局快门·3μm·1/4英寸·液态调焦·100M网络·5W·约100g·IP67','60','有无/计数/正反/位置修正(基础算子·无内置AI)'],
+
+        ['VN2000-100-037','1280×800·全局快门·3μm·1/4英寸·液态调焦·100M网络·5W·约100g·IP67','60','有无/计数/正反/位置修正(基础算子·无内置AI)'],
+
+        ['VN2000-103-030','1280×800·全局快门·3μm·1/4英寸·液态调焦·100M网络·5W·约100g·IP67','60','有无/计数/正反/位置修正(基础算子·无内置AI)'],
+
+        ['VN2000-103-031','1280×800·全局快门·3μm·1/4英寸·液态调焦·100M网络·5W·约100g·IP67','60','有无/计数/正反/位置修正(基础算子·无内置AI)'],
+
+        ['VN2000-103-032','1280×800·全局快门·3μm·1/4英寸·液态调焦·100M网络·5W·约100g·IP67','60','有无/计数/正反/位置修正(基础算子·无内置AI)'],
+
+        ['VN2000-103-033','1280×800·全局快门·3μm·1/4英寸·液态调焦·100M网络·5W·约100g·IP67','60','有无/计数/正反/位置修正(基础算子·无内置AI)'],
+
+      ]},
+
+            {name:'VN4000 ViNeo(AI深度学习) · 官网补全型号',searchKeys:['vn4000'],
+
+        counterpart:'VN4000-101-020→MV-SC2013XM-05M-WBN; VN4000-101-021→MV-SC2013XM-05M-WBN; VN4000-101-022→MV-SC2013XM-05M-WBN 等24种型号(逐型号对标见表)',
+
+        reason:'思谋优势:液态调焦+4路独立16种补光方案+少样本AI二分类/OCR+全协议(MELSEC/SLMP);VN2000(VN2000-100/103)仅基础工具无内置AI→海康SC2000X异常判断/种类识别占优;VN4000-1xx(1280×800黑白·8/12/16mm)→MV-SC2013XM(05/12/16M);VN4000-2xx(1920×1200黑白·8/12/16mm)→MV-SC2023XM(05/12/16M);VN4000CL 5MP(2600×1952彩色)→SC3050X系列(彩色对彩色·焦距对焦距);思谋官网VN4000标\'手动调焦·WD100-1000mm\'与\'液态自动对焦\'并存,选型需确认;海康胜在帧率官方可背书/IP67/协议广度/VM平台。核心参数差异：全局快门(同)',colNames:['型号','规格(官方数据)','帧率','AI能力'],
+
+        models:[
+
+        ['VN4000-101-020','1280×800·全局快门·液态自动对焦·工作距离100-1000mm·IP67','60','⭐AI二分类/OCR/有无/计数/位置修正(少样本深度学习)'],
+
+        ['VN4000-101-021','1280×800·全局快门·液态自动对焦·工作距离100-1000mm·IP67','60','⭐AI二分类/OCR/有无/计数/位置修正(少样本深度学习)'],
+
+        ['VN4000-101-022','1280×800·全局快门·液态自动对焦·工作距离100-1000mm·IP67','60','⭐AI二分类/OCR/有无/计数/位置修正(少样本深度学习)'],
+
+        ['VN4000-101-023','1280×800·全局快门·液态自动对焦·工作距离100-1000mm·IP67','60','⭐AI二分类/OCR/有无/计数/位置修正(少样本深度学习)'],
+
+        ['VN4000-102-020','1280×800·全局快门·液态自动对焦·工作距离100-1000mm·IP67','60','⭐AI二分类/OCR/有无/计数/位置修正(少样本深度学习)'],
+
+        ['VN4000-102-021','1280×800·全局快门·液态自动对焦·工作距离100-1000mm·IP67','60','⭐AI二分类/OCR/有无/计数/位置修正(少样本深度学习)'],
+
+        ['VN4000-102-022','1280×800·全局快门·液态自动对焦·工作距离100-1000mm·IP67','60','⭐AI二分类/OCR/有无/计数/位置修正(少样本深度学习)'],
+
+        ['VN4000-102-023','1280×800·全局快门·液态自动对焦·工作距离100-1000mm·IP67','60','⭐AI二分类/OCR/有无/计数/位置修正(少样本深度学习)'],
+
+        ['VN4000-103-020','1280×800·全局快门·液态自动对焦·工作距离100-1000mm·IP67','60','⭐AI二分类/OCR/有无/计数/位置修正(少样本深度学习)'],
+
+        ['VN4000-103-021','1280×800·全局快门·液态自动对焦·工作距离100-1000mm·IP67','60','⭐AI二分类/OCR/有无/计数/位置修正(少样本深度学习)'],
+
+        ['VN4000-103-022','1280×800·全局快门·液态自动对焦·工作距离100-1000mm·IP67','60','⭐AI二分类/OCR/有无/计数/位置修正(少样本深度学习)'],
+
+        ['VN4000-103-023','1280×800·全局快门·液态自动对焦·工作距离100-1000mm·IP67','60','⭐AI二分类/OCR/有无/计数/位置修正(少样本深度学习)'],
+
+        ['VN4000-201-020','1920×1200·全局快门·液态自动对焦·工作距离100-1000mm·IP67','60','⭐AI二分类/OCR/有无/计数/位置修正(少样本深度学习)'],
+
+        ['VN4000-201-021','1920×1200·全局快门·液态自动对焦·工作距离100-1000mm·IP67','60','⭐AI二分类/OCR/有无/计数/位置修正(少样本深度学习)'],
+
+        ['VN4000-201-022','1920×1200·全局快门·液态自动对焦·工作距离100-1000mm·IP67','60','⭐AI二分类/OCR/有无/计数/位置修正(少样本深度学习)'],
+
+        ['VN4000-201-023','1920×1200·全局快门·液态自动对焦·工作距离100-1000mm·IP67','60','⭐AI二分类/OCR/有无/计数/位置修正(少样本深度学习)'],
+
+        ['VN4000-202-020','1920×1200·全局快门·液态自动对焦·工作距离100-1000mm·IP67','60','⭐AI二分类/OCR/有无/计数/位置修正(少样本深度学习)'],
+
+        ['VN4000-202-021','1920×1200·全局快门·液态自动对焦·工作距离100-1000mm·IP67','60','⭐AI二分类/OCR/有无/计数/位置修正(少样本深度学习)'],
+
+        ['VN4000-202-022','1920×1200·全局快门·液态自动对焦·工作距离100-1000mm·IP67','60','⭐AI二分类/OCR/有无/计数/位置修正(少样本深度学习)'],
+
+        ['VN4000-202-023','1920×1200·全局快门·液态自动对焦·工作距离100-1000mm·IP67','60','⭐AI二分类/OCR/有无/计数/位置修正(少样本深度学习)'],
+
+        ['VN4000-203-020','1920×1200·全局快门·液态自动对焦·工作距离100-1000mm·IP67','60','⭐AI二分类/OCR/有无/计数/位置修正(少样本深度学习)'],
+
+        ['VN4000-203-021','1920×1200·全局快门·液态自动对焦·工作距离100-1000mm·IP67','60','⭐AI二分类/OCR/有无/计数/位置修正(少样本深度学习)'],
+
+        ['VN4000-203-022','1920×1200·全局快门·液态自动对焦·工作距离100-1000mm·IP67','60','⭐AI二分类/OCR/有无/计数/位置修正(少样本深度学习)'],
+
+        ['VN4000-203-023','1920×1200·全局快门·液态自动对焦·工作距离100-1000mm·IP67','60','⭐AI二分类/OCR/有无/计数/位置修正(少样本深度学习)'],
+
+      ]},
+      {name:'VN4000CL 5MP系列(彩色) · 官网补全型号',searchKeys:['vn4000cl'],colNames:['型号','规格(官方数据)','帧率','AI能力'],
+        models:[
+        ['VN4000CL-501-CL20','2600×1952(5MP彩色)·卷帘·2.2μm·1/2.5″·机械调焦·100-2000mm·白灯/标准光源(8LED)·无偏振','30','⭐AI二分类/OCR/有无/计数/位置修正(少样本)'],
+        ['VN4000CL-502-CL20','2600×1952(5MP彩色)·卷帘·2.2μm·1/2.5″·机械调焦·100-2000mm·白灯/标准光源(8LED)·无偏振','30','⭐AI二分类/OCR/有无/计数/位置修正(少样本)'],
+        ['VN4000CL-503-CL20','2600×1952(5MP彩色)·卷帘·2.2μm·1/2.5″·机械调焦·100-2000mm·白灯/标准光源(8LED)·无偏振','30','⭐AI二分类/OCR/有无/计数/位置修正(少样本)'],
+        ['VN4000CL-501-CL23','2600×1952(5MP彩色)·卷帘·2.2μm·1/2.5″·机械调焦·100-2000mm·白灯/标准光源(8LED)·半偏振','30','⭐AI二分类/OCR/有无/计数/位置修正(少样本)'],
+        ['VN4000CL-502-CL23','2600×1952(5MP彩色)·卷帘·2.2μm·1/2.5″·机械调焦·100-2000mm·白灯/标准光源(8LED)·半偏振','30','⭐AI二分类/OCR/有无/计数/位置修正(少样本)'],
+        ['VN4000CL-503-CL23','2600×1952(5MP彩色)·卷帘·2.2μm·1/2.5″·机械调焦·100-2000mm·白灯/标准光源(8LED)·半偏振','30','⭐AI二分类/OCR/有无/计数/位置修正(少样本)'],
+        ['VN4000CL-501-CL26','2600×1952(5MP彩色)·卷帘·2.2μm·1/2.5″·机械调焦·100-2000mm·白灯/高亮光源(16LED)·无偏振','30','⭐AI二分类/OCR/有无/计数/位置修正(少样本)'],
+        ['VN4000CL-502-CL26','2600×1952(5MP彩色)·卷帘·2.2μm·1/2.5″·机械调焦·100-2000mm·白灯/高亮光源(16LED)·无偏振','30','⭐AI二分类/OCR/有无/计数/位置修正(少样本)'],
+        ['VN4000CL-503-CL26','2600×1952(5MP彩色)·卷帘·2.2μm·1/2.5″·机械调焦·100-2000mm·白灯/高亮光源(16LED)·无偏振','30','⭐AI二分类/OCR/有无/计数/位置修正(少样本)'],
+        ['VN4000CL-501-CL2B','2600×1952(5MP彩色)·卷帘·2.2μm·1/2.5″·机械调焦·100-2000mm·白灯/高亮光源(16LED)·半偏振','30','⭐AI二分类/OCR/有无/计数/位置修正(少样本)'],
+        ['VN4000CL-502-CL2B','2600×1952(5MP彩色)·卷帘·2.2μm·1/2.5″·机械调焦·100-2000mm·白灯/高亮光源(16LED)·半偏振','30','⭐AI二分类/OCR/有无/计数/位置修正(少样本)'],
+        ['VN4000CL-503-CL2B','2600×1952(5MP彩色)·卷帘·2.2μm·1/2.5″·机械调焦·100-2000mm·白灯/高亮光源(16LED)·半偏振','30','⭐AI二分类/OCR/有无/计数/位置修正(少样本)'],
+      ],
+        counterpart:'VN4000CL-501(8mm)→MV-SC3050XC-08M-WBN; -502(12mm)→MV-SC3050XC-12M-WBN; -503(16mm)→MV-SC3050XC-16M-WBN(彩色对彩色·焦距对焦距)',
+        reason:'思谋优势:5MP彩色2600×1952+机械调焦100-2000mm+白灯标准/高亮16种补光+少样本AI;海康SC3050X优势:全局快门(对卷帘)+40fps(对30fps)+⭐深度学习/边缘学习/OCR/HDR;注意VN4000CL官网状态为待上市,海康已量产'
+      },
+
+
+
+    ]
+
+  },
+
+  {
+
+    id:'opt',brand:'奥普特 OPT',region:'cn',logo:'#dc2626',logoText:'O',
+
+    counterpart:'SCB1/SCD1/SCS3(1920×1200·90fps)→SC2023X; SCA1-50MC(5MP C口)→SC5050X, SCA1-C023G-L12(M12口)→SC2023X; SCA2(卷帘多分辨率)→SC5000X/SC6000',
+
+    reason:'OPT全链条自研(光源/镜头/相机/控制器),HDMI直连调试+13秒小样本AI训练是差异化优势;SCB1/SCS3(1920×1200·90fps)对标SC2023X/SC3000X;SCA1/SCA2(C口卷阵)对标SC5000X;海康优势:IP67(OPT为IP62/IP65)+边缘学习+VM 140+算法+30+通讯协议(FINS/KV/SLMP)',
+
+    url:'https://www.optmv.com/',
+
+    series:[
+
+      {name:'SCB1 轻量版智能相机',searchKeys:['scb1'],
+
+        counterpart:'OPT-SCB1-M023G-L06→MV-SC2023XM-05M-WBN; OPT-SCB1-C023G-L06→MV-SC2023XC-05M-WBN; OPT-SCB1-M023G-L25→MV-SC2023XM-16M-WBN',
+
+        reason:'OPT全链条自研(光源/镜头/相机/控制器),HDMI直连调试+13秒小样本AI训练是差异化优势;SCB1/SCS3(1920×1200·90fps)对标SC2023X/SC3000X;SCA1/SCA2(C口卷帘)对标SC5000X;海康优势:IP67(OPT为IP62/IP65)+边缘学习+VM 140+算法+30+通讯协议(FINS/KV/SLMP)。核心参数差异：分辨率最接近(1920×1200 vs 1920×1280)；友商90fps vs 海康75fps(友商速度优势)；友商IP62 vs 海康IP65；友商无内置AI vs 海康AI(海康优势)；彩色对彩色；1920×1200 vs 1920×1280；友商90fps vs 海康75fps(友商速度优势)；25mm长焦 vs 海康16M(最长焦档)；友商90fps vs 海康75fps(友商速度优势)；友商无内置AI vs 海康AI(海康优势)',colNames:['型号','规格(官方数据)','帧率','AI能力'],
+        models:[
+
+        ['OPT-SCB1-M023G-L06','1920×1200·3.0μm·1/2.6英寸全局快门·6mm手动调焦·工作距离50-2000mm','90','无内置AI·仅基础工具(单色版)'],
+
+        ['OPT-SCB1-C023G-L06','1920×1200·3.0μm·1/2.6英寸·6mm·彩色·深度学习OCR','90','深度学习OCR/读码'],
+
+        ['OPT-SCB1-M023G-L25','1920×1200·3.0μm·25mm长焦·工作距离200-2000mm','90','无内置AI·仅基础工具(长焦版)'],
+
+      ]},
+
+      {name:'SCA1 C接口智能相机',searchKeys:['sca1'],
+
+        counterpart:'OPT-SCA1-50MC→MV-SC5050XM-00C-NNN; OPT-SCA1-C023G-L12→MV-SC2023XC-12M-WBN',
+
+        reason:'OPT全链条自研(光源/镜头/相机/控制器),HDMI直连调试+13秒小样本AI训练是差异化优势;SCB1/SCS3(1920×1200·90fps)对标SC2023X/SC3000X;SCA1/SCA2(C口卷帘)对标SC5000X;海康优势:IP67(OPT为IP62/IP65)+边缘学习+VM 140+算法+30+通讯协议(FINS/KV/SLMP)。核心参数差异：全局快门(同)；彩色对彩色；12mm对12mm；友商90fps vs 海康75fps(友商速度优势)；友商IP62 vs 海康IP65',colNames:['型号','规格(官方数据)','帧率','AI能力'],
+
+        models:[
+
+        ['OPT-SCA1-50MC','2464×2048·3.45μm·2/3英寸全局快门·13μs-1s·C口·16W·382g·IP62','30','内嵌深度学习OCR·HDMI直连(无边缘学习分类/检测)'],
+
+        ['OPT-SCA1-C023G-L12','1920×1200·3.0μm·M12口·12mm自动调焦·48W·466g·IP62·HDMI','90','内嵌深度学习OCR·HDMI直连(无边缘学习分类/检测)'],
+
+      ]},
+
+      {name:'SCA2 C接口(多分辨率卷帘快门)',searchKeys:['sca2'],
+
+        counterpart:'OPT-SCA2-60MC→MV-SC5060XM-08M-WBN; OPT-SCA2-80MC→MV-SC5120XM-00C-NNN; OPT-SCA2-120MC→MV-SC5120XM-00C-NNN; OPT-SCA2-200MC→MV-SC6250M-00C-NNN',
+
+        reason:'OPT全链条自研(光源/镜头/相机/控制器),HDMI直连调试+13秒小样本AI训练是差异化优势;SCB1/SCS3(1920×1200·90fps)对标SC2023X/SC3000X;SCA1/SCA2(C口卷帘)对标SC5000X;海康优势:IP67(OPT为IP62/IP65)+边缘学习+VM 140+算法+30+通讯协议(FINS/KV/SLMP)。核心参数差异：卷帘快门(同)；分辨率最接近(3072×2048 vs 3200×1920)；友商30fps vs 海康15fps(友商速度优势)；友商8.2MP卷帘 vs 海康12MP全局(海康优势)；30fps持平；友商卷帘快门 vs 海康全局快门(海康优势)；友商无内置AI vs 海康AI边缘学习(海康优势)；友商19.9MP卷帘 vs 海康26MP全局(海康优势)；20fps持平',colNames:['型号','规格(官方数据)','帧率','AI能力'],
+
+        models:[
+
+        ['OPT-SCA2-60MC','3072×2048·2.4μm·1/1.8英寸卷帘快门·14μs-1s','30','深度学习OCR(SC系列通用)·无边缘学习分类/检测'],
+
+        ['OPT-SCA2-80MC','3840×2144·2.0μm·1/1.8英寸卷帘快门','30','深度学习OCR(SC系列通用)·无边缘学习分类/检测'],
+
+        ['OPT-SCA2-120MC','4000×3000·1.85μm·1/1.7英寸卷帘快门','25','深度学习OCR(SC系列通用)·无边缘学习分类/检测'],
+
+        ['OPT-SCA2-200MC','5440×3648·2.4μm·1英寸卷帘快门','20','深度学习OCR(SC系列通用)·无边缘学习分类/检测'],
+
+      ]},
+
+      {name:'SCD1 标准版智能相机',searchKeys:['scd1'],
+
+        counterpart:'SCD1系列(M12口标准版:OPT-SCD1-C023G-L25等)→MV-SC2023XC-16M-WBN',
+
+        reason:'OPT全链条自研(光源/镜头/相机/控制器),HDMI直连调试+13秒小样本AI训练是差异化优势;SCB1/SCS3(1920×1200·90fps)对标SC2023X/SC3000X;SCA1/SCA2(C口卷帘)对标SC5000X;海康优势:IP67(OPT为IP62/IP65)+边缘学习+VM 140+算法+30+通讯协议(FINS/KV/SLMP)。核心参数差异：友商25mm vs 海康16M(最长焦档)；友商90fps vs 海康75fps(友商速度优势)；友商IP62 vs 海康IP65',colNames:['型号','规格(官方数据)','帧率','AI能力'],
+        specs:{
+          '产品定位':'奥普特标准版智能相机,内置AI学习工具(最快13秒小样本训练)',
+          '核心创新':'高速自动调焦;光源分区域独立控制(可搭配偏振片/漫射板/多色光源)',
+          'AI能力':'高精度定位/测量/识别,覆盖计数/缺陷/有无/定位全场景',
+          '分辨率范围':'0~3MP / 3~10MP 可选',
+          '通讯':'TCP/UDP/Serial/Ethernet/IP/Modbus/Profinet/FTP'
+        },
+        models:[
+
+        ['SCD1系列(M12口标准版:OPT-SCD1-C023G-L25等)','1920×1200·3.0μm·1/2.6英寸全局快门·25mm','90','内置AI学习工具(13秒小样本训练)+深度学习OCR(彩色型)·光源分区控制'],
+
+      ]},
+
+      {name:'SCS3 标准版智能相机(紧凑型·IP65)',searchKeys:['scs3'],
+
+        counterpart:'SCS3系列(M8口紧凑版:OPT-SCS3-C023G-LT16等)→MV-SC2023XC-16M-WBN',
+
+        reason:'OPT全链条自研(光源/镜头/相机/控制器),HDMI直连调试+13秒小样本AI训练是差异化优势;SCB1/SCS3(1920×1200·90fps)对标SC2023X/SC3000X;SCA1/SCA2(C口卷帘)对标SC5000X;海康优势:IP67(OPT为IP62/IP65)+边缘学习+VM 140+算法+30+通讯协议(FINS/KV/SLMP)。核心参数差异：16mm对16mm精确；友商90fps vs 海康75fps(友商速度优势)；友商166g vs 海康118g(海康更轻)',colNames:['型号','规格(官方数据)','帧率','AI能力'],
+        specs:{
+          '产品定位':'奥普特紧凑型智能相机,适配空间狭窄产线',
+          '核心创新':'0.1m-2m宽范围工作距,多焦距镜头可选;IP65防尘防水',
+          'AI能力':'内置AI学习工具(13秒小样本训练);定位/测量/识别/计数/缺陷/有无',
+          '通讯':'TCP/UDP/Serial/Ethernet/IP/Modbus/Profinet/FTP'
+        },
+        models:[
+
+        ['SCS3系列(M8口紧凑版:OPT-SCS3-C023G-LT16等)','1920×1200·3.0μm·1/2.6英寸·固态调焦·工作距离100-450mm·166g·IP65','90','内置AI学习工具(13秒小样本训练)+定位/测量/识别'],
+
+      ]}
+
+    ]
+
+  },
+
+  {
+
+    id:'huarui',brand:'华睿科技 Huarui',region:'cn',logo:'#0d9488',logoText:'H',
+
+    counterpart:'SS3000(1.6MP手动调焦)→SC2000E(SC2016EM/EC); SS4000(1.3MP电动调焦)→SC2000X(用户指定); SS5000旗舰:SS5016(1.6MP)→SC3016,SS5050(5MP)→SC3050(均属SC3000系列)',
+
+    reason:'华睿SS3000(1.6MP超紧凑·手动调焦7/16mm·WD40-200mm·无内置AI)对标海康SC2000E(SC2016EM/EC,同手动调焦IP65,同分辨率档+同焦距档16mm→14.8mm最近档);SS4000(1.3MP·电动调焦7/12mm·WD50-500mm·AI分类/OCR)对标SC2000X(用户指定);SS5016(1.6MP·电动调焦8/12/16/25mm·WD80-1500mm·AI芯片·GigE)对标SC3016;SS5050(5MP·45fps)对标SC3050(SC3000系列5MP边缘学习档)。华睿优势:超紧凑体积+大华渠道+价格+千兆;海康优势:AI边缘学习+VM 140+算法+IP67+30+协议',
+
+    url:'https://www.huaraytech.cn/',
+
+    series:[
+
+      {name:'SS3000 超紧凑AI视觉传感器',searchKeys:['ss3000','ss3016'],
+
+        counterpart:'SS3016PMG-16H-RGF01→MV-SC2016EM-15S-WBN; SS3016PCG-07H-WGF01→MV-SC2016EC-08S-WBN',
+
+        reason:'按指定口径用SC2016EM(1.6MP黑白)打华睿SS3016(1.6MP·手动调焦7/16mm·IP65):同分辨率档+同焦距档(16mm→14.8mm最近档)+同价位段;均手动调焦IP65。核心参数差异：分辨率最接近(1440×1080 vs 1408×1024)；16mm vs 14.8mm；海康AI深度学习(目标检测/分类) vs 友商基础AI分类(海康AI优势)；均IP65；彩色对彩色；分辨率最接近(1440×1080 vs 1408×1024)；7mm vs 8mm；海康AI深度学习(海康AI优势)；均IP65',colNames:['型号','规格(官方数据)','帧率','AI能力'],
+
+        models:[
+
+        ['SS3016PMG-16H-RGF01','1440×1080·超紧凑45×52×25.5mm·16mm红光偏振·工作距离80-200mm·手动调焦','60','基础AI:AI分类/OCR/读码(无边缘学习)'],
+
+        ['SS3016PCG-07H-WGF01','1440×1080·超紧凑45×35×25.5mm·7mm白光非偏振·工作距离40-150mm','60','基础AI:AI分类/OCR/读码/颜色识别(无边缘学习)'],
+
+      ]},
+
+            {name:'SS4000 AI视觉传感器 · 官网补全具体型号',searchKeys:['ss4000','ss4013','ss4','ss40'],
+
+        counterpart:'SS4013MG-07M-WGG01E→MV-SC2013XM-05M-WBN; SS4013CG-07M-WGG01E→MV-SC2013XC-05M-WBN; SS4013MG-07M-RGG01E→MV-SC2013XM-05M-WBN 等8种型号(逐型号对标见表)',
+
+        reason:'华睿SS3000(1.6MP超紧凑·手动调焦7/16mm·WD40-200mm·无内置AI)对标海康SC2000X(海康带异常判断/种类识别,AI占优);SS4000(1.3MP·电动调焦7/12mm·WD50-500mm·AI分类/OCR)对标SC2000X;SS5016(1.6MP·电动调焦8/12/16/25mm·WD80-1500mm·AI芯片)对标SC3016;SS5050(5MP·45fps)对标SC3050(SC3000X系列)。华睿优势:超紧凑体积+大华渠道+价格;海康优势:AI边缘学习+VM 140+算法+IP67+30+协议。核心参数差异：全局快门(同)',colNames:['型号','规格(官方数据)','帧率','AI能力'],
+
+        models:[
+
+        ['SS4013MG-07M-WGG01E','1280×1024·1.3MP·电动调焦7mm·白光偏振/非偏振·黑白·工作距离50-500mm','60','基础AI:AI分类/OCR/读码(无边缘学习)'],
+
+        ['SS4013CG-07M-WGG01E','1280×1024·1.3MP·电动调焦7mm·白光偏振/非偏振·彩色·工作距离50-500mm','60','基础AI:AI分类/OCR/读码/颜色识别(无边缘学习)'],
+
+        ['SS4013MG-07M-RGG01E','1280×1024·1.3MP·电动调焦7mm·红光偏振/非偏振·黑白·工作距离50-500mm','60','基础AI:AI分类/OCR/读码(无边缘学习)'],
+
+        ['SS4013CG-07M-RGG01E','1280×1024·1.3MP·电动调焦7mm·红光偏振/非偏振·彩色·工作距离50-500mm','60','基础AI:AI分类/OCR/读码/颜色识别(无边缘学习)'],
+
+        ['SS4013MG-12M-WGG01E','1280×1024·1.3MP·电动调焦12mm·白光偏振/非偏振·黑白·工作距离50-500mm','60','基础AI:AI分类/OCR/读码(无边缘学习)'],
+
+        ['SS4013CG-12M-WGG01E','1280×1024·1.3MP·电动调焦12mm·白光偏振/非偏振·彩色·工作距离50-500mm','60','基础AI:AI分类/OCR/读码/颜色识别(无边缘学习)'],
+
+        ['SS4013MG-12M-RGG01E','1280×1024·1.3MP·电动调焦12mm·红光偏振/非偏振·黑白·工作距离50-500mm','60','基础AI:AI分类/OCR/读码(无边缘学习)'],
+
+        ['SS4013CG-12M-RGG01E','1280×1024·1.3MP·电动调焦12mm·红光偏振/非偏振·彩色·工作距离50-500mm','60','基础AI:AI分类/OCR/读码/颜色识别(无边缘学习)'],
+
+      ]},
+
+      {name:'SS5000 AI视觉传感器(旗舰)',searchKeys:['ss5000','ss5016','ss5050'],
+
+        counterpart:'SS5016MG-08M-WGG01→MV-SC3016M-06M-WBN; SS5016CG-16M-WGG01→MV-SC3016C-15M-WBN; SS5016MG-12M-WGG01→MV-SC3016M-12M-WBN 等18种型号(逐型号对标见表)',
+
+        reason:'华睿SS3000(1.6MP超紧凑·手动调焦7/16mm·WD40-200mm·无内置AI)对标海康SC2000X(海康带异常判断/种类识别,AI占优);SS4000(1.3MP·电动调焦7/12mm·WD50-500mm·AI分类/OCR)对标SC2000X;SS5016(1.6MP·电动调焦8/12/16/25mm·WD80-1500mm·AI芯片)对标SC3016;SS5050(5MP·45fps)对标SC3050(SC3000X系列)。华睿优势:超紧凑体积+大华渠道+价格;海康优势:AI边缘学习+VM 140+算法+IP67+30+协议。核心参数差异：全局快门(同)；彩色对彩色；16mm vs 14.8mm(最近档)；友商千兆 vs 海康百兆(友商优势)；8mm→6mm(最近档)；彩色对彩色；友商千兆vs海康百兆(友商优势)；海康IP67 vs IP65+AI深度学习(海康优势)；16mm→14.8mm(最近档)；分辨率最接近(1440×1080 vs 1408×1024)；友商千兆vs海康百兆(友商优势)；海康IP67+AI深度学习(海康优势)；12mm→12.4mm(同档)；彩色对彩色；友商千兆vs海康百兆(友商优势)；海康IP67+AI深度学习(海康优势)；25mm→14.8mm(海康最长焦档,窄视野对窄视野)；分辨率最接近；友商千兆vs海康百兆(友商优势)；海康IP67+AI深度学习(海康优势)；25mm→14.8mm(海康最长焦档)；彩色对彩色；友商千兆vs海康百兆(友商优势)；海康IP67+AI深度学习(海康优势)；5mm→6mm(最近档)；友商红光偏振 vs 海康白光(红光可选)(光源差异)；友商千兆vs海康百兆(友商优势)；海康IP67+AI深度学习(海康优势)；12mm→12.4mm(同档)；偏振光源同口径；友商千兆vs海康百兆(友商优势)；海康IP67+AI深度学习(海康优势)；8mm同档；彩色对彩色；友商45fps vs 海康40fps(友商小幅优势)；友商千兆vs海康百兆(友商优势)；海康IP67+VM深度学习(海康优势)；12mm→8mm(海康最近档)；友商45fps vs 海康40fps(友商小幅优势)；海康IP67+VM深度学习(海康优势)；12mm→8mm(海康最近档)；彩色对彩色；友商45fps vs 海康40fps(友商小幅优势)；海康IP67+VM深度学习(海康优势)；16mm同档；友商45fps vs 海康40fps(友商小幅优势)；海康IP67+VM深度学习(海康优势)；16mm同档；彩色对彩色；友商45fps vs 海康40fps(友商小幅优势)；海康IP67+VM深度学习(海康优势)；25mm→16mm(海康最长焦档,窄视野对窄视野)；友商45fps vs 海康40fps(友商小幅优势)；海康IP67+VM深度学习(海康优势)；25mm→16mm(海康最长焦档)；彩色对彩色；友商45fps vs 海康40fps(友商小幅优势)；海康IP67+VM深度学习(海康优势)',colNames:['型号','规格(官方数据)','帧率','AI能力'],
+
+        models:[
+
+        ['SS5016MG-08M-WGG01','1440×1080·8mm白光偏振/非偏振·工作距离80-1500mm·千兆','60','基础AI:AI分类/OCR/读码(无边缘学习)'],
+
+        ['SS5016CG-16M-WGG01','1440×1080·16mm白光偏振/非偏振·工作距离100-1500mm·千兆·彩色','60','基础AI:AI分类/OCR/读码/颜色识别(无边缘学习)'],
+
+        ['SS5016MG-12M-WGG01','1440×1080·12mm白光偏振/非偏振·工作距离80-1500mm·千兆','60','基础AI:AI分类/OCR/读码(无边缘学习)'],
+
+        ['SS5016CG-08M-WGG01','1440×1080·8mm白光·电动调焦·WD80-1500mm·千兆·彩色','60','基础AI:AI分类/OCR/读码/颜色识别(无边缘学习)'],
+
+        ['SS5016MG-16M-WGG01','1440×1080·16mm白光·电动调焦·WD100-1500mm·千兆·黑白','60','基础AI:AI分类/OCR/读码(无边缘学习)'],
+
+        ['SS5016CG-12M-WGG01','1440×1080·12mm白光·电动调焦·WD80-1500mm·千兆·彩色','60','基础AI:AI分类/OCR/读码/颜色识别(无边缘学习)'],
+
+        ['SS5016MG-25M-WGG01','1440×1080·25mm白光·电动调焦·WD250-1500mm·千兆·黑白','60','基础AI:AI分类/OCR/读码(无边缘学习)'],
+
+        ['SS5016CG-25M-WGG01','1440×1080·25mm白光·电动调焦·WD250-1500mm·千兆·彩色','60','基础AI:AI分类/OCR/读码/颜色识别(无边缘学习)'],
+
+        ['SS5016PMG-05M-RGG01','1440×1080·5mm红光·偏振/非偏振/漫射·电动调焦·WD25-2000mm·千兆·黑白','60','基础AI:AI分类/OCR/读码(无边缘学习)'],
+
+        ['SS5016PMG-12M-WGG01','1440×1080·12mm白光·偏振/非偏振/漫射·电动调焦·WD50-2000mm·千兆·黑白','60','基础AI:AI分类/OCR/读码(无边缘学习)'],
+
+        ['SS5050MG-08M-WGG01','2368×1792·5MP·8mm白光偏振/非偏振·工作距离80-1500mm·千兆','45','基础AI:AI分类/OCR/读码(无边缘学习)'],
+
+        ['SS5050CG-08M-WGG01','2368×1792·5MP·8mm白光·电动调焦·WD80-1500mm·千兆·彩色','45','基础AI:AI分类/OCR/读码/颜色识别(无边缘学习)'],
+
+        ['SS5050MG-12M-WGG01','2368×1792·5MP·12mm白光·电动调焦·WD80-1500mm·千兆·黑白','45','基础AI:AI分类/OCR/读码(无边缘学习)'],
+
+        ['SS5050CG-12M-WGG01','2368×1792·5MP·12mm白光·电动调焦·WD80-1500mm·千兆·彩色','45','基础AI:AI分类/OCR/读码/颜色识别(无边缘学习)'],
+
+        ['SS5050MG-16M-WGG01','2368×1792·5MP·16mm白光·电动调焦·WD100-1500mm·千兆·黑白','45','基础AI:AI分类/OCR/读码(无边缘学习)'],
+
+        ['SS5050CG-16M-WGG01','2368×1792·5MP·16mm白光·电动调焦·WD100-1500mm·千兆·彩色','45','基础AI:AI分类/OCR/读码/颜色识别(无边缘学习)'],
+
+        ['SS5050MG-25M-WGG01','2368×1792·5MP·25mm白光·电动调焦·WD250-1500mm·千兆·黑白','45','基础AI:AI分类/OCR/读码(无边缘学习)'],
+
+        ['SS5050CG-25M-WGG01','2368×1792·5MP·25mm白光·电动调焦·WD250-1500mm·千兆·彩色','45','基础AI:AI分类/OCR/读码/颜色识别(无边缘学习)'],
+
+      ]},
+
+
+
+
+    ]
+
+  },
+
+  {
+
+    id:'decheng',brand:'德成视觉 Decheng',region:'cn',logo:'#ca8a04',logoText:'D',
+
+    counterpart:'DC-080/DC-100(640×480)→SC1000; DC-200(1280×1024)→SC2000X; DC-300(2048×1536)→SC3000X; DC-400低配(1280×960)→SC2000X, 高配(5MP)→SC5050X; DC-400M(AI旗舰)→SC6000',
+
+    reason:'德成最大优势:超低价格(DC-100 ¥899起)与兼容基恩士/康耐视指令。DC-080(四核ARM+频闪光源+IP67)对位SC1000;DC-100/200/300/400/400M已按渠道/展会数据补入对标(官网未公布详细规格·标待核);DC-500为含13.3英寸触摸屏的一体机工作站(非单相机形态),海康SC系无此形态→不入表。海康优势:AI边缘学习+VM 140+算法+全参数透明+30+协议+品牌信任',
+
+    url:'http://www.dcjdkj.com/',
+
+    series:[
+
+      {name:'DC-100(入门·AI)',searchKeys:['dc-100','dc100'],
+
+        counterpart:'DC-100→MV-SC1003M-03S-WBN-SR',
+
+        reason:'德成DC-100入门级(渠道数据·官网未公布详细规格)按分辨率对位SC1003(640×480同档·IP54·一键60秒建方案);海康优势:AI边缘学习+全参数透明+30+协议。核心参数差异：友商120fps(渠道数据) vs 海康15fps;高速场景海康可升级SC6016M/V2(120fps)覆盖;德成低价 vs 海康AI边缘学习(海康优势)',colNames:['型号','规格(官方数据)','帧率','AI能力'],
+
+        models:[
+
+        ['DC-100','640×480(待核·官网未公布)·嵌入式Linux·无风扇密封','120(待核)','轻量AI:自学习OK/NG判定·140+工具·30+协议(无边缘学习分类/检测)'],
+
+      ]},
+
+      {name:'DC-200(中级)',searchKeys:['dc-200','dc200'],
+
+        counterpart:'DC-200(8mm)→MV-SC2013XM-05M-WBN; DC-200(16mm)→MV-SC2013XM-16M-WBN',
+
+        reason:'德成DC-200 8mm版(渠道数据)按分辨率对位SC2013X(1280×1024同档·5/12/16mm);8mm→5mm最近档;海康优势:AI边缘学习+异常判断+30+协议。核心参数差异：同分辨率档；8mm vs 5mm(海康最近档)；友商120fps(渠道数据) vs 海康55fps；德成低价 vs 海康AI(海康优势)；同分辨率档；16mm对16mm(同焦距档)；友商120fps(渠道数据) vs 海康55fps；德成低价 vs 海康AI(海康优势)',colNames:['型号','规格(官方数据)','帧率','AI能力'],
+
+        models:[
+
+        ['DC-200(8mm)','1280×1024(待核·官网未公布)·内置M12镜头','120(待核)','轻量AI:自学习OK/NG判定·140+工具·30+协议(无边缘学习分类/检测)'],
+
+        ['DC-200(16mm)','1280×1024(待核·官网未公布)·内置M12镜头','120(待核)','轻量AI:自学习OK/NG判定·140+工具·30+协议(无边缘学习分类/检测)'],
+
+      ]},
+
+      {name:'DC-300(进阶)',searchKeys:['dc-300','dc300'],
+
+        counterpart:'DC-300→MV-SC3030XM-08M-WBN',
+
+        reason:'德成DC-300(渠道数据)按分辨率对位SC3030X(2048×1536精确同档·IP67);海康优势:深度学习+IP67+30+协议。核心参数差异：分辨率精确同档(2048×1536)；友商60fps(渠道数据) vs 海康40fps；德成低价 vs 海康AI深度学习(海康优势)',colNames:['型号','规格(官方数据)','帧率','AI能力'],
+
+        models:[
+
+        ['DC-300','2048×1536(待核·官网未公布)·嵌入式Linux','60(待核)','轻量AI:自学习OK/NG判定·140+工具·30+协议(无边缘学习分类/检测)'],
+
+      ]},
+
+      {name:'DC-400(高端)',searchKeys:['dc-400','dc400'],
+
+        counterpart:'DC-400(低配)→MV-SC2013XM-12M-WBN; DC-400(高配)→MV-SC5050XM-00C-NNN; DC-400M→MV-SC6050M-00C-NNN/V2',
+
+        reason:'德成DC-400低配(渠道数据)按分辨率对位SC2013X(1280×1024最近档);海康优势:AI边缘学习+30+协议。核心参数差异：分辨率最接近(1280×960 vs 1280×1024)；友商120fps(渠道数据) vs 海康55fps；德成低价 vs 海康AI(海康优势)；5MP对5MP(2592×1944 vs 2432×2048)；同帧率60fps(渠道 vs 官方)；GigE对GigE；海康VM 160+算法(海康优势)；6.3MP vs 5MP(2432×2048)；友商120fps vs 海康80fps(友商优势·海康SC6016M/V2为120fps)；均C口+GigE同档；德成AI缺陷 vs 海康VM 160+算法(算法生态海康优势)',colNames:['型号','规格(官方数据)','帧率','AI能力'],
+
+        models:[
+
+        ['DC-400(低配)','1280×960(待核·官网未公布)','120(待核)','轻量AI:自学习OK/NG判定·140+工具·30+协议(无边缘学习分类/检测)'],
+
+        ['DC-400(高配)','2592×1944·5MP(待核·官网未公布)','60(待核)','轻量AI:自学习OK/NG判定·140+工具·30+协议(无边缘学习分类/检测)'],
+
+      ]},
+
+      {name:'DC-400M(AI旗舰)',searchKeys:['dc-400m','dc400m'],
+
+        counterpart:'DC-400M→MV-SC6050M-00C-NNN/V2',
+
+        reason:'德成DC-400M旗舰(官网确证3072×2048@120fps·C口)按分辨率对位SC6050(5MP档最接近·80fps·C口);海康优势:VM 160+算法+GigE+官方规格透明。核心参数差异：6.3MP vs 5MP(2432×2048)；友商120fps vs 海康80fps(友商优势·海康SC6016M/V2为120fps)；均C口+GigE同档；德成AI缺陷 vs 海康VM 160+算法(算法生态海康优势)',colNames:['型号','规格(官方数据)','帧率','AI能力'],
+
+        models:[
+
+        ['DC-400M','3072×2048·八核ARM 2.4GHz·4GB+32GB·C口镜头(可换高清)·内置光源控制器','120','AI深度学习:缺陷检测(0.01mm²级)/OCR/读码·内置NPU·单帧/多帧/连续触发'],
+
+      ]},
+
+
+
+      {name:'DC-080AI(视觉传感器·AI)',searchKeys:['dc-080','dc080','dc-080ai'],
+
+        counterpart:'DC-080→MV-SC1003M-03S-WBN-SR',
+
+        reason:'德成DC-080主打超低价格与兼容基恩士/康耐视指令(四核ARM+频闪光源+IP67);DC-100/200/300/400/400M已按渠道/展会数据补入对标(官网未公布详细规格·标待核);DC-500为触摸屏一体机工作站(非单相机形态)不入表;海康优势:AI边缘学习+VM 140+算法+全参数透明+30+协议+品牌信任。核心参数差异：友商标称120fps(第三方渠道数据) vs 海康官方15fps;德成低价 vs 海康AI边缘学习+全参数透明(海康优势)',colNames:['型号','规格(官方数据)','帧率','AI能力'],
+        models:[
+
+        ['DC-080','640×480·四核ARM 2GHz·2GB+32GB·内置M12机械调焦镜头+频闪光源·IP67·12W','120','轻量AI:OCR/读码/防错判定(无内置深度学习/无边缘学习)'],
+
+      ]},
+
+    ]
+
+  }
+
+];
+
+
+
+// Counterpart map (comp search key -> hik series)
+
+const counterpartMap = {
+
+  'iv4':'sc3000','iv3':'sc2000x',
+
+  'vs':'sc6000','vs-c320':'sc5000x','vs-c500':'sc5000x','vs-c1500':'sc6000','vs-c2500':'sc6000',
+
+  'is3900':'sc6000','is3901':'sc6000','is3905':'sc6000','is3916':'sc6000','is3925':'sc6000',
+
+  'is3800':'sc3000','is3801':'sc3000','is3803':'sc3000','is3805':'sc3000','is3808':'sc3000','is3812':'sc6000','is3816':'sc6000',
+
+  'is2800':'sc2000x','is2801':'sc2000x','is2802':'sc2000x',
+
+  'is8900':'sc2000','is8902':'sc2000x','is8905':'sc5000x','is8912':'sc5000x',
+
+  'is1740':'sc6500','is1741':'sc6500','is1742':'sc6500',
+
+  'd900':'sc5000x','d905':'sc5000x','d902':'sc5000x',
+
+  'vn2000':'sc2000x','vn4000cl':'sc3000','vn4000':'sc2000x',
+
+  'scb1':'sc2000x','sca1':'sc5000x','sca150':'sc5000x','sca1c023g':'sc2000x','sca2-200mc':'sc6000','sca2':'sc5000x','scd1':'sc2000x','scs3':'sc2000x',
+
+  'ss3000':'sc2000','ss3016':'sc2000','ss4000':'sc2000x','ss4013':'sc2000x','ss4':'sc2000x','ss40':'sc2000x','ss5000':'sc3000','ss5016':'sc3000','ss5050':'sc3000',
+
+  'dc-100':'sc1000','dc-080':'sc1000','dc080':'sc1000','dc-080ai':'sc1000','dc-200':'sc2000x','dc-300':'sc3000x','dc-400低配':'sc2000x','dc-400高配':'sc5000x','dc-400':'sc2000x','dc-400m':'sc6000',
+
+};
+
+// Brand name -> hik default series
+
+const brandHikMap = {
+
+  '基恩士':'sc6000','keyence':'sc6000',
+
+  '康耐视':'sc5000x','cognex':'sc5000x',
+
+  '思谋':'sc2000x','smartmore':'sc2000x',
+
+  'opt':'sc2000x','奥普特':'sc2000x',
+
+  '华睿':'sc3000','huarui':'sc3000',
+
+  '德成':'sc2000x','decheng':'sc2000x'
+
+};
+
+
+
+// 本次官网巡检新增的竞品型号(用于表格内「🌟官网新增」标记)
+
+const NEW_MODELS = {'VN2000-103-031':1,'VN4000-103-021':1};
+
+// 数据更新日期(官网巡检)
+
+const COMP_DATA_UPDATED = '2026-10-12';
+
+
+
+
+
+
+
+// ==================== COMPETITOR SEARCH ====================
+
+function matchSeries(qn, searchKeys){
+
+  if(!searchKeys)return false;
+
+  return searchKeys.some(sk=>{
+
+    // Exact match
+
+    if(qn===sk)return true;
+
+    // Query starts with searchKey (full model "is3901mc" also matches key "is3901")
+
+    if(qn.length>sk.length && qn.startsWith(sk))return true;
+
+    // Substring (hyphen-insensitive): prefixed full model "opt-sca1-50mc" contains key "sca1"
+
+    if(qn.length>sk.length && qn.replace(/-/g,'').indexOf(sk.replace(/-/g,''))>=0)return true;
+
+    // SearchKey starts with query (e.g., query "iv4" matches key "iv4-400")
+
+    if(sk.length>qn.length && sk.startsWith(qn)){
+
+      const nc=sk[qn.length];
+
+      if(!/[a-z0-9]/.test(nc))return true; // word boundary
+
+    }
+
+    return false;
+
+  });
+
+}
+
+
+
+// Find Hik counterpart key from query
+
+function findHikKey(qn){
+
+  // Try exact match in counterpartMap
+
+  if(counterpartMap[qn])return counterpartMap[qn];
+
+  // Longest-prefix key first (handles full model queries like "is3901mc" / "vs-c320mx")
+
+  let best=null,bestLen=0;
+
+  for(const k in counterpartMap){
+
+    if(qn.startsWith(k)&&k.length>bestLen){best=counterpartMap[k];bestLen=k.length;}
+
+  }
+
+  if(best)return best;
+
+  // Word-boundary prefix match (query shorter than key, e.g. "ss4" hits "ss4000")
+
+  for(const [k,v] of Object.entries(counterpartMap)){
+
+    if(qn.startsWith(k)&&(qn.length===k.length||!/[a-z0-9]/.test(qn[k.length])))return v;
+
+    if(k.startsWith(qn)&&(k.length===qn.length||!/[a-z0-9]/.test(k[qn.length])))return v;
+
+  }
+
+  // Longest substring key (>=4 chars, hyphens ignored) for prefixed full models like "opt-sca1-c023g-l12"
+
+  let sub=null,subLen=3;
+
+  const qnh=qn.replace(/-/g,'');
+
+  for(const k in counterpartMap){
+
+    if(k.length>=4&&qnh.indexOf(k.replace(/-/g,''))>=0&&k.length>subLen){sub=counterpartMap[k];subLen=k.length;}
+
+  }
+
+  return sub;
+
+}
+
+const pairData = [["基恩士 KEYENCE","IV4 系列(AI旗舰视觉传感器)","IV4-400CA/MA","窄视野·1280×960·1/2.9英寸·安装400mm起·视场58×44~464×348mm·IP67·PoE Class4/6·千兆·2026-09中国发布","—(官方未公布帧率;官方仅公布最高250个/秒·4ms处理)","AI旗舰:AI辅助判别/现场学习·65工具(判别最多64)·128程序(SD卡)/32","SC3000系列 视觉传感器(主推SC3000X)","MV-SC3013XM/XC-16M-WBN","1216×1024","60","深度学习分类/目标检测·注册分类/注册目标检测·学习字符识别","IV4为基恩士2026-09新品AI旗舰视觉传感器(65工具·IP67·PoE·千兆,官方不公布帧率,仅公布最高250个/秒·4ms处理);海康SC3000X系列带边缘学习(异常检测/分类)+VM算法平台,官方60fps可背书;窄视野IV4-400配SC3013XM-16M(最长焦),标准/宽视野配SC3013XM-08M","全局快门(同)"],["基恩士 KEYENCE","IV4 系列(AI旗舰视觉传感器)","IV4-500CA/MA","标准·1280×960·1/2.9英寸·安装50mm起·视场22×16~1184×888mm·IP67·PoE Class4/6·千兆·2026-09中国发布","—(官方未公布帧率;官方仅公布最高250个/秒·4ms处理)","AI旗舰:AI辅助判别/现场学习·65工具(判别最多64)·128程序(SD卡)/32","SC3000系列 视觉传感器(主推SC3000X)","MV-SC3013XM/XC-08M-WBN","1216×1024","60","深度学习分类/目标检测·注册分类/注册目标检测·学习字符识别","IV4为基恩士2026-09新品AI旗舰视觉传感器(65工具·IP67·PoE·千兆,官方不公布帧率,仅公布最高250个/秒·4ms处理);海康SC3000X系列带边缘学习(异常检测/分类)+VM算法平台,官方60fps可背书;窄视野IV4-400配SC3013XM-16M(最长焦),标准/宽视野配SC3013XM-08M","全局快门(同)"],["基恩士 KEYENCE","IV4 系列(AI旗舰视觉传感器)","IV4-600CA/MA","宽视野·1280×960·1/2.9英寸·安装50mm起·视场51×38~2730×2044mm·IP67·PoE Class4/6·千兆·2026-09中国发布","—(官方未公布帧率;官方仅公布最高250个/秒·4ms处理)","AI旗舰:AI辅助判别/现场学习·65工具(判别最多64)·128程序(SD卡)/32","SC3000系列 视觉传感器(主推SC3000X)","MV-SC3013XM/XC-08M-WBN","1216×1024","60","深度学习分类/目标检测·注册分类/注册目标检测·学习字符识别","IV4为基恩士2026-09新品AI旗舰视觉传感器(65工具·IP67·PoE·千兆,官方不公布帧率,仅公布最高250个/秒·4ms处理);海康SC3000X系列带边缘学习(异常检测/分类)+VM算法平台,官方60fps可背书;窄视野IV4-400配SC3013XM-16M(最长焦),标准/宽视野配SC3013XM-08M","全局快门(同)"],["基恩士 KEYENCE","IV3 系列","IV3-400CA/MA","窄视野·1280×960·1/2.9英寸·安装400mm起·视场58×44~464×348mm·IP67·PoE Class3/4/6·千兆·约300g","—(官方未公布)","AI分类模式+AI拍摄·65工具(判别最多64)·128程序(SD卡)/32","SC2000X系列 视觉传感器(AI)","MV-SC2013XC-16M-WBN","1280×1024","55","异常判断/种类识别/学习计数·VisionTrain离线训练","IV3为基恩士主力AI视觉传感器(1280×960·65工具·官方不公布帧率);海康SC2000X系列同为约1.3MP一体式,带异常判断/种类识别,官方55/75fps可背书;IV3装偏光镜后失去IP67,海康SC2000X配偏振罩仍保持IP65;窄视野IV3-400配SC2013XC-16M(最长焦)","全局快门(同)"],["基恩士 KEYENCE","IV3 系列","IV3-500CA/MA","标准·1280×960·1/2.9英寸·安装50mm起·视场22×16~1184×888mm·IP67·PoE Class3/4/6·千兆·约300g","—(官方未公布)","AI分类模式+AI拍摄·65工具(判别最多64)·128程序(SD卡)/32","SC2000X系列 视觉传感器(AI)","MV-SC2013XC-05M-WBN","1280×1024","55","异常判断/种类识别/学习计数·VisionTrain离线训练","IV3为基恩士主力AI视觉传感器(1280×960·65工具·官方不公布帧率);海康SC2000X系列同为约1.3MP一体式,带异常判断/种类识别,官方55/75fps可背书;IV3装偏光镜后失去IP67,海康SC2000X配偏振罩仍保持IP65;窄视野IV3-400配SC2013XC-16M(最长焦)","全局快门(同)"],["基恩士 KEYENCE","IV3 系列","IV3-600CA/MA","宽视野·1280×960·1/2.9英寸·安装50mm起·视场51×38~2730×2044mm·IP67·PoE Class3/4/6·千兆·约300g","—(官方未公布)","AI分类模式+AI拍摄·65工具(判别最多64)·128程序(SD卡)/32","SC2000X系列 视觉传感器(AI)","MV-SC2013XC-05M-WBN","1280×1024","55","异常判断/种类识别/学习计数·VisionTrain离线训练","IV3为基恩士主力AI视觉传感器(1280×960·65工具·官方不公布帧率);海康SC2000X系列同为约1.3MP一体式,带异常判断/种类识别,官方55/75fps可背书;IV3装偏光镜后失去IP67,海康SC2000X配偏振罩仍保持IP65;窄视野IV3-400配SC2013XC-16M(最长焦)","全局快门(同)"],["基恩士 KEYENCE","VS系列 一体式智能相机(AI×光学变焦ZoomTrax)","VS-L160MX/CX","1.6MP·变焦×8.75·安装150-5000mm·内存3GB/7GB·约700g·IP67·PoE/24VDC","85","AI×规则混合判别·数十张样本训练·ZoomTrax辅助选型","SC6000系列 AI智能相机","MV-SC6016C-00C-NNN/V2","1408×1024","120","VM完整版+全监督+深度学习","VS系列对标SC6000(同为旗舰级,最高2500万像素);VS优势:ZoomTrax光学变焦(免换镜头)+ESD-Safe+官方帧率85/83/81/48fps;海康优势:VM完整版140+视觉工具+30+通讯协议(FINS/KV/SLMP)+外接显示器+USB扩展,SC6000覆盖12/16/25MP且45fps档帧率更优","全局快门(同)"],["基恩士 KEYENCE","VS系列 一体式智能相机(AI×光学变焦ZoomTrax)","VS-L320MX/CX","3.2MP·变焦×6.0·安装150-5000mm·内存3GB/7GB·约700g·IP67·PoE/24VDC","83","AI×规则混合判别·数十张样本训练·ZoomTrax辅助选型","SC6000系列 AI智能相机","MV-SC6050C-00C-NNN/V2","2432×2048","80","VM完整版+全监督+深度学习","VS系列对标SC6000(同为旗舰级,最高2500万像素);VS优势:ZoomTrax光学变焦(免换镜头)+ESD-Safe+官方帧率85/83/81/48fps;海康优势:VM完整版140+视觉工具+30+通讯协议(FINS/KV/SLMP)+外接显示器+USB扩展,SC6000覆盖12/16/25MP且45fps档帧率更优","全局快门(同)"],["基恩士 KEYENCE","VS系列 一体式智能相机(AI×光学变焦ZoomTrax)","VS-L500MX/CX","5MP·变焦×5.0·安装150-5000mm·内存3GB/7GB·约700g·IP67·PoE/24VDC","81","AI×规则混合判别·数十张样本训练·ZoomTrax辅助选型","SC6000系列 AI智能相机","MV-SC6050C-00C-NNN/V2","2432×2048","80","VM完整版+全监督+深度学习","VS系列对标SC6000(同为旗舰级,最高2500万像素);VS优势:ZoomTrax光学变焦(免换镜头)+ESD-Safe+官方帧率85/83/81/48fps;海康优势:VM完整版140+视觉工具+30+通讯协议(FINS/KV/SLMP)+外接显示器+USB扩展,SC6000覆盖12/16/25MP且45fps档帧率更优","全局快门(同)"],["基恩士 KEYENCE","VS系列 一体式智能相机(AI×光学变焦ZoomTrax)","VS-L1500MX/CX","15MP 4400×3296(0.037-1000ms曝光)·安装150-5000mm·内存3GB/7GB·约700g·IP67·PoE/24VDC","48","AI×规则混合判别·数十张样本训练·ZoomTrax辅助选型","","MV-SC6120C-00C-NNN","4096×2944","45","VM完整版+全监督+深度学习","VS系列对标SC6000(同为旗舰级,最高2500万像素);VS优势:ZoomTrax光学变焦(免换镜头)+ESD-Safe+官方帧率85/83/81/48fps;海康优势:VM完整版140+视觉工具+30+通讯协议(FINS/KV/SLMP)+外接显示器+USB扩展,SC6000覆盖12/16/25MP且45fps档帧率更优","全局快门(同)"],["基恩士 KEYENCE","VS系列 一体式智能相机(AI×光学变焦ZoomTrax)","VS-S160MX/CX","1.6MP·变焦×3.5·安装50-500mm·内存3GB/7GB·约570g·IP67·PoE/24VDC","85","AI×规则混合判别·数十张样本训练·ZoomTrax辅助选型","SC6000系列 AI智能相机","MV-SC6016C-00C-NNN/V2","1408×1024","120","VM完整版+全监督+深度学习","VS系列对标SC6000(同为旗舰级,最高2500万像素);VS优势:ZoomTrax光学变焦(免换镜头)+ESD-Safe+官方帧率85/83/81/48fps;海康优势:VM完整版140+视觉工具+30+通讯协议(FINS/KV/SLMP)+外接显示器+USB扩展,SC6000覆盖12/16/25MP且45fps档帧率更优","全局快门(同)"],["基恩士 KEYENCE","VS系列 一体式智能相机(AI×光学变焦ZoomTrax)","VS-S320MX/CX","3.2MP·变焦×2.4·安装50-500mm·内存3GB/7GB·约570g·IP67·PoE/24VDC","83","AI×规则混合判别·数十张样本训练·ZoomTrax辅助选型","SC6000系列 AI智能相机","MV-SC6050C-00C-NNN/V2","2432×2048","80","VM完整版+全监督+深度学习","VS系列对标SC6000(同为旗舰级,最高2500万像素);VS优势:ZoomTrax光学变焦(免换镜头)+ESD-Safe+官方帧率85/83/81/48fps;海康优势:VM完整版140+视觉工具+30+通讯协议(FINS/KV/SLMP)+外接显示器+USB扩展,SC6000覆盖12/16/25MP且45fps档帧率更优","全局快门(同)"],["基恩士 KEYENCE","VS系列 一体式智能相机(AI×光学变焦ZoomTrax)","VS-S500MX/CX","5MP·变焦×2.0·安装50-500mm·内存3GB/7GB·约570g·IP67·PoE/24VDC","81","AI×规则混合判别·数十张样本训练·ZoomTrax辅助选型","SC6000系列 AI智能相机","MV-SC6050C-00C-NNN/V2","2432×2048","80","VM完整版+全监督+深度学习","VS系列对标SC6000(同为旗舰级,最高2500万像素);VS优势:ZoomTrax光学变焦(免换镜头)+ESD-Safe+官方帧率85/83/81/48fps;海康优势:VM完整版140+视觉工具+30+通讯协议(FINS/KV/SLMP)+外接显示器+USB扩展,SC6000覆盖12/16/25MP且45fps档帧率更优","全局快门(同)"],["基恩士 KEYENCE","VS系列 一体式智能相机(AI×光学变焦ZoomTrax)","VS-S1500MX/CX","15MP 4400×3296·安装50-500mm·内存3GB/7GB·约570g·IP67·PoE/24VDC","48","AI×规则混合判别·数十张样本训练·ZoomTrax辅助选型","","MV-SC6120C-00C-NNN","4096×2944","45","VM完整版+全监督+深度学习","VS系列对标SC6000(同为旗舰级,最高2500万像素);VS优势:ZoomTrax光学变焦(免换镜头)+ESD-Safe+官方帧率85/83/81/48fps;海康优势:VM完整版140+视觉工具+30+通讯协议(FINS/KV/SLMP)+外接显示器+USB扩展,SC6000覆盖12/16/25MP且45fps档帧率更优","全局快门(同)"],["基恩士 KEYENCE","VS系列 一体式智能相机(AI×光学变焦ZoomTrax)","VS-C160MX/CX","1.6MP 1440×1072·C口·1/2.9英寸·3.45μm·内存3GB/7GB·约420g·IP67·PoE/24VDC","83","AI×规则混合判别·数十张样本训练·ZoomTrax辅助选型","SC6000系列 AI智能相机","MV-SC6016C-00C-NNN/V2","1408×1024","120","VM完整版+全监督+深度学习","VS系列对标SC6000(同为旗舰级,最高2500万像素);VS优势:ZoomTrax光学变焦(免换镜头)+ESD-Safe+官方帧率85/83/81/48fps;海康优势:VM完整版140+视觉工具+30+通讯协议(FINS/KV/SLMP)+外接显示器+USB扩展,SC6000覆盖12/16/25MP且45fps档帧率更优","全局快门(同)"],["基恩士 KEYENCE","VS系列 一体式智能相机(AI×光学变焦ZoomTrax)","VS-C320MX/CX","3.2MP 2048×1536·C口·1/1.8英寸·3.45μm·内存3GB/7GB·约420g·IP67·PoE/24VDC","62","AI×规则混合判别·数十张样本训练·ZoomTrax辅助选型","SC5000X系列 智能相机","MV-SC5050XC-00C-NNN","2432×2048","60","VisionMaster 160+算法·深度学习模块(AI字符/物体识别、缺陷检测)","VS系列对标SC6000(同为旗舰级,最高2500万像素);VS优势:ZoomTrax光学变焦(免换镜头)+ESD-Safe+官方帧率85/83/81/48fps;海康优势:VM完整版140+视觉工具+30+通讯协议(FINS/KV/SLMP)+外接显示器+USB扩展,SC6000覆盖12/16/25MP且45fps档帧率更优","C口对C口；分辨率最接近(2048×1536 vs 2432×2048)；友商62fps vs 海康60fps(持平)"],["基恩士 KEYENCE","VS系列 一体式智能相机(AI×光学变焦ZoomTrax)","VS-C500MX/CX","5MP 2448×2048·C口·2/3英寸·3.45μm·内存3GB/7GB·约420g·IP67·PoE/24VDC","55","AI×规则混合判别·数十张样本训练·ZoomTrax辅助选型","SC5000X系列 智能相机","MV-SC5050XC-00C-NNN","2432×2048","60","VisionMaster 160+算法·深度学习模块(AI字符/物体识别、缺陷检测)","VS系列对标SC6000(同为旗舰级,最高2500万像素);VS优势:ZoomTrax光学变焦(免换镜头)+ESD-Safe+官方帧率85/83/81/48fps;海康优势:VM完整版140+视觉工具+30+通讯协议(FINS/KV/SLMP)+外接显示器+USB扩展,SC6000覆盖12/16/25MP且45fps档帧率更优","C口对C口；5MP对5MP；友商55fps vs 海康60fps(海康优势)"],["基恩士 KEYENCE","VS系列 一体式智能相机(AI×光学变焦ZoomTrax)","VS-C1500MX/CX","15MP 4400×3296·C口·1.1英寸·2.5μm·内存7GB·约420g·IP67·PoE/24VDC","40","AI×规则混合判别·数十张样本训练·ZoomTrax辅助选型","","MV-SC6120C-00C-NNN","4096×2944","45","VM平台140+算法·内嵌AI深度学习(字符/物体识别、缺陷检测)","VS系列对标SC6000(同为旗舰级,最高2500万像素);VS优势:ZoomTrax光学变焦(免换镜头)+ESD-Safe+官方帧率85/83/81/48fps;海康优势:VM完整版140+视觉工具+30+通讯协议(FINS/KV/SLMP)+外接显示器+USB扩展,SC6000覆盖12/16/25MP且45fps档帧率更优","C口对C口；友商15MP/40fps vs 海康12MP/45fps(海康帧率优、分辨率略低)"],["基恩士 KEYENCE","VS系列 一体式智能相机(AI×光学变焦ZoomTrax)","VS-C2500MX/CX","⭐25MP 5120×5120·C口·1.1英寸·2.5μm·内存7GB·约420g·IP67·PoE/24VDC","28","AI×规则混合判别·数十张样本训练·ZoomTrax辅助选型","","MV-SC6250C-00C-NNN","4608×5120","16","2500万像素/VM完整版","VS系列对标SC6000(同为旗舰级,最高2500万像素);VS优势:ZoomTrax光学变焦(免换镜头)+ESD-Safe+官方帧率85/83/81/48fps;海康优势:VM完整版140+视觉工具+30+通讯协议(FINS/KV/SLMP)+外接显示器+USB扩展,SC6000覆盖12/16/25MP且45fps档帧率更优","全局快门(同)"],["康耐视 Cognex","In-Sight 3900(高性能AI旗舰 ⭐2026新品)","IS3901M/C","1.6MP 1440×1080·1/2.3英寸全局快门·液态镜头自动对焦·IP67","125","嵌入式AI(深度学习+传统视觉工具)·Qualcomm Dragonwing平台","SC6000系列 AI智能相机","MV-SC6016C-00C-NNN/V2","1408×1024","120","VM完整版+全监督+深度学习","康耐视 In-Sight 对标(按分辨率/AI档拆分):IS3900(Qualcomm AI旗舰)→SC6000;IS3800(1.6MP→SC6016,3MP→SC3030X,5MP→SC5050X,8MP→SC5060,12/16MP→SC6000/SC5120);IS2800(0.3~2MP入门)→SC2000X;IS8900→SC2000E(2004E-Mini);D900(深度学习专用)→SC5000X/SC6000;IS1740(晶圆读码)→SC6500P-AI-WID。Cognex优势:液态镜头自动对焦+VisionSuite生态+官方帧率;海康优势:VM完整版140余种视觉算法、30余种通讯协议(FINS/KV/SLMP)、官方参数公开可逐项核验、国产化供应与价格;晶圆专用客户端与晶圆ID大模型仅SC6500P-AI-WID具备(36,000片/时@≥99.9%),常规SC6000系列不具备该专用客户端与大模型","全局快门(同)"],["康耐视 Cognex","In-Sight 3900(高性能AI旗舰 ⭐2026新品)","IS3905M/C","5MP 2448×2048·2/3英寸全局快门·Qualcomm Dragonwing平台·IP67","32","嵌入式AI(深度学习+传统视觉工具)·Qualcomm Dragonwing平台","SC6000系列 AI智能相机","MV-SC6050C-00C-NNN/V2","2432×2048","80","VM完整版+全监督+深度学习","康耐视 In-Sight 对标(按分辨率/AI档拆分):IS3900(Qualcomm AI旗舰)→SC6000;IS3800(1.6MP→SC6016,3MP→SC3030X,5MP→SC5050X,8MP→SC5060,12/16MP→SC6000/SC5120);IS2800(0.3~2MP入门)→SC2000X;IS8900→SC2000E(2004E-Mini);D900(深度学习专用)→SC5000X/SC6000;IS1740(晶圆读码)→SC6500P-AI-WID。Cognex优势:液态镜头自动对焦+VisionSuite生态+官方帧率;海康优势:VM完整版140余种视觉算法、30余种通讯协议(FINS/KV/SLMP)、官方参数公开可逐项核验、国产化供应与价格;晶圆专用客户端与晶圆ID大模型仅SC6500P-AI-WID具备(36,000片/时@≥99.9%),常规SC6000系列不具备该专用客户端与大模型","全局快门(同)"],["康耐视 Cognex","In-Sight 3900(高性能AI旗舰 ⭐2026新品)","IS3916M/C","16MP 5320×3032·1.1英寸全局快门·2×千兆网口·8GB程序内存·IP67","28","嵌入式AI(深度学习+传统视觉工具)·Qualcomm Dragonwing平台","","MV-SC6120C-00C-NNN","4096×2944","45","2500万像素/VM完整版","康耐视 In-Sight 对标(按分辨率/AI档拆分):IS3900(Qualcomm AI旗舰)→SC6000;IS3800(1.6MP→SC6016,3MP→SC3030X,5MP→SC5050X,8MP→SC5060,12/16MP→SC6000/SC5120);IS2800(0.3~2MP入门)→SC2000X;IS8900→SC2000E(2004E-Mini);D900(深度学习专用)→SC5000X/SC6000;IS1740(晶圆读码)→SC6500P-AI-WID。Cognex优势:液态镜头自动对焦+VisionSuite生态+官方帧率;海康优势:VM完整版140余种视觉算法、30余种通讯协议(FINS/KV/SLMP)、官方参数公开可逐项核验、国产化供应与价格;晶圆专用客户端与晶圆ID大模型仅SC6500P-AI-WID具备(36,000片/时@≥99.9%),常规SC6000系列不具备该专用客户端与大模型","全局快门(同)"],["康耐视 Cognex","In-Sight 3900(高性能AI旗舰 ⭐2026新品)","IS3925M/C","⭐25MP 5320×4600·1.2英寸全局快门·128GB图像存储·Edge AI工具·IP67","21","嵌入式AI(深度学习+传统视觉工具)·Qualcomm Dragonwing平台","","MV-SC6250C-00C-NNN","4608×5120","16","2500万像素/VM完整版","康耐视 In-Sight 对标(按分辨率/AI档拆分):IS3900(Qualcomm AI旗舰)→SC6000;IS3800(1.6MP→SC6016,3MP→SC3030X,5MP→SC5050X,8MP→SC5060,12/16MP→SC6000/SC5120);IS2800(0.3~2MP入门)→SC2000X;IS8900→SC2000E(2004E-Mini);D900(深度学习专用)→SC5000X/SC6000;IS1740(晶圆读码)→SC6500P-AI-WID。Cognex优势:液态镜头自动对焦+VisionSuite生态+官方帧率;海康优势:VM完整版140余种视觉算法、30余种通讯协议(FINS/KV/SLMP)、官方参数公开可逐项核验、国产化供应与价格;晶圆专用客户端与晶圆ID大模型仅SC6500P-AI-WID具备(36,000片/时@≥99.9%),常规SC6000系列不具备该专用客户端与大模型","全局快门(同)"],["康耐视 Cognex","In-Sight 3800(中高端AI视觉系统)","IS3801M/C","1.6MP 1440×1080·1/2.3英寸全局快门·2×千兆网口·IP67","125/52","边缘学习+深度学习·AI高速处理","SC3000系列 视觉传感器(主推SC3000X)","MV-SC3013XM-08M-WBN","1216×1024","60","有无/计数/OCR","康耐视 In-Sight 对标(按分辨率/AI档拆分):IS3900(Qualcomm AI旗舰)→SC6000;IS3800系列→SC3000X(1.3MP→SC3013X,3MP→SC3030X,5MP→SC3050X,8MP→SC3060,12MP→SC6120C,16MP→SC6250C);IS2800系列(0.3~2MP入门)→SC2000X;IS8900→SC2000E(2004E-Mini)","全局快门(同)"],["康耐视 Cognex","In-Sight 3800(中高端AI视觉系统)","IS3803M/C","3MP 2048×1536·1/1.8英寸全局快门·液态镜头·IP67","47/30","边缘学习+深度学习·AI高速处理","SC3000系列 视觉传感器(主推SC3000X)","MV-SC3030XM-08M-WBN","2048×1536","40","边缘学习/异常检测/OCR","康耐视 In-Sight 对标(按分辨率/AI档拆分):IS3900(Qualcomm AI旗舰)→SC6000;IS3800系列→SC3000X(1.3MP→SC3013X,3MP→SC3030X,5MP→SC3050X,8MP→SC3060,12MP→SC6120C,16MP→SC6250C);IS2800系列(0.3~2MP入门)→SC2000X;IS8900→SC2000E(2004E-Mini)","C口对C口；友商3MP/47fps vs 海康5MP/60fps(海康分辨率帧率双优)；友商液态镜头 vs 海康需手选镜头"],["康耐视 Cognex","In-Sight 3800(中高端AI视觉系统)","IS3805M/C","5MP 2448×2048·2/3英寸全局快门·IP67","32/21","边缘学习+深度学习·AI高速处理","SC3000系列 视觉传感器(主推SC3000X)","MV-SC3050XM-08M-WBN","2432×2048","40","⭐深度学习/边缘学习","康耐视 In-Sight 对标(按分辨率/AI档拆分):IS3900(Qualcomm AI旗舰)→SC6000;IS3800系列→SC3000X(1.3MP→SC3013X,3MP→SC3030X,5MP→SC3050X,8MP→SC3060,12MP→SC6120C,16MP→SC6250C);IS2800系列(0.3~2MP入门)→SC2000X;IS8900→SC2000E(2004E-Mini)","全局快门(同)"],["康耐视 Cognex","In-Sight 3800(中高端AI视觉系统)","IS3808M/C","8MP 2840×2840·2/3英寸全局快门·2.74μm·IP67","24/12","边缘学习+深度学习·AI高速处理","SC3000系列 视觉传感器(主推SC3000X)","MV-SC3060XM-08M-WBN","3200×1920","20","边缘学习/异常检测","康耐视 In-Sight 对标(按分辨率/AI档拆分):IS3900(Qualcomm AI旗舰)→SC6000;IS3800系列→SC3000X(1.3MP→SC3013X,3MP→SC3030X,5MP→SC3050X,8MP→SC3060,12MP→SC6120C,16MP→SC6250C);IS2800系列(0.3~2MP入门)→SC2000X;IS8900→SC2000E(2004E-Mini)","C口对C口；友商8MP/24fps vs 海康12MP/30fps(海康双优)"],["康耐视 Cognex","In-Sight 3800(中高端AI视觉系统)","IS3812M/C","12MP 4096×3000·1/1.1英寸全局快门·2.74μm·IP67","22/11","边缘学习+深度学习·AI高速处理","SC6000系列 AI智能相机","MV-SC6120C-00C-NNN","4096×2944","45","VM完整版+全监督+深度学习","康耐视 In-Sight 对标(按分辨率/AI档拆分):IS3900(Qualcomm AI旗舰)→SC6000;IS3800系列→SC3000X(1.3MP→SC3013X,3MP→SC3030X,5MP→SC3050X,8MP→SC3060,12MP→SC6120C,16MP→SC6250C);IS2800系列(0.3~2MP入门)→SC2000X;IS8900→SC2000E(2004E-Mini)","全局快门(同)"],["康耐视 Cognex","In-Sight 3800(中高端AI视觉系统)","IS3816M/C","16MP 5320×3032·1.1英寸全局快门·7.2GB程序内存·IP67","18/8","边缘学习+深度学习·AI高速处理","SC6000系列 AI智能相机","MV-SC6250C-00C-NNN","4608×5120","16","2500万像素/VM完整版","康耐视 In-Sight 对标(按分辨率/AI档拆分):IS3900(Qualcomm AI旗舰)→SC6000;IS3800系列→SC3000X(1.3MP→SC3013X,3MP→SC3030X,5MP→SC3050X,8MP→SC3060,12MP→SC6120C,16MP→SC6250C);IS2800系列(0.3~2MP入门)→SC2000X;IS8900→SC2000E(2004E-Mini)","全局快门(同)"],["康耐视 Cognex","In-Sight 2800(入门AI视觉系统)","IS2800","0.3MP 720×540·卷帘快门·IP67","45","预训练AI(异常检测/分类/OCR)","SC2000X系列 视觉传感器(AI)","MV-SC2013XM-05M-WBN","1280×1024","55","异常判断/种类识别","康耐视 In-Sight 对标(按分辨率/AI档拆分):IS3900(Qualcomm AI旗舰)→SC6000;IS3800系列→SC3000X(1.3MP→SC3013X,3MP→SC3030X,5MP→SC3050X,8MP→SC3060,12MP→SC6120C,16MP→SC6250C);IS2800系列(0.3~2MP入门)→SC2000X;IS8900→SC2000E(2004E-Mini)","—"],["康耐视 Cognex","In-Sight 2800(入门AI视觉系统)","IS2801","1.6MP 1440×1080·卷帘快门·IP67","45","预训练AI(异常检测/分类/OCR)","SC2000X系列 视觉传感器(AI)","MV-SC2013XM-12M-WBN","1280×1024","55","异常判断/种类识别","康耐视 In-Sight 对标(按分辨率/AI档拆分):IS3900(Qualcomm AI旗舰)→SC6000;IS3800系列→SC3000X(1.3MP→SC3013X,3MP→SC3030X,5MP→SC3050X,8MP→SC3060,12MP→SC6120C,16MP→SC6250C);IS2800系列(0.3~2MP入门)→SC2000X;IS8900→SC2000E(2004E-Mini)","分辨率最接近(1440×1080 vs 1408×1024)；友商卷帘快门 vs 海康全局快门(海康优势)；同为集成光源IP67"],["康耐视 Cognex","In-Sight 2800(入门AI视觉系统)","IS2802","2MP 1920×1080·卷帘快门·IP67","45","预训练AI(异常检测/分类/OCR)","SC2000X系列 视觉传感器(AI)","MV-SC2023XC-05M-WBN","1920×1280","75","异常判断/种类识别/学习计数","康耐视 In-Sight 对标(按分辨率/AI档拆分):IS3900(Qualcomm AI旗舰)→SC6000;IS3800系列→SC3000X(1.3MP→SC3013X,3MP→SC3030X,5MP→SC3050X,8MP→SC3060,12MP→SC6120C,16MP→SC6250C);IS2800系列(0.3~2MP入门)→SC2000X;IS8900→SC2000E(2004E-Mini)","—"],["康耐视 Cognex","In-Sight D900(深度学习专用)","D905M/C","5MP 2448×2048·深度学习专用·IP67","26/16","深度学习(In-Sight ViDi:Detect/Read/Check)","SC5000X系列 智能相机","MV-SC5050XC-00C-NNN","2432×2048","60","VM+AI深度学习/全监督","康耐视 In-Sight 对标(按分辨率/AI档拆分):IS3900(Qualcomm AI旗舰)→SC6000;IS3800(1.6MP→SC6016,3MP→SC3030X,5MP→SC5050X,8MP→SC5060,12/16MP→SC6000/SC5120);IS2800(0.3~2MP入门)→SC2000X;IS8900→SC2000E(2004E-Mini);D900(深度学习专用)→SC5000X/SC6000;IS1740(晶圆读码)→SC6500P-AI-WID。Cognex优势:液态镜头自动对焦+VisionSuite生态+官方帧率;海康优势:VM完整版140余种视觉算法、30余种通讯协议(FINS/KV/SLMP)、官方参数公开可逐项核验、国产化供应与价格;晶圆专用客户端与晶圆ID大模型仅SC6500P-AI-WID具备(36,000片/时@≥99.9%),常规SC6000系列不具备该专用客户端与大模型","全局快门(同)"],["康耐视 Cognex","In-Sight D900(深度学习专用)","D902M/C","2MP 1920×1200·深度学习专用·液态镜头·IP67","51/34","深度学习(In-Sight ViDi:Detect/Read/Check)","SC5000X系列 智能相机","MV-SC5020XC-00C-NNN","1600×1216","100","VM+AI深度学习","康耐视 In-Sight 对标(按分辨率/AI档拆分):IS3900(Qualcomm AI旗舰)→SC6000;IS3800(1.6MP→SC6016,3MP→SC3030X,5MP→SC5050X,8MP→SC5060,12/16MP→SC6000/SC5120);IS2800(0.3~2MP入门)→SC2000X;IS8900→SC2000E(2004E-Mini);D900(深度学习专用)→SC5000X/SC6000;IS1740(晶圆读码)→SC6500P-AI-WID。Cognex优势:液态镜头自动对焦+VisionSuite生态+官方帧率;海康优势:VM完整版140余种视觉算法、30余种通讯协议(FINS/KV/SLMP)、官方参数公开可逐项核验、国产化供应与价格;晶圆专用客户端与晶圆ID大模型仅SC6500P-AI-WID具备(36,000片/时@≥99.9%),常规SC6000系列不具备该专用客户端与大模型","全局快门(同)"],["康耐视 Cognex","In-Sight 8900(超紧凑AI视觉系统,21 CFR Part 11合规)","IS8900","0.5MP 800×600(SVGA)·液态镜头·4GB+512MB·IP40·1光耦入2高速出·工作0-40°C·205g","142(M)/100(C)","AI(分割/分类/OCR)+传统视觉工具","SC2000E系列 视觉传感器(手动调焦)","MV-SC2004EM-06S-WBN-Mini","704×540","60","异常判断/种类识别/学习计数·VisionTrain离线训练","康耐视 In-Sight 对标(按分辨率/AI档拆分):IS3900(Qualcomm AI旗舰)→SC6000;IS3800(1.6MP→SC6016,3MP→SC3030X,5MP→SC5050X,8MP→SC5060,12/16MP→SC6000/SC5120);IS2800(0.3~2MP入门)→SC2000X;IS8900→SC2000E(2004E-Mini);D900(深度学习专用)→SC5000X/SC6000;IS1740(晶圆读码)→SC6500P-AI-WID。Cognex优势:液态镜头自动对焦+VisionSuite生态+官方帧率;海康优势:VM完整版140余种视觉算法、30余种通讯协议(FINS/KV/SLMP)、官方参数公开可逐项核验、国产化供应与价格;晶圆专用客户端与晶圆ID大模型仅SC6500P-AI-WID具备(36,000片/时@≥99.9%),常规SC6000系列不具备该专用客户端与大模型","分辨率最接近(800×600 vs 704×540)；友商IP40/142fps vs 海康IP65/60fps(友商速度优势)；友商分体生态 vs 海康一体式"],["康耐视 Cognex","In-Sight 8900(超紧凑AI视觉系统,21 CFR Part 11合规)","IS8902","2MP 1920×1200·1/2.3英寸全局快门·IP40·205g","86(M)/49(C)","AI(分割/分类/OCR)+传统视觉工具","SC2000X系列 视觉传感器(AI)","MV-SC2023XC-05M-WBN","1920×1280","75","异常判断/种类识别/学习计数","康耐视 In-Sight 对标(按分辨率/AI档拆分):IS3900(Qualcomm AI旗舰)→SC6000;IS3800(1.6MP→SC6016,3MP→SC3030X,5MP→SC5050X,8MP→SC5060,12/16MP→SC6000/SC5120);IS2800(0.3~2MP入门)→SC2000X;IS8900→SC2000E(2004E-Mini);D900(深度学习专用)→SC5000X/SC6000;IS1740(晶圆读码)→SC6500P-AI-WID。Cognex优势:液态镜头自动对焦+VisionSuite生态+官方帧率;海康优势:VM完整版140余种视觉算法、30余种通讯协议(FINS/KV/SLMP)、官方参数公开可逐项核验、国产化供应与价格;晶圆专用客户端与晶圆ID大模型仅SC6500P-AI-WID具备(36,000片/时@≥99.9%),常规SC6000系列不具备该专用客户端与大模型","同2MP档(1920×1200 vs 1920×1280)；友商86(M)/49(C)fps vs 海康75fps(海康黑白优势)；IP40 vs IP65(海康防护优势)；友商超紧凑205g"],["康耐视 Cognex","In-Sight 8900(超紧凑AI视觉系统,21 CFR Part 11合规)","IS8905","5MP 2448×2048·1/1.8英寸全局快门·IP40·205g","47(M)/29(C)","AI(分割/分类/OCR)+传统视觉工具","SC5000X系列 智能相机","MV-SC5050XC-00C-NNN","2432×2048","60","VM+AI深度学习/全监督","康耐视 In-Sight 对标(按分辨率/AI档拆分):IS3900(Qualcomm AI旗舰)→SC6000;IS3800(1.6MP→SC6016,3MP→SC3030X,5MP→SC5050X,8MP→SC5060,12/16MP→SC6000/SC5120);IS2800(0.3~2MP入门)→SC2000X;IS8900→SC2000E(2004E-Mini);D900(深度学习专用)→SC5000X/SC6000;IS1740(晶圆读码)→SC6500P-AI-WID。Cognex优势:液态镜头自动对焦+VisionSuite生态+官方帧率;海康优势:VM完整版140余种视觉算法、30余种通讯协议(FINS/KV/SLMP)、官方参数公开可逐项核验、国产化供应与价格;晶圆专用客户端与晶圆ID大模型仅SC6500P-AI-WID具备(36,000片/时@≥99.9%),常规SC6000系列不具备该专用客户端与大模型","同5MP档(2448×2048 vs 2432×2048)；友商47(M)/29(C)fps vs 海康60fps(海康优势)；IP40 vs IP67(海康防护优势)；海康VM 160+算法+DL(海康AI优势)"],["康耐视 Cognex","In-Sight 8900(超紧凑AI视觉系统,21 CFR Part 11合规)","IS8912","12MP 4096×3000·1/1.1英寸全局快门·IP40·205g","21(M)/10(C)","AI(分割/分类/OCR)+传统视觉工具","SC5000X系列 智能相机","MV-SC5120XC-00C-NNN","4096×2944","30","异常判断/种类识别/学习计数","康耐视 In-Sight 对标(按分辨率/AI档拆分):IS3900(Qualcomm AI旗舰)→SC6000;IS3800(1.6MP→SC6016,3MP→SC3030X,5MP→SC5050X,8MP→SC5060,12/16MP→SC6000/SC5120);IS2800(0.3~2MP入门)→SC2000X;IS8900→SC2000E(2004E-Mini);D900(深度学习专用)→SC5000X/SC6000;IS1740(晶圆读码)→SC6500P-AI-WID。Cognex优势:液态镜头自动对焦+VisionSuite生态+官方帧率;海康优势:VM完整版140余种视觉算法、30余种通讯协议(FINS/KV/SLMP)、官方参数公开可逐项核验、国产化供应与价格;晶圆专用客户端与晶圆ID大模型仅SC6500P-AI-WID具备(36,000片/时@≥99.9%),常规SC6000系列不具备该专用客户端与大模型","分辨率最接近(4096×3000 vs 4096×2944)；友商21(M)/10(C)fps vs 海康30fps(海康优势)；IP40 vs IP67(海康防护优势)；海康VM 160+算法(海康AI优势)"],["康耐视 Cognex","In-Sight 1740 晶圆读码器(半导体晶圆OCR ⭐对标SC6500)","IS1740","0.36MP 752×480·红色LED 615-640nm·SEMI S2","41","OCR+SEMI-T7 DM码·自主学习照明/滤波(无通用AI分类/检测)","SC6500P-AI-WID 半导体晶圆OCR智能相机","MV-SC6500P-AI-WID-RBN","1408×576","120","⭐晶圆ID专用/81万像素/条光RGB","康耐视 In-Sight 对标(按分辨率/AI档拆分):IS3900(Qualcomm AI旗舰)→SC6000;IS3800(1.6MP→SC6016,3MP→SC3030X,5MP→SC5050X,8MP→SC5060,12/16MP→SC6000/SC5120);IS2800(0.3~2MP入门)→SC2000X;IS8900→SC2000E(2004E-Mini);D900(深度学习专用)→SC5000X/SC6000;IS1740(晶圆读码)→SC6500P-AI-WID。Cognex优势:液态镜头自动对焦+VisionSuite生态+官方帧率;海康优势:VM完整版140余种视觉算法、30余种通讯协议(FINS/KV/SLMP)、官方参数公开可逐项核验、国产化供应与价格;晶圆专用客户端与晶圆ID大模型仅SC6500P-AI-WID具备(36,000片/时@≥99.9%),常规SC6000系列不具备该专用客户端与大模型","友商41/17fps·无通用AI vs 海康120fps·晶圆ID专用AI(36,000片/时·≥99.9%)(海康优势)"],["康耐视 Cognex","In-Sight 1740 晶圆读码器(半导体晶圆OCR ⭐对标SC6500)","IS1741","0.79MP 1024×768·红色LED 622nm·SEMI S2","17","OCR+SEMI-T7 DM码·自主学习照明/滤波(无通用AI分类/检测)","SC6500P-AI-WID 半导体晶圆OCR智能相机","MV-SC6500P-AI-WID-RBN","1408×576","120","⭐晶圆ID专用/81万像素/条光RGB","康耐视 In-Sight 对标(按分辨率/AI档拆分):IS3900(Qualcomm AI旗舰)→SC6000;IS3800(1.6MP→SC6016,3MP→SC3030X,5MP→SC5050X,8MP→SC5060,12/16MP→SC6000/SC5120);IS2800(0.3~2MP入门)→SC2000X;IS8900→SC2000E(2004E-Mini);D900(深度学习专用)→SC5000X/SC6000;IS1740(晶圆读码)→SC6500P-AI-WID。Cognex优势:液态镜头自动对焦+VisionSuite生态+官方帧率;海康优势:VM完整版140余种视觉算法、30余种通讯协议(FINS/KV/SLMP)、官方参数公开可逐项核验、国产化供应与价格;晶圆专用客户端与晶圆ID大模型仅SC6500P-AI-WID具备(36,000片/时@≥99.9%),常规SC6000系列不具备该专用客户端与大模型","友商41/17fps·无通用AI vs 海康120fps·晶圆ID专用AI(36,000片/时·≥99.9%)(海康优势)"],["康耐视 Cognex","In-Sight 1740 晶圆读码器(半导体晶圆OCR ⭐对标SC6500)","IS1742","0.79MP 1024×768·红外LED 870-890nm·SEMI S2","17","OCR+SEMI-T7 DM码·自主学习照明/滤波(无通用AI分类/检测)","SC6500P-AI-WID 半导体晶圆OCR智能相机","MV-SC6500P-AI-WID-IBN","1408×576","120","⭐晶圆ID专用/81万像素/条光RGB","康耐视 In-Sight 对标(按分辨率/AI档拆分):IS3900(Qualcomm AI旗舰)→SC6000;IS3800(1.6MP→SC6016,3MP→SC3030X,5MP→SC5050X,8MP→SC5060,12/16MP→SC6000/SC5120);IS2800(0.3~2MP入门)→SC2000X;IS8900→SC2000E(2004E-Mini);D900(深度学习专用)→SC5000X/SC6000;IS1740/1741(红色LED晶圆读码)→SC6500P-AI-WID-RBN;IS1742(红外LED 870-890nm)→SC6500P-AI-WID-IBN。Cognex优势:液态镜头自动对焦+VisionSuite生态+官方帧率;海康优势:VM完整版140余种视觉算法、30余种通讯协议(FINS/KV/SLMP)、官方参数公开可逐项核验、国产化供应与价格;晶圆专用客户端与晶圆ID大模型仅SC6500P-AI-WID具备(36,000片/时@≥99.9%),常规SC6000系列不具备该专用客户端与大模型","友商41/17fps·无通用AI vs 海康120fps·晶圆ID专用AI(36,000片/时·≥99.9%)(海康优势);IS1742为红外LED款,对标海康红外光源版MV-SC6500P-AI-WID-IBN"],["思谋科技 SmartMore","VN2000 ViNeo(紧凑型) · 官网补全型号","VN2000-100-000","1280×800·全局快门·3μm·1/4英寸·液态调焦·100M网络·5W·约100g·IP67","60","有无/计数/正反/位置修正(基础算子·无内置AI)","SC2000X系列 视觉传感器(AI)","MV-SC2013XM-05M-WBN","1280×1024","55","异常判断/种类识别","思谋优势:液态调焦+4路独立16种补光方案+少样本AI二分类/OCR+全协议(MELSEC/SLMP);VN2000(VN2000-100/103)仅基础工具无内置AI→海康SC2000X异常判断/种类识别占优;VN4000-1xx(1280×800手动调焦·8/12/16mm)→SC2013XC(05/12/16M);VN4000-2xx(1920×1200·8/12/16mm)→SC3020XM;思谋官网VN4000标'手动调焦·WD100-1000mm'与'液态自动对焦'并存,选型需确认;海康胜在帧率官方可背书/IP67/协议广度/VM平台","友商无内置AI(仅基础算子) vs 海康AI异常判断/种类识别·VisionTrain离线训练(海康优势)·全局快门(同)"],["思谋科技 SmartMore","VN2000 ViNeo(紧凑型) · 官网补全型号","VN2000-100-001","1280×800·全局快门·3μm·1/4英寸·液态调焦·100M网络·5W·约100g·IP67","60","有无/计数/正反/位置修正(基础算子·无内置AI)","SC2000X系列 视觉传感器(AI)","MV-SC2013XM-05M-WBN","1280×1024","55","异常判断/种类识别","思谋优势:液态调焦+4路独立16种补光方案+少样本AI二分类/OCR+全协议(MELSEC/SLMP);VN2000(VN2000-100/103)仅基础工具无内置AI→海康SC2000X异常判断/种类识别占优;VN4000-1xx(1280×800手动调焦·8/12/16mm)→SC2013XC(05/12/16M);VN4000-2xx(1920×1200·8/12/16mm)→SC3020XM;思谋官网VN4000标'手动调焦·WD100-1000mm'与'液态自动对焦'并存,选型需确认;海康胜在帧率官方可背书/IP67/协议广度/VM平台","友商无内置AI(仅基础算子) vs 海康AI异常判断/种类识别·VisionTrain离线训练(海康优势)·全局快门(同)"],["思谋科技 SmartMore","VN2000 ViNeo(紧凑型) · 官网补全型号","VN2000-100-002","1280×800·全局快门·3μm·1/4英寸·液态调焦·100M网络·5W·约100g·IP67","60","有无/计数/正反/位置修正(基础算子·无内置AI)","SC2000X系列 视觉传感器(AI)","MV-SC2013XM-05M-WBN","1280×1024","55","异常判断/种类识别","思谋优势:液态调焦+4路独立16种补光方案+少样本AI二分类/OCR+全协议(MELSEC/SLMP);VN2000(VN2000-100/103)仅基础工具无内置AI→海康SC2000X异常判断/种类识别占优;VN4000-1xx(1280×800手动调焦·8/12/16mm)→SC2013XC(05/12/16M);VN4000-2xx(1920×1200·8/12/16mm)→SC3020XM;思谋官网VN4000标'手动调焦·WD100-1000mm'与'液态自动对焦'并存,选型需确认;海康胜在帧率官方可背书/IP67/协议广度/VM平台","友商无内置AI(仅基础算子) vs 海康AI异常判断/种类识别·VisionTrain离线训练(海康优势)·全局快门(同)"],["思谋科技 SmartMore","VN2000 ViNeo(紧凑型) · 官网补全型号","VN2000-100-003","1280×800·全局快门·3μm·1/4英寸·液态调焦·100M网络·5W·约100g·IP67","60","有无/计数/正反/位置修正(基础算子·无内置AI)","SC2000X系列 视觉传感器(AI)","MV-SC2013XM-05M-WBN","1280×1024","55","异常判断/种类识别","思谋优势:液态调焦+4路独立16种补光方案+少样本AI二分类/OCR+全协议(MELSEC/SLMP);VN2000(VN2000-100/103)仅基础工具无内置AI→海康SC2000X异常判断/种类识别占优;VN4000-1xx(1280×800手动调焦·8/12/16mm)→SC2013XC(05/12/16M);VN4000-2xx(1920×1200·8/12/16mm)→SC3020XM;思谋官网VN4000标'手动调焦·WD100-1000mm'与'液态自动对焦'并存,选型需确认;海康胜在帧率官方可背书/IP67/协议广度/VM平台","友商无内置AI(仅基础算子) vs 海康AI异常判断/种类识别·VisionTrain离线训练(海康优势)·全局快门(同)"],["思谋科技 SmartMore","VN2000 ViNeo(紧凑型) · 官网补全型号","VN2000-100-030","1280×800·全局快门·3μm·1/4英寸·液态调焦·100M网络·5W·约100g·IP67","60","有无/计数/正反/位置修正(基础算子·无内置AI)","SC2000X系列 视觉传感器(AI)","MV-SC2013XM-05M-WBN","1280×1024","55","异常判断/种类识别","思谋优势:液态调焦+4路独立16种补光方案+少样本AI二分类/OCR+全协议(MELSEC/SLMP);VN2000(VN2000-100/103)仅基础工具无内置AI→海康SC2000X异常判断/种类识别占优;VN4000-1xx(1280×800手动调焦·8/12/16mm)→SC2013XC(05/12/16M);VN4000-2xx(1920×1200·8/12/16mm)→SC3020XM;思谋官网VN4000标'手动调焦·WD100-1000mm'与'液态自动对焦'并存,选型需确认;海康胜在帧率官方可背书/IP67/协议广度/VM平台","友商无内置AI(仅基础算子) vs 海康AI异常判断/种类识别·VisionTrain离线训练(海康优势)·全局快门(同)"],["思谋科技 SmartMore","VN2000 ViNeo(紧凑型) · 官网补全型号","VN2000-100-032","1280×800·全局快门·3μm·1/4英寸·液态调焦·100M网络·5W·约100g·IP67","60","有无/计数/正反/位置修正(基础算子·无内置AI)","SC2000X系列 视觉传感器(AI)","MV-SC2013XM-05M-WBN","1280×1024","55","异常判断/种类识别","思谋优势:液态调焦+4路独立16种补光方案+少样本AI二分类/OCR+全协议(MELSEC/SLMP);VN2000(VN2000-100/103)仅基础工具无内置AI→海康SC2000X异常判断/种类识别占优;VN4000-1xx(1280×800手动调焦·8/12/16mm)→SC2013XC(05/12/16M);VN4000-2xx(1920×1200·8/12/16mm)→SC3020XM;思谋官网VN4000标'手动调焦·WD100-1000mm'与'液态自动对焦'并存,选型需确认;海康胜在帧率官方可背书/IP67/协议广度/VM平台","友商无内置AI(仅基础算子) vs 海康AI异常判断/种类识别·VisionTrain离线训练(海康优势)·全局快门(同)"],["思谋科技 SmartMore","VN2000 ViNeo(紧凑型) · 官网补全型号","VN2000-100-033","1280×800·全局快门·3μm·1/4英寸·液态调焦·100M网络·5W·约100g·IP67","60","有无/计数/正反/位置修正(基础算子·无内置AI)","SC2000X系列 视觉传感器(AI)","MV-SC2013XM-05M-WBN","1280×1024","55","异常判断/种类识别","思谋优势:液态调焦+4路独立16种补光方案+少样本AI二分类/OCR+全协议(MELSEC/SLMP);VN2000(VN2000-100/103)仅基础工具无内置AI→海康SC2000X异常判断/种类识别占优;VN4000-1xx(1280×800手动调焦·8/12/16mm)→SC2013XC(05/12/16M);VN4000-2xx(1920×1200·8/12/16mm)→SC3020XM;思谋官网VN4000标'手动调焦·WD100-1000mm'与'液态自动对焦'并存,选型需确认;海康胜在帧率官方可背书/IP67/协议广度/VM平台","友商无内置AI(仅基础算子) vs 海康AI异常判断/种类识别·VisionTrain离线训练(海康优势)·全局快门(同)"],["思谋科技 SmartMore","VN2000 ViNeo(紧凑型) · 官网补全型号","VN2000-100-037","1280×800·全局快门·3μm·1/4英寸·液态调焦·100M网络·5W·约100g·IP67","60","有无/计数/正反/位置修正(基础算子·无内置AI)","SC2000X系列 视觉传感器(AI)","MV-SC2013XM-05M-WBN","1280×1024","55","异常判断/种类识别","思谋优势:液态调焦+4路独立16种补光方案+少样本AI二分类/OCR+全协议(MELSEC/SLMP);VN2000(VN2000-100/103)仅基础工具无内置AI→海康SC2000X异常判断/种类识别占优;VN4000-1xx(1280×800手动调焦·8/12/16mm)→SC2013XC(05/12/16M);VN4000-2xx(1920×1200·8/12/16mm)→SC3020XM;思谋官网VN4000标'手动调焦·WD100-1000mm'与'液态自动对焦'并存,选型需确认;海康胜在帧率官方可背书/IP67/协议广度/VM平台","友商无内置AI(仅基础算子) vs 海康AI异常判断/种类识别·VisionTrain离线训练(海康优势)·全局快门(同)"],["思谋科技 SmartMore","VN2000 ViNeo(紧凑型) · 官网补全型号","VN2000-103-030","1280×800·全局快门·3μm·1/4英寸·液态调焦·100M网络·5W·约100g·IP67","60","有无/计数/正反/位置修正(基础算子·无内置AI)","SC2000X系列 视觉传感器(AI)","MV-SC2013XM-05M-WBN","1280×1024","55","异常判断/种类识别","思谋优势:液态调焦+4路独立16种补光方案+少样本AI二分类/OCR+全协议(MELSEC/SLMP);VN2000(VN2000-100/103)仅基础工具无内置AI→海康SC2000X异常判断/种类识别占优;VN4000-1xx(1280×800手动调焦·8/12/16mm)→SC2013XC(05/12/16M);VN4000-2xx(1920×1200·8/12/16mm)→SC3020XM;思谋官网VN4000标'手动调焦·WD100-1000mm'与'液态自动对焦'并存,选型需确认;海康胜在帧率官方可背书/IP67/协议广度/VM平台","友商无内置AI(仅基础算子) vs 海康AI异常判断/种类识别·VisionTrain离线训练(海康优势)·全局快门(同)"],["思谋科技 SmartMore","VN2000 ViNeo(紧凑型) · 官网补全型号","VN2000-103-031","1280×800·全局快门·3μm·1/4英寸·液态调焦·100M网络·5W·约100g·IP67","60","有无/计数/正反/位置修正(基础算子·无内置AI)","SC2000X系列 视觉传感器(AI)","MV-SC2013XM-05M-WBN","1280×1024","55","异常判断/种类识别","思谋优势:液态调焦+4路独立16种补光方案+少样本AI二分类/OCR+全协议(MELSEC/SLMP);VN2000(VN2000-100/103)仅基础工具无内置AI→海康SC2000X异常判断/种类识别占优;VN4000-1xx(1280×800手动调焦·8/12/16mm)→SC2013XC(05/12/16M);VN4000-2xx(1920×1200·8/12/16mm)→SC3020XM;思谋官网VN4000标'手动调焦·WD100-1000mm'与'液态自动对焦'并存,选型需确认;海康胜在帧率官方可背书/IP67/协议广度/VM平台","友商无内置AI(仅基础算子) vs 海康AI异常判断/种类识别·VisionTrain离线训练(海康优势)·全局快门(同)"],["思谋科技 SmartMore","VN2000 ViNeo(紧凑型) · 官网补全型号","VN2000-103-032","1280×800·全局快门·3μm·1/4英寸·液态调焦·100M网络·5W·约100g·IP67","60","有无/计数/正反/位置修正(基础算子·无内置AI)","SC2000X系列 视觉传感器(AI)","MV-SC2013XM-05M-WBN","1280×1024","55","异常判断/种类识别","思谋优势:液态调焦+4路独立16种补光方案+少样本AI二分类/OCR+全协议(MELSEC/SLMP);VN2000(VN2000-100/103)仅基础工具无内置AI→海康SC2000X异常判断/种类识别占优;VN4000-1xx(1280×800手动调焦·8/12/16mm)→SC2013XC(05/12/16M);VN4000-2xx(1920×1200·8/12/16mm)→SC3020XM;思谋官网VN4000标'手动调焦·WD100-1000mm'与'液态自动对焦'并存,选型需确认;海康胜在帧率官方可背书/IP67/协议广度/VM平台","友商无内置AI(仅基础算子) vs 海康AI异常判断/种类识别·VisionTrain离线训练(海康优势)·全局快门(同)"],["思谋科技 SmartMore","VN2000 ViNeo(紧凑型) · 官网补全型号","VN2000-103-033","1280×800·全局快门·3μm·1/4英寸·液态调焦·100M网络·5W·约100g·IP67","60","有无/计数/正反/位置修正(基础算子·无内置AI)","SC2000X系列 视觉传感器(AI)","MV-SC2013XM-05M-WBN","1280×1024","55","异常判断/种类识别","思谋优势:液态调焦+4路独立16种补光方案+少样本AI二分类/OCR+全协议(MELSEC/SLMP);VN2000(VN2000-100/103)仅基础工具无内置AI→海康SC2000X异常判断/种类识别占优;VN4000-1xx(1280×800手动调焦·8/12/16mm)→SC2013XC(05/12/16M);VN4000-2xx(1920×1200·8/12/16mm)→SC3020XM;思谋官网VN4000标'手动调焦·WD100-1000mm'与'液态自动对焦'并存,选型需确认;海康胜在帧率官方可背书/IP67/协议广度/VM平台","友商无内置AI(仅基础算子) vs 海康AI异常判断/种类识别·VisionTrain离线训练(海康优势)·全局快门(同)"],["思谋科技 SmartMore","VN4000 ViNeo(AI深度学习) · 官网补全型号","VN4000-101-020","1280×800·全局快门·液态自动对焦·工作距离100-1000mm·IP67","60","⭐AI二分类/OCR/有无/计数/位置修正(少样本深度学习)","SC2000X系列 视觉传感器(AI)","MV-SC2013XM-05M-WBN","1280×1024","55","有无/计数/OCR","思谋优势:液态调焦+4路独立16种补光方案+少样本AI二分类/OCR+全协议(MELSEC/SLMP);VN2000(VN2000-100/103)仅基础工具无内置AI→海康SC2000X异常判断/种类识别占优;VN4000-1xx(1280×800手动调焦·8/12/16mm)→SC2013XC(05/12/16M);VN4000-2xx(1920×1200·8/12/16mm)→SC3020XM;思谋官网VN4000标'手动调焦·WD100-1000mm'与'液态自动对焦'并存,选型需确认;海康胜在帧率官方可背书/IP67/协议广度/VM平台","全局快门(同)"],["思谋科技 SmartMore","VN4000 ViNeo(AI深度学习) · 官网补全型号","VN4000-101-021","1280×800·全局快门·液态自动对焦·工作距离100-1000mm·IP67","60","⭐AI二分类/OCR/有无/计数/位置修正(少样本深度学习)","SC2000X系列 视觉传感器(AI)","MV-SC2013XM-05M-WBN","1280×1024","55","有无/计数/OCR","思谋优势:液态调焦+4路独立16种补光方案+少样本AI二分类/OCR+全协议(MELSEC/SLMP);VN2000(VN2000-100/103)仅基础工具无内置AI→海康SC2000X异常判断/种类识别占优;VN4000-1xx(1280×800手动调焦·8/12/16mm)→SC2013XC(05/12/16M);VN4000-2xx(1920×1200·8/12/16mm)→SC3020XM;思谋官网VN4000标'手动调焦·WD100-1000mm'与'液态自动对焦'并存,选型需确认;海康胜在帧率官方可背书/IP67/协议广度/VM平台","全局快门(同)"],["思谋科技 SmartMore","VN4000 ViNeo(AI深度学习) · 官网补全型号","VN4000-101-022","1280×800·全局快门·液态自动对焦·工作距离100-1000mm·IP67","60","⭐AI二分类/OCR/有无/计数/位置修正(少样本深度学习)","SC2000X系列 视觉传感器(AI)","MV-SC2013XM-05M-WBN","1280×1024","55","有无/计数/OCR","思谋优势:液态调焦+4路独立16种补光方案+少样本AI二分类/OCR+全协议(MELSEC/SLMP);VN2000(VN2000-100/103)仅基础工具无内置AI→海康SC2000X异常判断/种类识别占优;VN4000-1xx(1280×800手动调焦·8/12/16mm)→SC2013XC(05/12/16M);VN4000-2xx(1920×1200·8/12/16mm)→SC3020XM;思谋官网VN4000标'手动调焦·WD100-1000mm'与'液态自动对焦'并存,选型需确认;海康胜在帧率官方可背书/IP67/协议广度/VM平台","全局快门(同)"],["思谋科技 SmartMore","VN4000 ViNeo(AI深度学习) · 官网补全型号","VN4000-101-023","1280×800·全局快门·液态自动对焦·工作距离100-1000mm·IP67","60","⭐AI二分类/OCR/有无/计数/位置修正(少样本深度学习)","SC2000X系列 视觉传感器(AI)","MV-SC2013XM-05M-WBN","1280×1024","55","有无/计数/OCR","思谋优势:液态调焦+4路独立16种补光方案+少样本AI二分类/OCR+全协议(MELSEC/SLMP);VN2000(VN2000-100/103)仅基础工具无内置AI→海康SC2000X异常判断/种类识别占优;VN4000-1xx(1280×800手动调焦·8/12/16mm)→SC2013XC(05/12/16M);VN4000-2xx(1920×1200·8/12/16mm)→SC3020XM;思谋官网VN4000标'手动调焦·WD100-1000mm'与'液态自动对焦'并存,选型需确认;海康胜在帧率官方可背书/IP67/协议广度/VM平台","全局快门(同)"],["思谋科技 SmartMore","VN4000 ViNeo(AI深度学习) · 官网补全型号","VN4000-102-020","1280×800·全局快门·液态自动对焦·工作距离100-1000mm·IP67","60","⭐AI二分类/OCR/有无/计数/位置修正(少样本深度学习)","SC2000X系列 视觉传感器(AI)","MV-SC2013XM-12M-WBN","1280×1024","55","有无/计数/OCR","思谋优势:液态调焦+4路独立16种补光方案+少样本AI二分类/OCR+全协议(MELSEC/SLMP);VN2000(VN2000-100/103)仅基础工具无内置AI→海康SC2000X异常判断/种类识别占优;VN4000-1xx(1280×800手动调焦·8/12/16mm)→SC2013XC(05/12/16M);VN4000-2xx(1920×1200·8/12/16mm)→SC3020XM;思谋官网VN4000标'手动调焦·WD100-1000mm'与'液态自动对焦'并存,选型需确认;海康胜在帧率官方可背书/IP67/协议广度/VM平台","全局快门(同)"],["思谋科技 SmartMore","VN4000 ViNeo(AI深度学习) · 官网补全型号","VN4000-102-021","1280×800·全局快门·液态自动对焦·工作距离100-1000mm·IP67","60","⭐AI二分类/OCR/有无/计数/位置修正(少样本深度学习)","SC2000X系列 视觉传感器(AI)","MV-SC2013XM-12M-WBN","1280×1024","55","有无/计数/OCR","思谋优势:液态调焦+4路独立16种补光方案+少样本AI二分类/OCR+全协议(MELSEC/SLMP);VN2000(VN2000-100/103)仅基础工具无内置AI→海康SC2000X异常判断/种类识别占优;VN4000-1xx(1280×800手动调焦·8/12/16mm)→SC2013XC(05/12/16M);VN4000-2xx(1920×1200·8/12/16mm)→SC3020XM;思谋官网VN4000标'手动调焦·WD100-1000mm'与'液态自动对焦'并存,选型需确认;海康胜在帧率官方可背书/IP67/协议广度/VM平台","全局快门(同)"],["思谋科技 SmartMore","VN4000 ViNeo(AI深度学习) · 官网补全型号","VN4000-102-022","1280×800·全局快门·液态自动对焦·工作距离100-1000mm·IP67","60","⭐AI二分类/OCR/有无/计数/位置修正(少样本深度学习)","SC2000X系列 视觉传感器(AI)","MV-SC2013XM-12M-WBN","1280×1024","55","有无/计数/OCR","思谋优势:液态调焦+4路独立16种补光方案+少样本AI二分类/OCR+全协议(MELSEC/SLMP);VN2000(VN2000-100/103)仅基础工具无内置AI→海康SC2000X异常判断/种类识别占优;VN4000-1xx(1280×800手动调焦·8/12/16mm)→SC2013XC(05/12/16M);VN4000-2xx(1920×1200·8/12/16mm)→SC3020XM;思谋官网VN4000标'手动调焦·WD100-1000mm'与'液态自动对焦'并存,选型需确认;海康胜在帧率官方可背书/IP67/协议广度/VM平台","全局快门(同)"],["思谋科技 SmartMore","VN4000 ViNeo(AI深度学习) · 官网补全型号","VN4000-102-023","1280×800·全局快门·液态自动对焦·工作距离100-1000mm·IP67","60","⭐AI二分类/OCR/有无/计数/位置修正(少样本深度学习)","SC2000X系列 视觉传感器(AI)","MV-SC2013XM-12M-WBN","1280×1024","55","有无/计数/OCR","思谋优势:液态调焦+4路独立16种补光方案+少样本AI二分类/OCR+全协议(MELSEC/SLMP);VN2000(VN2000-100/103)仅基础工具无内置AI→海康SC2000X异常判断/种类识别占优;VN4000-1xx(1280×800手动调焦·8/12/16mm)→SC2013XC(05/12/16M);VN4000-2xx(1920×1200·8/12/16mm)→SC3020XM;思谋官网VN4000标'手动调焦·WD100-1000mm'与'液态自动对焦'并存,选型需确认;海康胜在帧率官方可背书/IP67/协议广度/VM平台","全局快门(同)"],["思谋科技 SmartMore","VN4000 ViNeo(AI深度学习) · 官网补全型号","VN4000-103-020","1280×800·全局快门·液态自动对焦·工作距离100-1000mm·IP67","60","⭐AI二分类/OCR/有无/计数/位置修正(少样本深度学习)","SC2000X系列 视觉传感器(AI)","MV-SC2013XM-16M-WBN","1280×1024","55","有无/计数/OCR","思谋优势:液态调焦+4路独立16种补光方案+少样本AI二分类/OCR+全协议(MELSEC/SLMP);VN2000(VN2000-100/103)仅基础工具无内置AI→海康SC2000X异常判断/种类识别占优;VN4000-1xx(1280×800手动调焦·8/12/16mm)→SC2013XC(05/12/16M);VN4000-2xx(1920×1200·8/12/16mm)→SC3020XM;思谋官网VN4000标'手动调焦·WD100-1000mm'与'液态自动对焦'并存,选型需确认;海康胜在帧率官方可背书/IP67/协议广度/VM平台","全局快门(同)"],["思谋科技 SmartMore","VN4000 ViNeo(AI深度学习) · 官网补全型号","VN4000-103-021","1280×800·全局快门·液态自动对焦·工作距离100-1000mm·IP67","60","⭐AI二分类/OCR/有无/计数/位置修正(少样本深度学习)","SC2000X系列 视觉传感器(AI)","MV-SC2013XM-16M-WBN","1280×1024","55","有无/计数/OCR","思谋优势:液态调焦+4路独立16种补光方案+少样本AI二分类/OCR+全协议(MELSEC/SLMP);VN2000(VN2000-100/103)仅基础工具无内置AI→海康SC2000X异常判断/种类识别占优;VN4000-1xx(1280×800手动调焦·8/12/16mm)→SC2013XC(05/12/16M);VN4000-2xx(1920×1200·8/12/16mm)→SC3020XM;思谋官网VN4000标'手动调焦·WD100-1000mm'与'液态自动对焦'并存,选型需确认;海康胜在帧率官方可背书/IP67/协议广度/VM平台","全局快门(同)"],["思谋科技 SmartMore","VN4000 ViNeo(AI深度学习) · 官网补全型号","VN4000-103-022","1280×800·全局快门·液态自动对焦·工作距离100-1000mm·IP67","60","⭐AI二分类/OCR/有无/计数/位置修正(少样本深度学习)","SC2000X系列 视觉传感器(AI)","MV-SC2013XM-16M-WBN","1280×1024","55","有无/计数/OCR","思谋优势:液态调焦+4路独立16种补光方案+少样本AI二分类/OCR+全协议(MELSEC/SLMP);VN2000(VN2000-100/103)仅基础工具无内置AI→海康SC2000X异常判断/种类识别占优;VN4000-1xx(1280×800手动调焦·8/12/16mm)→SC2013XC(05/12/16M);VN4000-2xx(1920×1200·8/12/16mm)→SC3020XM;思谋官网VN4000标'手动调焦·WD100-1000mm'与'液态自动对焦'并存,选型需确认;海康胜在帧率官方可背书/IP67/协议广度/VM平台","全局快门(同)"],["思谋科技 SmartMore","VN4000 ViNeo(AI深度学习) · 官网补全型号","VN4000-103-023","1280×800·全局快门·液态自动对焦·工作距离100-1000mm·IP67","60","⭐AI二分类/OCR/有无/计数/位置修正(少样本深度学习)","SC2000X系列 视觉传感器(AI)","MV-SC2013XM-16M-WBN","1280×1024","55","有无/计数/OCR","思谋优势:液态调焦+4路独立16种补光方案+少样本AI二分类/OCR+全协议(MELSEC/SLMP);VN2000(VN2000-100/103)仅基础工具无内置AI→海康SC2000X异常判断/种类识别占优;VN4000-1xx(1280×800手动调焦·8/12/16mm)→SC2013XC(05/12/16M);VN4000-2xx(1920×1200·8/12/16mm)→SC3020XM;思谋官网VN4000标'手动调焦·WD100-1000mm'与'液态自动对焦'并存,选型需确认;海康胜在帧率官方可背书/IP67/协议广度/VM平台","全局快门(同)"],["思谋科技 SmartMore","VN4000 ViNeo(AI深度学习) · 官网补全型号","VN4000-201-020","1920×1200·全局快门·液态自动对焦·工作距离100-1000mm·IP67","60","⭐AI二分类/OCR/有无/计数/位置修正(少样本深度学习)","SC2000X系列 视觉传感器(AI)","MV-SC2023XM-05M-WBN","1920×1280","75","边缘学习/异常检测","思谋优势:液态调焦+4路独立16种补光方案+少样本AI二分类/OCR+全协议(MELSEC/SLMP);VN2000(VN2000-100/103)仅基础工具无内置AI→海康SC2000X异常判断/种类识别占优;VN4000-1xx(1280×800手动调焦·8/12/16mm)→SC2013XC(05/12/16M);VN4000-2xx(1920×1200·8/12/16mm)→SC3020XM;思谋官网VN4000标'手动调焦·WD100-1000mm'与'液态自动对焦'并存,选型需确认;海康胜在帧率官方可背书/IP67/协议广度/VM平台","全局快门(同)"],["思谋科技 SmartMore","VN4000 ViNeo(AI深度学习) · 官网补全型号","VN4000-201-021","1920×1200·全局快门·液态自动对焦·工作距离100-1000mm·IP67","60","⭐AI二分类/OCR/有无/计数/位置修正(少样本深度学习)","SC2000X系列 视觉传感器(AI)","MV-SC2023XM-05M-WBN","1920×1280","75","边缘学习/异常检测","思谋优势:液态调焦+4路独立16种补光方案+少样本AI二分类/OCR+全协议(MELSEC/SLMP);VN2000(VN2000-100/103)仅基础工具无内置AI→海康SC2000X异常判断/种类识别占优;VN4000-1xx(1280×800手动调焦·8/12/16mm)→SC2013XC(05/12/16M);VN4000-2xx(1920×1200·8/12/16mm)→SC3020XM;思谋官网VN4000标'手动调焦·WD100-1000mm'与'液态自动对焦'并存,选型需确认;海康胜在帧率官方可背书/IP67/协议广度/VM平台","全局快门(同)"],["思谋科技 SmartMore","VN4000 ViNeo(AI深度学习) · 官网补全型号","VN4000-201-022","1920×1200·全局快门·液态自动对焦·工作距离100-1000mm·IP67","60","⭐AI二分类/OCR/有无/计数/位置修正(少样本深度学习)","SC2000X系列 视觉传感器(AI)","MV-SC2023XM-05M-WBN","1920×1280","75","边缘学习/异常检测","思谋优势:液态调焦+4路独立16种补光方案+少样本AI二分类/OCR+全协议(MELSEC/SLMP);VN2000(VN2000-100/103)仅基础工具无内置AI→海康SC2000X异常判断/种类识别占优;VN4000-1xx(1280×800手动调焦·8/12/16mm)→SC2013XC(05/12/16M);VN4000-2xx(1920×1200·8/12/16mm)→SC3020XM;思谋官网VN4000标'手动调焦·WD100-1000mm'与'液态自动对焦'并存,选型需确认;海康胜在帧率官方可背书/IP67/协议广度/VM平台","全局快门(同)"],["思谋科技 SmartMore","VN4000 ViNeo(AI深度学习) · 官网补全型号","VN4000-201-023","1920×1200·全局快门·液态自动对焦·工作距离100-1000mm·IP67","60","⭐AI二分类/OCR/有无/计数/位置修正(少样本深度学习)","SC2000X系列 视觉传感器(AI)","MV-SC2023XM-05M-WBN","1920×1280","75","边缘学习/异常检测","思谋优势:液态调焦+4路独立16种补光方案+少样本AI二分类/OCR+全协议(MELSEC/SLMP);VN2000(VN2000-100/103)仅基础工具无内置AI→海康SC2000X异常判断/种类识别占优;VN4000-1xx(1280×800手动调焦·8/12/16mm)→SC2013XC(05/12/16M);VN4000-2xx(1920×1200·8/12/16mm)→SC3020XM;思谋官网VN4000标'手动调焦·WD100-1000mm'与'液态自动对焦'并存,选型需确认;海康胜在帧率官方可背书/IP67/协议广度/VM平台","全局快门(同)"],["思谋科技 SmartMore","VN4000 ViNeo(AI深度学习) · 官网补全型号","VN4000-202-020","1920×1200·全局快门·液态自动对焦·工作距离100-1000mm·IP67","60","⭐AI二分类/OCR/有无/计数/位置修正(少样本深度学习)","SC2000X系列 视觉传感器(AI)","MV-SC2023XM-12M-WBN","1920×1280","75","边缘学习/异常检测","思谋优势:液态调焦+4路独立16种补光方案+少样本AI二分类/OCR+全协议(MELSEC/SLMP);VN2000(VN2000-100/103)仅基础工具无内置AI→海康SC2000X异常判断/种类识别占优;VN4000-1xx(1280×800手动调焦·8/12/16mm)→SC2013XC(05/12/16M);VN4000-2xx(1920×1200·8/12/16mm)→SC3020XM;思谋官网VN4000标'手动调焦·WD100-1000mm'与'液态自动对焦'并存,选型需确认;海康胜在帧率官方可背书/IP67/协议广度/VM平台","全局快门(同)"],["思谋科技 SmartMore","VN4000 ViNeo(AI深度学习) · 官网补全型号","VN4000-202-021","1920×1200·全局快门·液态自动对焦·工作距离100-1000mm·IP67","60","⭐AI二分类/OCR/有无/计数/位置修正(少样本深度学习)","SC2000X系列 视觉传感器(AI)","MV-SC2023XM-12M-WBN","1920×1280","75","边缘学习/异常检测","思谋优势:液态调焦+4路独立16种补光方案+少样本AI二分类/OCR+全协议(MELSEC/SLMP);VN2000(VN2000-100/103)仅基础工具无内置AI→海康SC2000X异常判断/种类识别占优;VN4000-1xx(1280×800手动调焦·8/12/16mm)→SC2013XC(05/12/16M);VN4000-2xx(1920×1200·8/12/16mm)→SC3020XM;思谋官网VN4000标'手动调焦·WD100-1000mm'与'液态自动对焦'并存,选型需确认;海康胜在帧率官方可背书/IP67/协议广度/VM平台","全局快门(同)"],["思谋科技 SmartMore","VN4000 ViNeo(AI深度学习) · 官网补全型号","VN4000-202-022","1920×1200·全局快门·液态自动对焦·工作距离100-1000mm·IP67","60","⭐AI二分类/OCR/有无/计数/位置修正(少样本深度学习)","SC2000X系列 视觉传感器(AI)","MV-SC2023XM-12M-WBN","1920×1280","75","边缘学习/异常检测","思谋优势:液态调焦+4路独立16种补光方案+少样本AI二分类/OCR+全协议(MELSEC/SLMP);VN2000(VN2000-100/103)仅基础工具无内置AI→海康SC2000X异常判断/种类识别占优;VN4000-1xx(1280×800手动调焦·8/12/16mm)→SC2013XC(05/12/16M);VN4000-2xx(1920×1200·8/12/16mm)→SC3020XM;思谋官网VN4000标'手动调焦·WD100-1000mm'与'液态自动对焦'并存,选型需确认;海康胜在帧率官方可背书/IP67/协议广度/VM平台","全局快门(同)"],["思谋科技 SmartMore","VN4000 ViNeo(AI深度学习) · 官网补全型号","VN4000-202-023","1920×1200·全局快门·液态自动对焦·工作距离100-1000mm·IP67","60","⭐AI二分类/OCR/有无/计数/位置修正(少样本深度学习)","SC2000X系列 视觉传感器(AI)","MV-SC2023XM-12M-WBN","1920×1280","75","边缘学习/异常检测","思谋优势:液态调焦+4路独立16种补光方案+少样本AI二分类/OCR+全协议(MELSEC/SLMP);VN2000(VN2000-100/103)仅基础工具无内置AI→海康SC2000X异常判断/种类识别占优;VN4000-1xx(1280×800手动调焦·8/12/16mm)→SC2013XC(05/12/16M);VN4000-2xx(1920×1200·8/12/16mm)→SC3020XM;思谋官网VN4000标'手动调焦·WD100-1000mm'与'液态自动对焦'并存,选型需确认;海康胜在帧率官方可背书/IP67/协议广度/VM平台","全局快门(同)"],["思谋科技 SmartMore","VN4000 ViNeo(AI深度学习) · 官网补全型号","VN4000-203-020","1920×1200·全局快门·液态自动对焦·工作距离100-1000mm·IP67","60","⭐AI二分类/OCR/有无/计数/位置修正(少样本深度学习)","SC2000X系列 视觉传感器(AI)","MV-SC2023XM-16M-WBN","1920×1280","75","边缘学习/异常检测","思谋优势:液态调焦+4路独立16种补光方案+少样本AI二分类/OCR+全协议(MELSEC/SLMP);VN2000(VN2000-100/103)仅基础工具无内置AI→海康SC2000X异常判断/种类识别占优;VN4000-1xx(1280×800手动调焦·8/12/16mm)→SC2013XC(05/12/16M);VN4000-2xx(1920×1200·8/12/16mm)→SC3020XM;思谋官网VN4000标'手动调焦·WD100-1000mm'与'液态自动对焦'并存,选型需确认;海康胜在帧率官方可背书/IP67/协议广度/VM平台","全局快门(同)"],["思谋科技 SmartMore","VN4000 ViNeo(AI深度学习) · 官网补全型号","VN4000-203-021","1920×1200·全局快门·液态自动对焦·工作距离100-1000mm·IP67","60","⭐AI二分类/OCR/有无/计数/位置修正(少样本深度学习)","SC2000X系列 视觉传感器(AI)","MV-SC2023XM-16M-WBN","1920×1280","75","边缘学习/异常检测","思谋优势:液态调焦+4路独立16种补光方案+少样本AI二分类/OCR+全协议(MELSEC/SLMP);VN2000(VN2000-100/103)仅基础工具无内置AI→海康SC2000X异常判断/种类识别占优;VN4000-1xx(1280×800手动调焦·8/12/16mm)→SC2013XC(05/12/16M);VN4000-2xx(1920×1200·8/12/16mm)→SC3020XM;思谋官网VN4000标'手动调焦·WD100-1000mm'与'液态自动对焦'并存,选型需确认;海康胜在帧率官方可背书/IP67/协议广度/VM平台","全局快门(同)"],["思谋科技 SmartMore","VN4000 ViNeo(AI深度学习) · 官网补全型号","VN4000-203-022","1920×1200·全局快门·液态自动对焦·工作距离100-1000mm·IP67","60","⭐AI二分类/OCR/有无/计数/位置修正(少样本深度学习)","SC2000X系列 视觉传感器(AI)","MV-SC2023XM-16M-WBN","1920×1280","75","边缘学习/异常检测","思谋优势:液态调焦+4路独立16种补光方案+少样本AI二分类/OCR+全协议(MELSEC/SLMP);VN2000(VN2000-100/103)仅基础工具无内置AI→海康SC2000X异常判断/种类识别占优;VN4000-1xx(1280×800手动调焦·8/12/16mm)→SC2013XC(05/12/16M);VN4000-2xx(1920×1200·8/12/16mm)→SC3020XM;思谋官网VN4000标'手动调焦·WD100-1000mm'与'液态自动对焦'并存,选型需确认;海康胜在帧率官方可背书/IP67/协议广度/VM平台","全局快门(同)"],["思谋科技 SmartMore","VN4000 ViNeo(AI深度学习) · 官网补全型号","VN4000-203-023","1920×1200·全局快门·液态自动对焦·工作距离100-1000mm·IP67","60","⭐AI二分类/OCR/有无/计数/位置修正(少样本深度学习)","SC2000X系列 视觉传感器(AI)","MV-SC2023XM-16M-WBN","1920×1280","75","边缘学习/异常检测","思谋优势:液态调焦+4路独立16种补光方案+少样本AI二分类/OCR+全协议(MELSEC/SLMP);VN2000(VN2000-100/103)仅基础工具无内置AI→海康SC2000X异常判断/种类识别占优;VN4000-1xx(1280×800手动调焦·8/12/16mm)→SC2013XC(05/12/16M);VN4000-2xx(1920×1200·8/12/16mm)→SC3020XM;思谋官网VN4000标'手动调焦·WD100-1000mm'与'液态自动对焦'并存,选型需确认;海康胜在帧率官方可背书/IP67/协议广度/VM平台","全局快门(同)"],["思谋科技 SmartMore","VN4000CL 5MP系列(彩色) · 官网补全型号","VN4000CL-501-CL20","2600×1952(5MP彩色)·卷帘快门·2.2μm·1/2.5″·机械调焦·工作距离100-2000mm·IP67·白灯/标准光源(8LED)·无偏振","30","⭐AI二分类/OCR/有无/计数/位置修正(少样本深度学习)","SC3000系列 视觉传感器(主推SC3050X)","MV-SC3050XC-08M-WBN","2432×2048","40","⭐深度学习/边缘学习/OCR/HDR","思谋优势:5MP彩色2600×1952+机械调焦100-2000mm+白灯标准/高亮16种补光+少样本AI;海康SC3050X优势:全局快门(对卷帘)+40fps(对30fps)+⭐深度学习/边缘学习/OCR/HDR;彩色对彩色(SC3050XC)、焦距对焦距(-501-8mm/-502-12mm/-503-16mm);注意VN4000CL官网状态为待上市","卷帘vs全局快门;30fps vs 40fps;2600×1952 vs 2432×2048;待上市 vs 量产"],["思谋科技 SmartMore","VN4000CL 5MP系列(彩色) · 官网补全型号","VN4000CL-501-CL23","2600×1952(5MP彩色)·卷帘快门·2.2μm·1/2.5″·机械调焦·工作距离100-2000mm·IP67·白灯/标准光源(8LED)·半偏振","30","⭐AI二分类/OCR/有无/计数/位置修正(少样本深度学习)","SC3000系列 视觉传感器(主推SC3050X)","MV-SC3050XC-08M-WBN","2432×2048","40","⭐深度学习/边缘学习/OCR/HDR","思谋优势:5MP彩色2600×1952+机械调焦100-2000mm+白灯标准/高亮16种补光+少样本AI;海康SC3050X优势:全局快门(对卷帘)+40fps(对30fps)+⭐深度学习/边缘学习/OCR/HDR;彩色对彩色(SC3050XC)、焦距对焦距(-501-8mm/-502-12mm/-503-16mm);注意VN4000CL官网状态为待上市","卷帘vs全局快门;30fps vs 40fps;2600×1952 vs 2432×2048;待上市 vs 量产"],["思谋科技 SmartMore","VN4000CL 5MP系列(彩色) · 官网补全型号","VN4000CL-501-CL26","2600×1952(5MP彩色)·卷帘快门·2.2μm·1/2.5″·机械调焦·工作距离100-2000mm·IP67·白灯/高亮光源(16LED)·无偏振","30","⭐AI二分类/OCR/有无/计数/位置修正(少样本深度学习)","SC3000系列 视觉传感器(主推SC3050X)","MV-SC3050XC-08M-WBN","2432×2048","40","⭐深度学习/边缘学习/OCR/HDR","思谋优势:5MP彩色2600×1952+机械调焦100-2000mm+白灯标准/高亮16种补光+少样本AI;海康SC3050X优势:全局快门(对卷帘)+40fps(对30fps)+⭐深度学习/边缘学习/OCR/HDR;彩色对彩色(SC3050XC)、焦距对焦距(-501-8mm/-502-12mm/-503-16mm);注意VN4000CL官网状态为待上市","卷帘vs全局快门;30fps vs 40fps;2600×1952 vs 2432×2048;待上市 vs 量产"],["思谋科技 SmartMore","VN4000CL 5MP系列(彩色) · 官网补全型号","VN4000CL-501-CL2B","2600×1952(5MP彩色)·卷帘快门·2.2μm·1/2.5″·机械调焦·工作距离100-2000mm·IP67·白灯/高亮光源(16LED)·半偏振","30","⭐AI二分类/OCR/有无/计数/位置修正(少样本深度学习)","SC3000系列 视觉传感器(主推SC3050X)","MV-SC3050XC-08M-WBN","2432×2048","40","⭐深度学习/边缘学习/OCR/HDR","思谋优势:5MP彩色2600×1952+机械调焦100-2000mm+白灯标准/高亮16种补光+少样本AI;海康SC3050X优势:全局快门(对卷帘)+40fps(对30fps)+⭐深度学习/边缘学习/OCR/HDR;彩色对彩色(SC3050XC)、焦距对焦距(-501-8mm/-502-12mm/-503-16mm);注意VN4000CL官网状态为待上市","卷帘vs全局快门;30fps vs 40fps;2600×1952 vs 2432×2048;待上市 vs 量产"],["思谋科技 SmartMore","VN4000CL 5MP系列(彩色) · 官网补全型号","VN4000CL-502-CL20","2600×1952(5MP彩色)·卷帘快门·2.2μm·1/2.5″·机械调焦·工作距离100-2000mm·IP67·白灯/标准光源(8LED)·无偏振","30","⭐AI二分类/OCR/有无/计数/位置修正(少样本深度学习)","SC3000系列 视觉传感器(主推SC3050X)","MV-SC3050XC-12M-WBN","2432×2048","40","⭐深度学习/边缘学习/OCR/HDR","思谋优势:5MP彩色2600×1952+机械调焦100-2000mm+白灯标准/高亮16种补光+少样本AI;海康SC3050X优势:全局快门(对卷帘)+40fps(对30fps)+⭐深度学习/边缘学习/OCR/HDR;彩色对彩色(SC3050XC)、焦距对焦距(-501-8mm/-502-12mm/-503-16mm);注意VN4000CL官网状态为待上市","卷帘vs全局快门;30fps vs 40fps;2600×1952 vs 2432×2048;待上市 vs 量产"],["思谋科技 SmartMore","VN4000CL 5MP系列(彩色) · 官网补全型号","VN4000CL-502-CL23","2600×1952(5MP彩色)·卷帘快门·2.2μm·1/2.5″·机械调焦·工作距离100-2000mm·IP67·白灯/标准光源(8LED)·半偏振","30","⭐AI二分类/OCR/有无/计数/位置修正(少样本深度学习)","SC3000系列 视觉传感器(主推SC3050X)","MV-SC3050XC-12M-WBN","2432×2048","40","⭐深度学习/边缘学习/OCR/HDR","思谋优势:5MP彩色2600×1952+机械调焦100-2000mm+白灯标准/高亮16种补光+少样本AI;海康SC3050X优势:全局快门(对卷帘)+40fps(对30fps)+⭐深度学习/边缘学习/OCR/HDR;彩色对彩色(SC3050XC)、焦距对焦距(-501-8mm/-502-12mm/-503-16mm);注意VN4000CL官网状态为待上市","卷帘vs全局快门;30fps vs 40fps;2600×1952 vs 2432×2048;待上市 vs 量产"],["思谋科技 SmartMore","VN4000CL 5MP系列(彩色) · 官网补全型号","VN4000CL-502-CL26","2600×1952(5MP彩色)·卷帘快门·2.2μm·1/2.5″·机械调焦·工作距离100-2000mm·IP67·白灯/高亮光源(16LED)·无偏振","30","⭐AI二分类/OCR/有无/计数/位置修正(少样本深度学习)","SC3000系列 视觉传感器(主推SC3050X)","MV-SC3050XC-12M-WBN","2432×2048","40","⭐深度学习/边缘学习/OCR/HDR","思谋优势:5MP彩色2600×1952+机械调焦100-2000mm+白灯标准/高亮16种补光+少样本AI;海康SC3050X优势:全局快门(对卷帘)+40fps(对30fps)+⭐深度学习/边缘学习/OCR/HDR;彩色对彩色(SC3050XC)、焦距对焦距(-501-8mm/-502-12mm/-503-16mm);注意VN4000CL官网状态为待上市","卷帘vs全局快门;30fps vs 40fps;2600×1952 vs 2432×2048;待上市 vs 量产"],["思谋科技 SmartMore","VN4000CL 5MP系列(彩色) · 官网补全型号","VN4000CL-502-CL2B","2600×1952(5MP彩色)·卷帘快门·2.2μm·1/2.5″·机械调焦·工作距离100-2000mm·IP67·白灯/高亮光源(16LED)·半偏振","30","⭐AI二分类/OCR/有无/计数/位置修正(少样本深度学习)","SC3000系列 视觉传感器(主推SC3050X)","MV-SC3050XC-12M-WBN","2432×2048","40","⭐深度学习/边缘学习/OCR/HDR","思谋优势:5MP彩色2600×1952+机械调焦100-2000mm+白灯标准/高亮16种补光+少样本AI;海康SC3050X优势:全局快门(对卷帘)+40fps(对30fps)+⭐深度学习/边缘学习/OCR/HDR;彩色对彩色(SC3050XC)、焦距对焦距(-501-8mm/-502-12mm/-503-16mm);注意VN4000CL官网状态为待上市","卷帘vs全局快门;30fps vs 40fps;2600×1952 vs 2432×2048;待上市 vs 量产"],["思谋科技 SmartMore","VN4000CL 5MP系列(彩色) · 官网补全型号","VN4000CL-503-CL20","2600×1952(5MP彩色)·卷帘快门·2.2μm·1/2.5″·机械调焦·工作距离100-2000mm·IP67·白灯/标准光源(8LED)·无偏振","30","⭐AI二分类/OCR/有无/计数/位置修正(少样本深度学习)","SC3000系列 视觉传感器(主推SC3050X)","MV-SC3050XC-16M-WBN","2432×2048","40","⭐深度学习/边缘学习/OCR/HDR","思谋优势:5MP彩色2600×1952+机械调焦100-2000mm+白灯标准/高亮16种补光+少样本AI;海康SC3050X优势:全局快门(对卷帘)+40fps(对30fps)+⭐深度学习/边缘学习/OCR/HDR;彩色对彩色(SC3050XC)、焦距对焦距(-501-8mm/-502-12mm/-503-16mm);注意VN4000CL官网状态为待上市","卷帘vs全局快门;30fps vs 40fps;2600×1952 vs 2432×2048;待上市 vs 量产"],["思谋科技 SmartMore","VN4000CL 5MP系列(彩色) · 官网补全型号","VN4000CL-503-CL23","2600×1952(5MP彩色)·卷帘快门·2.2μm·1/2.5″·机械调焦·工作距离100-2000mm·IP67·白灯/标准光源(8LED)·半偏振","30","⭐AI二分类/OCR/有无/计数/位置修正(少样本深度学习)","SC3000系列 视觉传感器(主推SC3050X)","MV-SC3050XC-16M-WBN","2432×2048","40","⭐深度学习/边缘学习/OCR/HDR","思谋优势:5MP彩色2600×1952+机械调焦100-2000mm+白灯标准/高亮16种补光+少样本AI;海康SC3050X优势:全局快门(对卷帘)+40fps(对30fps)+⭐深度学习/边缘学习/OCR/HDR;彩色对彩色(SC3050XC)、焦距对焦距(-501-8mm/-502-12mm/-503-16mm);注意VN4000CL官网状态为待上市","卷帘vs全局快门;30fps vs 40fps;2600×1952 vs 2432×2048;待上市 vs 量产"],["思谋科技 SmartMore","VN4000CL 5MP系列(彩色) · 官网补全型号","VN4000CL-503-CL26","2600×1952(5MP彩色)·卷帘快门·2.2μm·1/2.5″·机械调焦·工作距离100-2000mm·IP67·白灯/高亮光源(16LED)·无偏振","30","⭐AI二分类/OCR/有无/计数/位置修正(少样本深度学习)","SC3000系列 视觉传感器(主推SC3050X)","MV-SC3050XC-16M-WBN","2432×2048","40","⭐深度学习/边缘学习/OCR/HDR","思谋优势:5MP彩色2600×1952+机械调焦100-2000mm+白灯标准/高亮16种补光+少样本AI;海康SC3050X优势:全局快门(对卷帘)+40fps(对30fps)+⭐深度学习/边缘学习/OCR/HDR;彩色对彩色(SC3050XC)、焦距对焦距(-501-8mm/-502-12mm/-503-16mm);注意VN4000CL官网状态为待上市","卷帘vs全局快门;30fps vs 40fps;2600×1952 vs 2432×2048;待上市 vs 量产"],["思谋科技 SmartMore","VN4000CL 5MP系列(彩色) · 官网补全型号","VN4000CL-503-CL2B","2600×1952(5MP彩色)·卷帘快门·2.2μm·1/2.5″·机械调焦·工作距离100-2000mm·IP67·白灯/高亮光源(16LED)·半偏振","30","⭐AI二分类/OCR/有无/计数/位置修正(少样本深度学习)","SC3000系列 视觉传感器(主推SC3050X)","MV-SC3050XC-16M-WBN","2432×2048","40","⭐深度学习/边缘学习/OCR/HDR","思谋优势:5MP彩色2600×1952+机械调焦100-2000mm+白灯标准/高亮16种补光+少样本AI;海康SC3050X优势:全局快门(对卷帘)+40fps(对30fps)+⭐深度学习/边缘学习/OCR/HDR;彩色对彩色(SC3050XC)、焦距对焦距(-501-8mm/-502-12mm/-503-16mm);注意VN4000CL官网状态为待上市","卷帘vs全局快门;30fps vs 40fps;2600×1952 vs 2432×2048;待上市 vs 量产"],["奥普特 OPT","SCB1 轻量版智能相机","OPT-SCB1-M023G-L06","1920×1200·3.0μm·1/2.6英寸全局快门·6mm手动调焦·工作距离50-2000mm","90","无内置AI·仅基础工具(单色版)","SC2000X系列 视觉传感器(AI)","MV-SC2023XM-05M-WBN","1920×1280","75","异常判断/种类识别/学习计数·VisionTrain离线训练","OPT全链条自研(光源/镜头/相机/控制器),HDMI直连调试+13秒小样本AI训练是差异化优势;SCB1/SCS3(1920×1200·90fps)对标SC2023X/SC3000X;SCA1/SCA2(C口卷帘)对标SC5000X;海康优势:IP67(OPT为IP62/IP65)+边缘学习+VM 140+算法+30+通讯协议(FINS/KV/SLMP)","分辨率最接近(1920×1200 vs 1920×1280)；友商90fps vs 海康75fps(友商速度优势)；友商IP62 vs 海康IP65；友商无内置AI vs 海康AI(海康优势)"],["奥普特 OPT","SCB1 轻量版智能相机","OPT-SCB1-C023G-L06","1920×1200·3.0μm·1/2.6英寸·6mm·彩色·深度学习OCR","90","深度学习OCR/读码","SC2000X系列 视觉传感器(AI)","MV-SC2023XC-05M-WBN","1920×1280","75","异常判断/种类识别/学习计数·VisionTrain离线训练","OPT全链条自研(光源/镜头/相机/控制器),HDMI直连调试+13秒小样本AI训练是差异化优势;SCB1/SCS3(1920×1200·90fps)对标SC2023X/SC3000X;SCA1/SCA2(C口卷帘)对标SC5000X;海康优势:IP67(OPT为IP62/IP65)+边缘学习+VM 140+算法+30+通讯协议(FINS/KV/SLMP)","彩色对彩色；1920×1200 vs 1920×1280；友商90fps vs 海康75fps(友商速度优势)"],["奥普特 OPT","SCB1 轻量版智能相机","OPT-SCB1-M023G-L25","1920×1200·3.0μm·25mm长焦·工作距离200-2000mm","90","无内置AI·仅基础工具(长焦版)","SC2000X系列 视觉传感器(AI)","MV-SC2023XM-16M-WBN","1920×1280","75","异常判断/种类识别/学习计数·VisionTrain离线训练","OPT全链条自研(光源/镜头/相机/控制器),HDMI直连调试+13秒小样本AI训练是差异化优势;SCB1/SCS3(1920×1200·90fps)对标SC2023X/SC3000X;SCA1/SCA2(C口卷帘)对标SC5000X;海康优势:IP67(OPT为IP62/IP65)+边缘学习+VM 140+算法+30+通讯协议(FINS/KV/SLMP)","25mm长焦 vs 海康16M(最长焦档)；友商90fps vs 海康75fps(友商速度优势)；友商无内置AI vs 海康AI(海康优势)"],["奥普特 OPT","SCA1 C接口智能相机","OPT-SCA1-50MC","2464×2048·3.45μm·2/3英寸全局快门·13μs-1s·C口·16W·382g·IP62","30","内嵌深度学习OCR·HDMI直连(无边缘学习分类/检测)","SC5000X系列 智能相机","MV-SC5050XM-00C-NNN","2432×2048","60","VM+AI深度学习/全监督","OPT全链条自研(光源/镜头/相机/控制器),HDMI直连调试+13秒小样本AI训练是差异化优势;SCB1/SCS3(1920×1200·90fps)对标SC2023X/SC3000X;SCA1/SCA2(C口卷帘)对标SC5000X;海康优势:IP67(OPT为IP62/IP65)+边缘学习+VM 140+算法+30+通讯协议(FINS/KV/SLMP)","全局快门(同)"],["奥普特 OPT","SCA1 C接口智能相机","OPT-SCA1-C023G-L12","1920×1200·3.0μm·M12口·12mm自动调焦·48W·466g·IP62·HDMI","90","内嵌深度学习OCR·HDMI直连(无边缘学习分类/检测)","SC2000X系列 视觉传感器(AI)","MV-SC2023XC-12M-WBN","1920×1280","75","异常判断/种类识别/学习计数·VisionTrain离线训练","OPT全链条自研(光源/镜头/相机/控制器),HDMI直连调试+13秒小样本AI训练是差异化优势;SCB1/SCS3(1920×1200·90fps)对标SC2023X/SC3000X;SCA1/SCA2(C口卷帘)对标SC5000X;海康优势:IP67(OPT为IP62/IP65)+边缘学习+VM 140+算法+30+通讯协议(FINS/KV/SLMP)","彩色对彩色；12mm对12mm；友商90fps vs 海康75fps(友商速度优势)；友商IP62 vs 海康IP65"],["奥普特 OPT","SCA2 C接口(多分辨率卷帘快门)","OPT-SCA2-60MC","3072×2048·2.4μm·1/1.8英寸卷帘快门·14μs-1s","30","深度学习OCR(SC系列通用)·无边缘学习分类/检测","SC5000X系列 智能相机","MV-SC5060XM-08M-WBN","3200×1920","15","VisionMaster 160+算法·深度学习模块(AI字符/物体识别、缺陷检测)","OPT全链条自研(光源/镜头/相机/控制器),HDMI直连调试+13秒小样本AI训练是差异化优势;SCB1/SCS3(1920×1200·90fps)对标SC2023X/SC3000X;SCA1/SCA2(C口卷帘)对标SC5000X;海康优势:IP67(OPT为IP62/IP65)+边缘学习+VM 140+算法+30+通讯协议(FINS/KV/SLMP)","卷帘快门(同)；分辨率最接近(3072×2048 vs 3200×1920)；友商30fps vs 海康15fps(友商速度优势)"],["奥普特 OPT","SCA2 C接口(多分辨率卷帘快门)","OPT-SCA2-80MC","3840×2144·2.0μm·1/1.8英寸卷帘快门","30","深度学习OCR(SC系列通用)·无边缘学习分类/检测","","MV-SC5120XM-00C-NNN","4096×2944","30","VisionMaster 160+算法·深度学习模块(AI字符/物体识别、缺陷检测)","OPT全链条自研(光源/镜头/相机/控制器),HDMI直连调试+13秒小样本AI训练是差异化优势;SCB1/SCS3(1920×1200·90fps)对标SC2023X/SC3000X;SCA1/SCA2(C口卷帘)对标SC5000X;海康优势:IP67(OPT为IP62/IP65)+边缘学习+VM 140+算法+30+通讯协议(FINS/KV/SLMP)","友商8.2MP卷帘 vs 海康12MP全局(海康优势)；30fps持平"],["奥普特 OPT","SCA2 C接口(多分辨率卷帘快门)","OPT-SCA2-120MC","4000×3000·1.85μm·1/1.7英寸卷帘快门","25","深度学习OCR(SC系列通用)·无边缘学习分类/检测","","MV-SC5120XM-00C-NNN","4096×2944","30","VM+AI深度学习","OPT全链条自研(光源/镜头/相机/控制器),HDMI直连调试+13秒小样本AI训练是差异化优势;SCB1/SCS3(1920×1200·90fps)对标SC2023X/SC3000X;SCA1/SCA2(C口卷帘)对标SC5000X;海康优势:IP67(OPT为IP62/IP65)+边缘学习+VM 140+算法+30+通讯协议(FINS/KV/SLMP)","友商卷帘快门 vs 海康全局快门(海康优势)；友商无内置AI vs 海康AI边缘学习(海康优势)"],["奥普特 OPT","SCA2 C接口(多分辨率卷帘快门)","OPT-SCA2-200MC","5440×3648·2.4μm·1英寸卷帘快门","20","深度学习OCR(SC系列通用)·无边缘学习分类/检测","","MV-SC6250M-00C-NNN","5120×5120","20","VM平台140+算法·内嵌AI深度学习(字符/物体识别、缺陷检测)","OPT全链条自研(光源/镜头/相机/控制器),HDMI直连调试+13秒小样本AI训练是差异化优势;SCB1/SCS3(1920×1200·90fps)对标SC2023X/SC3000X;SCA1/SCA2(C口卷帘)对标SC5000X;海康优势:IP67(OPT为IP62/IP65)+边缘学习+VM 140+算法+30+通讯协议(FINS/KV/SLMP)","友商19.9MP卷帘 vs 海康26MP全局(海康优势)；20fps持平"],["奥普特 OPT","SCD1 标准版智能相机","SCD1系列(M12口标准版:OPT-SCD1-C023G-L25等)","1920×1200·3.0μm·1/2.6英寸全局快门·25mm","90","内置AI学习工具(13秒小样本训练)+深度学习OCR(彩色型)·光源分区控制","SC2000X系列 视觉传感器(AI)","MV-SC2023XC-16M-WBN","1920×1280","75","异常判断/种类识别/学习计数·VisionTrain离线训练","OPT全链条自研(光源/镜头/相机/控制器),HDMI直连调试+13秒小样本AI训练是差异化优势;SCB1/SCS3(1920×1200·90fps)对标SC2023X/SC3000X;SCA1/SCA2(C口卷帘)对标SC5000X;海康优势:IP67(OPT为IP62/IP65)+边缘学习+VM 140+算法+30+通讯协议(FINS/KV/SLMP)","友商25mm vs 海康16M(最长焦档)；友商90fps vs 海康75fps(友商速度优势)；友商IP62 vs 海康IP65"],["奥普特 OPT","SCS3 标准版智能相机(紧凑型·IP65)","SCS3系列(M8口紧凑版:OPT-SCS3-C023G-LT16等)","1920×1200·3.0μm·1/2.6英寸·固态调焦·工作距离100-450mm·166g·IP65","90","内置AI学习工具(13秒小样本训练)+定位/测量/识别","SC2000X系列 视觉传感器(AI)","MV-SC2023XC-16M-WBN","1920×1280","75","异常判断/种类识别/学习计数·VisionTrain离线训练","OPT全链条自研(光源/镜头/相机/控制器),HDMI直连调试+13秒小样本AI训练是差异化优势;SCB1/SCS3(1920×1200·90fps)对标SC2023X/SC3000X;SCA1/SCA2(C口卷帘)对标SC5000X;海康优势:IP67(OPT为IP62/IP65)+边缘学习+VM 140+算法+30+通讯协议(FINS/KV/SLMP)","16mm对16mm精确；友商90fps vs 海康75fps(友商速度优势)；友商166g vs 海康118g(海康更轻)"],["华睿科技 Huarui","SS3000 超紧凑AI视觉传感器","SS3016PMG-16H-RGF01","1440×1080·超紧凑45×52×25.5mm·16mm红光偏振·工作距离80-200mm·手动调焦","60","基础AI:AI分类/OCR/读码(无边缘学习)","SC2000E系列 视觉传感器(1.6MP)","MV-SC2016EM-15S-WBN","1408×1024","60","深度学习(目标检测/分类)+有无/识别(字符/分类/颜色)/测量/计数","按指定口径用SC2016EM(1.6MP黑白)打华睿SS3016(1.6MP·手动调焦7/16mm·IP65):同分辨率档+同焦距档(16mm→14.8mm最近档)+同价位段;均手动调焦IP65","分辨率最接近(1440×1080 vs 1408×1024)；16mm vs 14.8mm；海康AI深度学习(目标检测/分类) vs 友商基础AI分类(海康AI优势)；均IP65"],["华睿科技 Huarui","SS3000 超紧凑AI视觉传感器","SS3016PCG-07H-WGF01","1440×1080·超紧凑45×35×25.5mm·7mm白光非偏振·工作距离40-150mm","60","基础AI:AI分类/OCR/读码/颜色识别(无边缘学习)","SC2000E系列 视觉传感器(1.6MP)","MV-SC2016EC-08S-WBN","1408×1024","60","深度学习(目标检测/分类)+有无/识别(字符/分类/颜色)/测量/计数(RGB8彩色)","按指定口径用SC2016EC(1.6MP彩色)打华睿SS3016彩色版:彩色对彩色+同分辨率档+同焦距档(7mm→8mm最近档)+同价位段;均手动调焦IP65","彩色对彩色；分辨率最接近(1440×1080 vs 1408×1024)；7mm vs 8mm；海康AI深度学习(海康AI优势)；均IP65"],["华睿科技 Huarui","SS4000 AI视觉传感器 · 官网补全具体型号","SS4013MG-07M-WGG01E","1280×1024·1.3MP·电动调焦7mm·白光偏振/非偏振·黑白·工作距离50-500mm","60","基础AI:AI分类/OCR/读码(无边缘学习)","SC2000X系列 视觉传感器(AI)","MV-SC2013XM-05M-WBN","1280×1024","55","异常判断/种类识别","华睿SS3000(1.6MP超紧凑·手动调焦7/16mm·WD40-200mm·无内置AI)对标海康SC2000X(海康带异常判断/种类识别,AI占优);SS4000(1.3MP·电动调焦7/12mm·WD50-500mm·AI分类/OCR)对标SC2000X;SS5016(1.6MP·电动调焦8/12/16/25mm·WD80-1500mm·AI芯片)对标SC3016;SS5050(5MP·45fps)对标SC3050(SC3000X系列)。华睿优势:超紧凑体积+大华渠道+价格;海康优势:AI边缘学习+VM 140+算法+IP67+30+协议","全局快门(同)"],["华睿科技 Huarui","SS4000 AI视觉传感器 · 官网补全具体型号","SS4013CG-07M-WGG01E","1280×1024·1.3MP·电动调焦7mm·白光偏振/非偏振·彩色·工作距离50-500mm","60","基础AI:AI分类/OCR/读码/颜色识别(无边缘学习)","SC2000X系列 视觉传感器(AI)","MV-SC2013XC-05M-WBN","1280×1024","55","异常判断/种类识别","华睿SS3000(1.6MP超紧凑·手动调焦7/16mm·WD40-200mm·无内置AI)对标海康SC2000X(海康带异常判断/种类识别,AI占优);SS4000(1.3MP·电动调焦7/12mm·WD50-500mm·AI分类/OCR)对标SC2000X;SS5016(1.6MP·电动调焦8/12/16/25mm·WD80-1500mm·AI芯片)对标SC3016;SS5050(5MP·45fps)对标SC3050(SC3000X系列)。华睿优势:超紧凑体积+大华渠道+价格;海康优势:AI边缘学习+VM 140+算法+IP67+30+协议","全局快门(同)"],["华睿科技 Huarui","SS4000 AI视觉传感器 · 官网补全具体型号","SS4013MG-07M-RGG01E","1280×1024·1.3MP·电动调焦7mm·红光偏振/非偏振·黑白·工作距离50-500mm","60","基础AI:AI分类/OCR/读码(无边缘学习)","SC2000X系列 视觉传感器(AI)","MV-SC2013XM-05M-WBN","1280×1024","55","异常判断/种类识别","华睿SS3000(1.6MP超紧凑·手动调焦7/16mm·WD40-200mm·无内置AI)对标海康SC2000X(海康带异常判断/种类识别,AI占优);SS4000(1.3MP·电动调焦7/12mm·WD50-500mm·AI分类/OCR)对标SC2000X;SS5016(1.6MP·电动调焦8/12/16/25mm·WD80-1500mm·AI芯片)对标SC3016;SS5050(5MP·45fps)对标SC3050(SC3000X系列)。华睿优势:超紧凑体积+大华渠道+价格;海康优势:AI边缘学习+VM 140+算法+IP67+30+协议","全局快门(同)"],["华睿科技 Huarui","SS4000 AI视觉传感器 · 官网补全具体型号","SS4013CG-07M-RGG01E","1280×1024·1.3MP·电动调焦7mm·红光偏振/非偏振·彩色·工作距离50-500mm","60","基础AI:AI分类/OCR/读码/颜色识别(无边缘学习)","SC2000X系列 视觉传感器(AI)","MV-SC2013XC-05M-WBN","1280×1024","55","异常判断/种类识别","华睿SS3000(1.6MP超紧凑·手动调焦7/16mm·WD40-200mm·无内置AI)对标海康SC2000X(海康带异常判断/种类识别,AI占优);SS4000(1.3MP·电动调焦7/12mm·WD50-500mm·AI分类/OCR)对标SC2000X;SS5016(1.6MP·电动调焦8/12/16/25mm·WD80-1500mm·AI芯片)对标SC3016;SS5050(5MP·45fps)对标SC3050(SC3000X系列)。华睿优势:超紧凑体积+大华渠道+价格;海康优势:AI边缘学习+VM 140+算法+IP67+30+协议","全局快门(同)"],["华睿科技 Huarui","SS4000 AI视觉传感器 · 官网补全具体型号","SS4013MG-12M-WGG01E","1280×1024·1.3MP·电动调焦12mm·白光偏振/非偏振·黑白·工作距离50-500mm","60","基础AI:AI分类/OCR/读码(无边缘学习)","SC2000X系列 视觉传感器(AI)","MV-SC2013XM-12M-WBN","1280×1024","55","异常判断/种类识别","华睿SS3000(1.6MP超紧凑·手动调焦7/16mm·WD40-200mm·无内置AI)对标海康SC2000X(海康带异常判断/种类识别,AI占优);SS4000(1.3MP·电动调焦7/12mm·WD50-500mm·AI分类/OCR)对标SC2000X;SS5016(1.6MP·电动调焦8/12/16/25mm·WD80-1500mm·AI芯片)对标SC3016;SS5050(5MP·45fps)对标SC3050(SC3000X系列)。华睿优势:超紧凑体积+大华渠道+价格;海康优势:AI边缘学习+VM 140+算法+IP67+30+协议","全局快门(同)"],["华睿科技 Huarui","SS4000 AI视觉传感器 · 官网补全具体型号","SS4013CG-12M-WGG01E","1280×1024·1.3MP·电动调焦12mm·白光偏振/非偏振·彩色·工作距离50-500mm","60","基础AI:AI分类/OCR/读码/颜色识别(无边缘学习)","SC2000X系列 视觉传感器(AI)","MV-SC2013XC-12M-WBN","1280×1024","55","异常判断/种类识别","华睿SS3000(1.6MP超紧凑·手动调焦7/16mm·WD40-200mm·无内置AI)对标海康SC2000X(海康带异常判断/种类识别,AI占优);SS4000(1.3MP·电动调焦7/12mm·WD50-500mm·AI分类/OCR)对标SC2000X;SS5016(1.6MP·电动调焦8/12/16/25mm·WD80-1500mm·AI芯片)对标SC3016;SS5050(5MP·45fps)对标SC3050(SC3000X系列)。华睿优势:超紧凑体积+大华渠道+价格;海康优势:AI边缘学习+VM 140+算法+IP67+30+协议","全局快门(同)"],["华睿科技 Huarui","SS4000 AI视觉传感器 · 官网补全具体型号","SS4013MG-12M-RGG01E","1280×1024·1.3MP·电动调焦12mm·红光偏振/非偏振·黑白·工作距离50-500mm","60","基础AI:AI分类/OCR/读码(无边缘学习)","SC2000X系列 视觉传感器(AI)","MV-SC2013XM-12M-WBN","1280×1024","55","异常判断/种类识别","华睿SS3000(1.6MP超紧凑·手动调焦7/16mm·WD40-200mm·无内置AI)对标海康SC2000X(海康带异常判断/种类识别,AI占优);SS4000(1.3MP·电动调焦7/12mm·WD50-500mm·AI分类/OCR)对标SC2000X;SS5016(1.6MP·电动调焦8/12/16/25mm·WD80-1500mm·AI芯片)对标SC3016;SS5050(5MP·45fps)对标SC3050(SC3000X系列)。华睿优势:超紧凑体积+大华渠道+价格;海康优势:AI边缘学习+VM 140+算法+IP67+30+协议","全局快门(同)"],["华睿科技 Huarui","SS4000 AI视觉传感器 · 官网补全具体型号","SS4013CG-12M-RGG01E","1280×1024·1.3MP·电动调焦12mm·红光偏振/非偏振·彩色·工作距离50-500mm","60","基础AI:AI分类/OCR/读码/颜色识别(无边缘学习)","SC2000X系列 视觉传感器(AI)","MV-SC2013XC-12M-WBN","1280×1024","55","异常判断/种类识别","华睿SS3000(1.6MP超紧凑·手动调焦7/16mm·WD40-200mm·无内置AI)对标海康SC2000X(海康带异常判断/种类识别,AI占优);SS4000(1.3MP·电动调焦7/12mm·WD50-500mm·AI分类/OCR)对标SC2000X;SS5016(1.6MP·电动调焦8/12/16/25mm·WD80-1500mm·AI芯片)对标SC3016;SS5050(5MP·45fps)对标SC3050(SC3000X系列)。华睿优势:超紧凑体积+大华渠道+价格;海康优势:AI边缘学习+VM 140+算法+IP67+30+协议","全局快门(同)"],["华睿科技 Huarui","SS5000 AI视觉传感器(旗舰)","SS5016MG-08M-WGG01","1440×1080·8mm白光偏振/非偏振·工作距离80-1500mm·千兆","60","基础AI:AI分类/OCR/读码(无边缘学习)","SC3000系列 视觉传感器(主推SC3000X)","MV-SC3016M-06M-WBN","1408×1024","60","深度学习分类/目标检测·注册分类/注册目标检测·学习字符识别","华睿SS3000(1.6MP超紧凑·手动调焦7/16mm·WD40-200mm·无内置AI)对标海康SC2000X(海康带异常判断/种类识别,AI占优);SS4000(1.3MP·电动调焦7/12mm·WD50-500mm·AI分类/OCR)对标SC2000X;SS5016(1.6MP·电动调焦8/12/16/25mm·WD80-1500mm·AI芯片)对标SC3016;SS5050(5MP·45fps)对标SC3050(SC3000X系列)。华睿优势:超紧凑体积+大华渠道+价格;海康优势:AI边缘学习+VM 140+算法+IP67+30+协议","全局快门(同)"],["华睿科技 Huarui","SS5000 AI视觉传感器(旗舰)","SS5016CG-16M-WGG01","1440×1080·16mm白光偏振/非偏振·工作距离100-1500mm·千兆·彩色","60","基础AI:AI分类/OCR/读码/颜色识别(无边缘学习)","SC3000系列 视觉传感器(主推SC3000X)","MV-SC3016C-15M-WBN","1408×1024","60","深度学习分类/目标检测·注册分类/注册目标检测·学习字符识别","华睿SS3000(1.6MP超紧凑·手动调焦7/16mm·WD40-200mm·无内置AI)对标海康SC2000X(海康带异常判断/种类识别,AI占优);SS4000(1.3MP·电动调焦7/12mm·WD50-500mm·AI分类/OCR)对标SC2000X;SS5016(1.6MP·电动调焦8/12/16/25mm·WD80-1500mm·AI芯片)对标SC3016;SS5050(5MP·45fps)对标SC3050(SC3000X系列)。华睿优势:超紧凑体积+大华渠道+价格;海康优势:AI边缘学习+VM 140+算法+IP67+30+协议","彩色对彩色；16mm vs 14.8mm(最近档)；友商千兆 vs 海康百兆(友商优势)"],["华睿科技 Huarui","SS5000 AI视觉传感器(旗舰)","SS5016MG-12M-WGG01","1440×1080·12mm白光偏振/非偏振·工作距离80-1500mm·千兆","60","基础AI:AI分类/OCR/读码(无边缘学习)","SC3000系列 视觉传感器(主推SC3000X)","MV-SC3016M-12M-WBN","1408×1024","60","深度学习分类/目标检测·注册分类/注册目标检测·学习字符识别","华睿SS3000(1.6MP超紧凑·手动调焦7/16mm·WD40-200mm·无内置AI)对标海康SC2000X(海康带异常判断/种类识别,AI占优);SS4000(1.3MP·电动调焦7/12mm·WD50-500mm·AI分类/OCR)对标SC2000X;SS5016(1.6MP·电动调焦8/12/16/25mm·WD80-1500mm·AI芯片)对标SC3016;SS5050(5MP·45fps)对标SC3050(SC3000X系列)。华睿优势:超紧凑体积+大华渠道+价格;海康优势:AI边缘学习+VM 140+算法+IP67+30+协议","全局快门(同)"],["华睿科技 Huarui","SS5000 AI视觉传感器(旗舰)","SS5016CG-08M-WGG01","1440×1080·8mm白光·电动调焦·WD80-1500mm·千兆·彩色","60","基础AI:AI分类/OCR/读码/颜色识别(无边缘学习)","SC3000系列 视觉传感器(主推SC3000X)","MV-SC3016C-06M-WBN","1408×1024","60","深度学习分类/目标检测·注册分类/注册目标检测·学习字符识别","华睿SS5016(1.6MP·电动调焦8/12/16/25mm+偏振版PMG·WD25-2000mm·GigE·IP65·AI分类/OCR)对标海康SC3016(1.6MP·电动调焦6/12.4/14.8mm·IP67);同分辨率档+焦距最近档;PMG偏振版为华睿特殊光源型号(即PGM)","8mm→6mm(最近档)；彩色对彩色；友商千兆vs海康百兆(友商优势)；海康IP67 vs IP65+AI深度学习(海康优势)"],["华睿科技 Huarui","SS5000 AI视觉传感器(旗舰)","SS5016MG-16M-WGG01","1440×1080·16mm白光·电动调焦·WD100-1500mm·千兆·黑白","60","基础AI:AI分类/OCR/读码(无边缘学习)","SC3000系列 视觉传感器(主推SC3000X)","MV-SC3016M-15M-WBN","1408×1024","60","深度学习分类/目标检测·注册分类/注册目标检测·学习字符识别","华睿SS5016(1.6MP·电动调焦8/12/16/25mm+偏振版PMG·WD25-2000mm·GigE·IP65·AI分类/OCR)对标海康SC3016(1.6MP·电动调焦6/12.4/14.8mm·IP67);同分辨率档+焦距最近档;PMG偏振版为华睿特殊光源型号(即PGM)","16mm→14.8mm(最近档)；分辨率最接近(1440×1080 vs 1408×1024)；友商千兆vs海康百兆(友商优势)；海康IP67+AI深度学习(海康优势)"],["华睿科技 Huarui","SS5000 AI视觉传感器(旗舰)","SS5016CG-12M-WGG01","1440×1080·12mm白光·电动调焦·WD80-1500mm·千兆·彩色","60","基础AI:AI分类/OCR/读码/颜色识别(无边缘学习)","SC3000系列 视觉传感器(主推SC3000X)","MV-SC3016C-12M-WBN","1408×1024","60","深度学习分类/目标检测·注册分类/注册目标检测·学习字符识别","华睿SS5016(1.6MP·电动调焦8/12/16/25mm+偏振版PMG·WD25-2000mm·GigE·IP65·AI分类/OCR)对标海康SC3016(1.6MP·电动调焦6/12.4/14.8mm·IP67);同分辨率档+焦距最近档;PMG偏振版为华睿特殊光源型号(即PGM)","12mm→12.4mm(同档)；彩色对彩色；友商千兆vs海康百兆(友商优势)；海康IP67+AI深度学习(海康优势)"],["华睿科技 Huarui","SS5000 AI视觉传感器(旗舰)","SS5016MG-25M-WGG01","1440×1080·25mm白光·电动调焦·WD250-1500mm·千兆·黑白","60","基础AI:AI分类/OCR/读码(无边缘学习)","SC3000系列 视觉传感器(主推SC3000X)","MV-SC3016M-15M-WBN","1408×1024","60","深度学习分类/目标检测·注册分类/注册目标检测·学习字符识别","华睿SS5016(1.6MP·电动调焦8/12/16/25mm+偏振版PMG·WD25-2000mm·GigE·IP65·AI分类/OCR)对标海康SC3016(1.6MP·电动调焦6/12.4/14.8mm·IP67);同分辨率档+焦距最近档;PMG偏振版为华睿特殊光源型号(即PGM)","25mm→14.8mm(海康最长焦档,窄视野对窄视野)；分辨率最接近；友商千兆vs海康百兆(友商优势)；海康IP67+AI深度学习(海康优势)"],["华睿科技 Huarui","SS5000 AI视觉传感器(旗舰)","SS5016CG-25M-WGG01","1440×1080·25mm白光·电动调焦·WD250-1500mm·千兆·彩色","60","基础AI:AI分类/OCR/读码/颜色识别(无边缘学习)","SC3000系列 视觉传感器(主推SC3000X)","MV-SC3016C-15M-WBN","1408×1024","60","深度学习分类/目标检测·注册分类/注册目标检测·学习字符识别","华睿SS5016(1.6MP·电动调焦8/12/16/25mm+偏振版PMG·WD25-2000mm·GigE·IP65·AI分类/OCR)对标海康SC3016(1.6MP·电动调焦6/12.4/14.8mm·IP67);同分辨率档+焦距最近档;PMG偏振版为华睿特殊光源型号(即PGM)","25mm→14.8mm(海康最长焦档)；彩色对彩色；友商千兆vs海康百兆(友商优势)；海康IP67+AI深度学习(海康优势)"],["华睿科技 Huarui","SS5000 AI视觉传感器(旗舰)","SS5016PMG-05M-RGG01","1440×1080·5mm红光·偏振/非偏振/漫射·电动调焦·WD25-2000mm·千兆·黑白","60","基础AI:AI分类/OCR/读码(无边缘学习)","SC3000系列 视觉传感器(主推SC3000X)","MV-SC3016M-06M-WBN","1408×1024","60","深度学习分类/目标检测·注册分类/注册目标检测·学习字符识别","华睿SS5016(1.6MP·电动调焦8/12/16/25mm+偏振版PMG·WD25-2000mm·GigE·IP65·AI分类/OCR)对标海康SC3016(1.6MP·电动调焦6/12.4/14.8mm·IP67);同分辨率档+焦距最近档;PMG偏振版为华睿特殊光源型号(即PGM)","5mm→6mm(最近档)；友商红光偏振 vs 海康白光(红光可选)(光源差异)；友商千兆vs海康百兆(友商优势)；海康IP67+AI深度学习(海康优势)"],["华睿科技 Huarui","SS5000 AI视觉传感器(旗舰)","SS5016PMG-12M-WGG01","1440×1080·12mm白光·偏振/非偏振/漫射·电动调焦·WD50-2000mm·千兆·黑白","60","基础AI:AI分类/OCR/读码(无边缘学习)","SC3000系列 视觉传感器(主推SC3000X)","MV-SC3016M-12M-WBN","1408×1024","60","深度学习分类/目标检测·注册分类/注册目标检测·学习字符识别","华睿SS5016(1.6MP·电动调焦8/12/16/25mm+偏振版PMG·WD25-2000mm·GigE·IP65·AI分类/OCR)对标海康SC3016(1.6MP·电动调焦6/12.4/14.8mm·IP67);同分辨率档+焦距最近档;PMG偏振版为华睿特殊光源型号(即PGM)","12mm→12.4mm(同档)；偏振光源同口径；友商千兆vs海康百兆(友商优势)；海康IP67+AI深度学习(海康优势)"],["华睿科技 Huarui","SS5000 AI视觉传感器(旗舰)","SS5050MG-08M-WGG01","2368×1792·5MP·8mm白光偏振/非偏振·工作距离80-1500mm·千兆","45","基础AI:AI分类/OCR/读码(无边缘学习)","SC3000系列 视觉传感器(主推SC3000X)","MV-SC3050XM-08M-WBN","2432×2048","40","⭐深度学习/边缘学习/OCR/HDR","华睿SS3000(1.6MP超紧凑·手动调焦7/16mm·WD40-200mm·无内置AI)对标海康SC2000X(海康带异常判断/种类识别,AI占优);SS4000(1.3MP·电动调焦7/12mm·WD50-500mm·AI分类/OCR)对标SC2000X;SS5016(1.6MP·电动调焦8/12/16/25mm·WD80-1500mm·AI芯片)对标SC3016;SS5050(5MP·45fps)对标SC3050(SC3000X系列)。华睿优势:超紧凑体积+大华渠道+价格;海康优势:AI边缘学习+VM 140+算法+IP67+30+协议","全局快门(同)"],["华睿科技 Huarui","SS5000 AI视觉传感器(旗舰)","SS5050CG-08M-WGG01","2368×1792·5MP·8mm白光·电动调焦·WD80-1500mm·千兆·彩色","45","基础AI:AI分类/OCR/读码/颜色识别(无边缘学习)","SC3000系列 视觉传感器(主推SC3000X)","MV-SC3050XC-08M-WBN","2432×2048","40","深度学习分类/目标检测·学习字符识别·注册分类","华睿SS5050(5MP·电动调焦8/12/16/25mm·GigE·IP65·45fps)对标海康SC3050(5MP·电动调焦8/16mm·IP67·40fps);5MP对5MP同档+焦距最近档;海康SC3050分辨率2432×2048略高于友商2368×1792","8mm同档；彩色对彩色；友商45fps vs 海康40fps(友商小幅优势)；友商千兆vs海康百兆(友商优势)；海康IP67+VM深度学习(海康优势)"],["华睿科技 Huarui","SS5000 AI视觉传感器(旗舰)","SS5050MG-12M-WGG01","2368×1792·5MP·12mm白光·电动调焦·WD80-1500mm·千兆·黑白","45","基础AI:AI分类/OCR/读码(无边缘学习)","SC3000系列 视觉传感器(主推SC3000X)","MV-SC3050XM-08M-WBN","2432×2048","40","深度学习分类/目标检测·学习字符识别·注册分类","华睿SS5050(5MP·电动调焦8/12/16/25mm·GigE·IP65·45fps)对标海康SC3050(5MP·电动调焦8/16mm·IP67·40fps);5MP对5MP同档+焦距最近档;海康SC3050分辨率2432×2048略高于友商2368×1792","12mm→8mm(海康最近档)；友商45fps vs 海康40fps(友商小幅优势)；海康IP67+VM深度学习(海康优势)"],["华睿科技 Huarui","SS5000 AI视觉传感器(旗舰)","SS5050CG-12M-WGG01","2368×1792·5MP·12mm白光·电动调焦·WD80-1500mm·千兆·彩色","45","基础AI:AI分类/OCR/读码/颜色识别(无边缘学习)","SC3000系列 视觉传感器(主推SC3000X)","MV-SC3050XC-08M-WBN","2432×2048","40","深度学习分类/目标检测·学习字符识别·注册分类","华睿SS5050(5MP·电动调焦8/12/16/25mm·GigE·IP65·45fps)对标海康SC3050(5MP·电动调焦8/16mm·IP67·40fps);5MP对5MP同档+焦距最近档;海康SC3050分辨率2432×2048略高于友商2368×1792","12mm→8mm(海康最近档)；彩色对彩色；友商45fps vs 海康40fps(友商小幅优势)；海康IP67+VM深度学习(海康优势)"],["华睿科技 Huarui","SS5000 AI视觉传感器(旗舰)","SS5050MG-16M-WGG01","2368×1792·5MP·16mm白光·电动调焦·WD100-1500mm·千兆·黑白","45","基础AI:AI分类/OCR/读码(无边缘学习)","SC3000系列 视觉传感器(主推SC3000X)","MV-SC3050XM-16M-WBN","2432×2048","40","深度学习分类/目标检测·学习字符识别·注册分类","华睿SS5050(5MP·电动调焦8/12/16/25mm·GigE·IP65·45fps)对标海康SC3050(5MP·电动调焦8/16mm·IP67·40fps);5MP对5MP同档+焦距最近档;海康SC3050分辨率2432×2048略高于友商2368×1792","16mm同档；友商45fps vs 海康40fps(友商小幅优势)；海康IP67+VM深度学习(海康优势)"],["华睿科技 Huarui","SS5000 AI视觉传感器(旗舰)","SS5050CG-16M-WGG01","2368×1792·5MP·16mm白光·电动调焦·WD100-1500mm·千兆·彩色","45","基础AI:AI分类/OCR/读码/颜色识别(无边缘学习)","SC3000系列 视觉传感器(主推SC3000X)","MV-SC3050XC-16M-WBN","2432×2048","40","深度学习分类/目标检测·学习字符识别·注册分类","华睿SS5050(5MP·电动调焦8/12/16/25mm·GigE·IP65·45fps)对标海康SC3050(5MP·电动调焦8/16mm·IP67·40fps);5MP对5MP同档+焦距最近档;海康SC3050分辨率2432×2048略高于友商2368×1792","16mm同档；彩色对彩色；友商45fps vs 海康40fps(友商小幅优势)；海康IP67+VM深度学习(海康优势)"],["华睿科技 Huarui","SS5000 AI视觉传感器(旗舰)","SS5050MG-25M-WGG01","2368×1792·5MP·25mm白光·电动调焦·WD250-1500mm·千兆·黑白","45","基础AI:AI分类/OCR/读码(无边缘学习)","SC3000系列 视觉传感器(主推SC3000X)","MV-SC3050XM-16M-WBN","2432×2048","40","深度学习分类/目标检测·学习字符识别·注册分类","华睿SS5050(5MP·电动调焦8/12/16/25mm·GigE·IP65·45fps)对标海康SC3050(5MP·电动调焦8/16mm·IP67·40fps);5MP对5MP同档+焦距最近档;海康SC3050分辨率2432×2048略高于友商2368×1792","25mm→16mm(海康最长焦档,窄视野对窄视野)；友商45fps vs 海康40fps(友商小幅优势)；海康IP67+VM深度学习(海康优势)"],["华睿科技 Huarui","SS5000 AI视觉传感器(旗舰)","SS5050CG-25M-WGG01","2368×1792·5MP·25mm白光·电动调焦·WD250-1500mm·千兆·彩色","45","基础AI:AI分类/OCR/读码/颜色识别(无边缘学习)","SC3000系列 视觉传感器(主推SC3000X)","MV-SC3050XC-16M-WBN","2432×2048","40","深度学习分类/目标检测·学习字符识别·注册分类","华睿SS5050(5MP·电动调焦8/12/16/25mm·GigE·IP65·45fps)对标海康SC3050(5MP·电动调焦8/16mm·IP67·40fps);5MP对5MP同档+焦距最近档;海康SC3050分辨率2432×2048略高于友商2368×1792","25mm→16mm(海康最长焦档)；彩色对彩色；友商45fps vs 海康40fps(友商小幅优势)；海康IP67+VM深度学习(海康优势)"],["德成视觉 Decheng","DC-080AI(视觉传感器·AI)","DC-080","640×480·四核ARM 2GHz·2GB+32GB·内置M12机械调焦镜头+频闪光源·IP67·12W","120","轻量AI:OCR/读码/防错判定(无内置深度学习/无边缘学习)","SC1000系列 视觉传感器","MV-SC1003M-03S-WBN-SR","640×480","15","有无/计数/识别(注册分类)+边缘学习","德成DC-080主打超低价格与兼容基恩士/康耐视指令(四核ARM+频闪光源+IP67);DC-100/200/300/400/400M已按渠道/展会数据补入对标(官网未公布详细规格·标待核);DC-500为触摸屏一体机工作站(非单相机形态)不入表;海康优势:AI边缘学习+VM 140+算法+全参数透明+30+协议+品牌信任","友商标称120fps(第三方渠道数据) vs 海康官方15fps;德成低价 vs 海康AI边缘学习+全参数透明(海康优势)"],["德成视觉 Decheng","DC-100(入门·AI)","DC-100","640×480(待核·官网未公布)·嵌入式Linux·无风扇密封","120(待核)","轻量AI:自学习OK/NG判定·140+工具·30+协议(无边缘学习分类/检测)","SC1000系列 视觉传感器","MV-SC1003M-03S-WBN-SR","640×480","15","有无(含异常判断)/计数/识别(注册分类)+边缘学习","德成DC-100入门级(渠道数据·官网未公布详细规格)按分辨率对位SC1003(640×480同档·IP54·一键60秒建方案);海康优势:AI边缘学习+全参数透明+30+协议","友商120fps(渠道数据) vs 海康15fps;高速场景海康可升级SC6016M/V2(120fps)覆盖;德成低价 vs 海康AI边缘学习(海康优势)"],["德成视觉 Decheng","DC-200(中级·8mm)","DC-200(8mm)","1280×1024(待核·官网未公布)·内置M12镜头","120(待核)","轻量AI:自学习OK/NG判定·140+工具·30+协议(无边缘学习分类/检测)","SC2000X系列 视觉传感器(AI)","MV-SC2013XM-05M-WBN","1280×1024","55","有无(含异常判断)/计数/识别/读码+边缘学习","德成DC-200 8mm版(渠道数据)按分辨率对位SC2013X(1280×1024同档·5/12/16mm);8mm→5mm最近档;海康优势:AI边缘学习+异常判断+30+协议","同分辨率档；8mm vs 5mm(海康最近档)；友商120fps(渠道数据) vs 海康55fps；德成低价 vs 海康AI(海康优势)"],["德成视觉 Decheng","DC-200(中级·16mm)","DC-200(16mm)","1280×1024(待核·官网未公布)·内置M12镜头","120(待核)","轻量AI:自学习OK/NG判定·140+工具·30+协议(无边缘学习分类/检测)","SC2000X系列 视觉传感器(AI)","MV-SC2013XM-16M-WBN","1280×1024","55","有无(含异常判断)/计数/识别/读码+边缘学习","德成DC-200 16mm版(渠道数据)按分辨率对位SC2013X(1280×1024同档);16mm对16mm同档窄视野;海康优势:AI边缘学习+异常判断+30+协议","同分辨率档；16mm对16mm(同焦距档)；友商120fps(渠道数据) vs 海康55fps；德成低价 vs 海康AI(海康优势)"],["德成视觉 Decheng","DC-300(进阶)","DC-300","2048×1536(待核·官网未公布)·嵌入式Linux","60(待核)","轻量AI:自学习OK/NG判定·140+工具·30+协议(无边缘学习分类/检测)","SC3000X系列 视觉传感器","MV-SC3030XM-08M-WBN","2048×1536","40","深度学习分类/目标检测·学习字符识别+边缘学习","德成DC-300(渠道数据)按分辨率对位SC3030X(2048×1536精确同档·IP67);海康优势:深度学习+IP67+30+协议","分辨率精确同档(2048×1536)；友商60fps(渠道数据) vs 海康40fps；德成低价 vs 海康AI深度学习(海康优势)"],["德成视觉 Decheng","DC-400(高端·低配)","DC-400(低配)","1280×960(待核·官网未公布)","120(待核)","轻量AI:自学习OK/NG判定·140+工具·30+协议(无边缘学习分类/检测)","SC2000X系列 视觉传感器(AI)","MV-SC2013XM-12M-WBN","1280×1024","55","有无(含异常判断)/计数/识别/读码+边缘学习","德成DC-400低配(渠道数据)按分辨率对位SC2013X(1280×1024最近档);海康优势:AI边缘学习+30+协议","分辨率最接近(1280×960 vs 1280×1024)；友商120fps(渠道数据) vs 海康55fps；德成低价 vs 海康AI(海康优势)"],["德成视觉 Decheng","DC-400(高端·高配)","DC-400(高配)","2592×1944·5MP(待核·官网未公布)","60(待核)","轻量AI:自学习OK/NG判定·140+工具·30+协议(无边缘学习分类/检测)","SC5000X系列 智能相机","MV-SC5050XM-00C-NNN","2432×2048","60","VM平台160+算法(含深度学习:AI字符/物体识别/缺陷检测)","德成DC-400高配(渠道数据)5MP按分辨率对位SC5050X(2432×2048最接近档·GigE);海康优势:VM 160+算法+GigE同档","5MP对5MP(2592×1944 vs 2432×2048)；同帧率60fps(渠道 vs 官方)；GigE对GigE；海康VM 160+算法(海康优势)"],["德成视觉 Decheng","DC-400M(AI旗舰)","DC-400M","3072×2048·八核ARM 2.4GHz·4GB+32GB·C口镜头(可换高清)·内置光源控制器","120","AI深度学习:缺陷检测(0.01mm²级)/OCR/读码·内置NPU·单帧/多帧/连续触发","SC6000系列 AI智能相机","MV-SC6050M-00C-NNN/V2","2432×2048","80","VM平台160+算法(含深度学习:AI字符/物体识别/缺陷检测)+GigE","德成DC-400M旗舰(官网确证3072×2048@120fps·C口)按分辨率对位SC6050(5MP档最接近·80fps·C口);海康优势:VM 160+算法+GigE+官方规格透明","6.3MP vs 5MP(2432×2048)；友商120fps vs 海康80fps(友商优势·海康SC6016M/V2为120fps)；均C口+GigE同档；德成AI缺陷 vs 海康VM 160+算法(算法生态海康优势)"]];
+
+function qnn(s){return String(s||'').toLowerCase().replace(/[^a-z0-9-一-龥]/g,'');}
+function expandQueries(qn){const out=[qn];let m=/^(\d+(?:\.\d+)?)万$/.exec(qn);if(m){out.push(String(parseFloat(m[1])/100)+'mp');}m=/^(\d+(?:\.\d+)?)mp$/.exec(qn);if(m){out.push(String(parseFloat(m[1])*100)+'万');}return out;}
+function hayMatch(qn,text){if(!text)return false;const hay=qnn(text).replace(/-/g,'');return expandQueries(qn).some(q=>q&&hay.indexOf(q.replace(/-/g,''))>=0);}
+
+// ==================== 一对一型号参数对标模式（2026-11-04 二次修正） ====================
+// 规则：输入一个友商目标型号 → 只呈现一组对标；
+//       左侧「友商」单型号 + 参数，右侧「海康」单型号 + 参数；
+//       对比区逐项写出海康型号相对该友商型号的优势；
+//       不列候选清单、不列多个型号、不呈现多组结果。
+// pairData 由权威 CSV《竞品对标完整对照表》生成，一行 = 一组一对一映射（13 列）。
+
+function escP(s){return String(s==null?'':s).replace(/[&<>"']/g,function(ch){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch];});}
+function pnorm(s){return String(s||'').toLowerCase().replace(/[\s_./\\()（）\[\]·、,，:：+＋]/g,'').replace(/-/g,'');}
+
+function expandPairQueries(raw){
+  const q=String(raw||'').trim().toLowerCase(), out=[q];
+  let m=/^(\d+(?:\.\d+)?)万$/.exec(q);
+  if(m){const v=parseFloat(m[1]);out.push(String(v/100)+'mp');out.push(String(v*10000)+'像素');}
+  m=/^(\d+(?:\.\d+)?)mp$/.exec(q);
+  if(m){const v=parseFloat(m[1]);out.push(String(v*100)+'万');}
+  m=/^(\d+(?:\.\d+)?)mm$/.exec(q);
+  if(m){out.push(m[1]+'m');out.push('0'+m[1]+'m');}
+  if(/近红外|红外/i.test(q))out.push('红外');
+  return out.filter(Boolean);
+}
+
+function pairScore(r,qs,raw){
+  const model=pnorm(r[2]), hikModel=pnorm(r[7]);
+  const series=pnorm(r[1]), brand=pnorm(r[0]), hikSeries=pnorm(r[6]), all=pnorm(r.join(' '));
+  let best=0;
+  qs.forEach(function(q){
+    const nq=pnorm(q); if(!nq)return;
+    if(model===nq)best=Math.max(best,1000);
+    else if(model.indexOf(nq)===0)best=Math.max(best,900);
+    else if(model.indexOf(nq)>=0)best=Math.max(best,800);
+    if(hikModel===nq)best=Math.max(best,950);
+    else if(hikModel.indexOf(nq)>=0)best=Math.max(best,700);
+    if(series.indexOf(nq)>=0)best=Math.max(best,500);
+    if(brand.indexOf(nq)>=0)best=Math.max(best,420);
+    if(hikSeries.indexOf(nq)>=0)best=Math.max(best,380);
+    if(all.indexOf(nq)>=0)best=Math.max(best,120);
+    if(/^\d+(?:\.\d+)?mp$/.test(nq)&&String(r[3]||'').toLowerCase().indexOf(nq)>=0)best=Math.max(best,700);
+  });
+  if(/晶圆|wafer|6500p|ai-wid/i.test(String(raw||''))&&/SC6500P|AI-WID/i.test(String(r[7]||'')))best=Math.max(best,940);
+  return best;
+}
+
+function matchKind(r,raw){
+  const q=pnorm(raw),m=pnorm(r[2]),hm=pnorm(r[7]);
+  if(m===q)return '完整型号精确命中';
+  if(m.indexOf(q)===0)return '型号前缀命中';
+  if(m.indexOf(q)>=0)return '型号片段命中';
+  if(hm.indexOf(q)>=0||q===pnorm('SC6500P'))return '海康型号反查';
+  if(pnorm(r[1]).indexOf(q)>=0)return '友商系列命中';
+  if(pnorm(r[6]).indexOf(q)>=0)return '海康系列命中';
+  return '参数/关键词模糊命中';
+}
+function pickOnePair(raw){
+  const qs=expandPairQueries(raw);
+  let best=null,bs=0;
+  pairData.forEach(function(r){const s=pairScore(r,qs,raw);if(s>bs){bs=s;best=r;}});
+  return best;
+}
+
+function numFps(s){
+  const t=String(s||'').trim(); let m;
+  if(m=/^(\d+(?:\.\d+)?)\s*(?:fps)?$/i.exec(t))return parseFloat(m[1]);
+  if(m=/(\d+(?:\.\d+)?)\s*fps/i.exec(t))return parseFloat(m[1]);
+  if(m=/^(\d+(?:\.\d+)?)\s*[\/／]/.exec(t))return parseFloat(m[1]);
+  return null;
+}
+function pxCount(s){
+  const m=String(s||'').match(/(\d{3,5})\s*[×xX*]\s*(\d{3,5})/);
+  return m?parseInt(m[1],10)*parseInt(m[2],10):null;
+}
+
+function buildAdvantages(r){
+  const out=[],diff=String(r[12]||''),reason=String(r[11]||'');
+  function classify(t){
+    if(/fps|帧率/.test(t))return '帧率';
+    if(/分辨率|像素|×/.test(t))return '分辨率';
+    if(/快门/.test(t))return '快门';
+    if(/AI|学习|算法|算子|OCR|HDR/.test(t))return 'AI 能力';
+    if(/IP\d|防护/.test(t))return '防护等级';
+    if(/光/.test(t))return '光源';
+    if(/协议|生态|VM|平台|透明|通讯/.test(t))return '生态与平台';
+    return '综合';
+  }
+  function normTxt(x){return String(x||'').toLowerCase().replace(/[^a-z0-9\u4e00-\u9fa5]/g,'');}
+  function add(k,v){
+    v=String(v||'').trim().replace(/^[；;，,、\s]+|[；;，,、\s]+$/g,'');
+    if(!v)return;
+    const nv=normTxt(v), nums=(v.match(/\d+(?:\.\d+)?/g)||[]);
+    for(const o of out){
+      const no=normTxt(o.v), onums=(o.v.match(/\d+(?:\.\d+)?/g)||[]);
+      if(no===nv)return;
+      if(o.k===k&&(no.indexOf(nv)>=0||nv.indexOf(no)>=0))return;
+      if(o.k===k&&nums.length&&onums.length&&nums.some(x=>onums.indexOf(x)>=0))return;
+      // 同项目且共享四字以上中文短语 → 视为同义重复，保留先写入的（更具体）条目
+      const h4=nv.match(/[\u4e00-\u9fa5]{4}/), h4o=no.match(/[\u4e00-\u9fa5]{4}/);
+      if(o.k===k&&h4&&no.indexOf(h4[0])>=0)return;
+      if(o.k===k&&h4o&&nv.indexOf(h4o[0])>=0)return;
+    }
+    out.push({k:k,v:v});
+  }
+  // ① 参数差异列中明确标注「海康优势」的条目（排除友商占优条目）
+  diff.split(/[；;]/).forEach(function(seg){
+    const t=seg.trim();if(!t)return;
+    const hikWin=/海康[^）)]{0,12}优势|\(海康优势\)|（海康优势）|海康AI优势/.test(t);
+    const foeWin=/友商[^）)]{0,12}优势|友商速度优势|友商优势/.test(t);
+    if(!hikWin||foeWin)return;
+    add(classify(t),t);
+  });
+  // ② 帧率客观数值对比
+  const hf=numFps(r[9]),cf=numFps(r[4]);
+  if(hf!=null&&cf!=null&&hf>cf)add('帧率','官方 '+hf+'fps 高于友商 '+cf+'fps，检测节拍更快');
+  else if(hf!=null&&cf==null)add('帧率','官方明确公布 '+hf+'fps；友商未公布帧率，参数可背书');
+  // ③ 分辨率像素数客观对比
+  const hp=pxCount(r[8]),cp=pxCount(r[3]);
+  if(hp&&cp&&hp>cp){
+    const cm=String(r[3]).match(/\d{3,5}\s*[×xX*]\s*\d{3,5}/);
+    add('分辨率','海康 '+r[8]+'（约'+(hp/1e6).toFixed(2)+'MP）高于友商 '+(cm?cm[0]:'标称值'));
+  }
+  // ④ 快门形态
+  if(/卷帘/.test(String(r[3])+diff)&&/全局快门/.test(diff+reason))add('快门','全局快门对友商卷帘快门，高速运动成像无拖影');
+  // ⑤ AI 能力（仅当友商无内置 AI / 仅基础能力时才计为优势）
+  if(r[10]&&(/无内置AI|基础算子|仅基础|无AI|^[—\-]$|未标注/.test(String(r[5]).trim())||!String(r[5]).trim())){
+    add('AI 能力','海康：'+r[10]+'；友商：'+(r[5]||'未标注'));
+  }
+  // ⑥ 对标原因中的海康优势段（按内容归类，去掉与参数对比重复的条目）
+  let m=/海康[^：:；;。]{0,40}优势[:：]([^；;。]+)/.exec(reason);
+  if(m){
+    const parts=m[1].split(/[+＋、]/).map(function(x){return x.trim();}).filter(Boolean);
+    // 合并被 + 误拆的「数字结尾 + 名词」连写（如 VM完整版140+视觉工具、30+通讯协议）
+    for(let i=0;i<parts.length-1;i++){
+      if(/\d$/.test(parts[i])&&/^[\u4e00-\u9fa5]/.test(parts[i+1])){parts[i]=parts[i]+'+'+parts[i+1];parts.splice(i+1,1);}
+    }
+    parts.forEach(function(x){add(classify(x),x);});
+  }
+  m=/海康[^；;。]{0,60}(?:带|支持|开放)[^；;。]+/.exec(reason);
+  if(m&&out.length<4)add(classify(m[0]),m[0].replace(/^海康/,''));
+  // ⑦ 兜底：本行对标说明中含「海康」的完整句
+  if(out.length<2){
+    reason.split(/[；;。]/).forEach(function(t){
+      if(out.length>=3)return;
+      const x=t.trim();
+      if(x.length>=10&&/海康/.test(x)&&!/^(友商|康耐视|基恩士|思谋|OPT|华睿|德成)/.test(x))add(classify(x),x);
+    });
+  }
+  // ⑧ 品牌级对标说明兜底
+  if(out.length<2){
+    try{
+      const br=String(r[0]||'').split(' ')[0];
+      const c=compData.find(function(x){return x.brand&&x.brand.indexOf(br)>=0;});
+      if(c&&c.reason){const mm=/海康优势[:：]([^；;。]+)/.exec(c.reason);if(mm)add(classify(mm[1]),mm[1]);}
+    }catch(e){}
+  }
+  if(!out.length)add('综合','本组以参数对齐为主，海康型号参数官方公开、可逐项核验');
+  // ⑨ 机型能力护栏：晶圆专用客户端/晶圆ID大模型仅 SC6500P-AI-WID 具备，常规 SC6000 不具备
+  const waferModel=/SC6500P|AI-WID/i.test(String(r[7]||'')+' '+String(r[6]||''));
+  let final=out;
+  if(!waferModel){
+    final=out.filter(function(a){return !/晶圆|36,?000|SEMI标准OCR|专用客户端|晶圆ID大模型/i.test(a.v);});
+    if(!final.length)final=[{k:'综合',v:'常规系列优势：VM算法平台+官方公开参数可逐项核验；晶圆专用客户端与大模型仅 SC6500P-AI-WID 具备'}];
+  }else if(!final.some(function(a){return /晶圆|36,?000/.test(a.v);})){
+    final.push({k:'晶圆专用',v:'仅 SC6500P-AI-WID 具备晶圆专用客户端与晶圆ID大模型（SEMI标准OCR，36,000片/时@≥99.9%）；常规 SC6000 系列不具备'});
+  }
+  return final.slice(0,8);
+}
+
+function pairParamRows(r,side){
+  const rows=(side==='hik')
+    ? [['品牌','海康机器人 HIKROBOT'],['对标系列',r[6]],['分辨率',r[8]],['帧率',r[9]+' fps'],['AI 能力',r[10]]]
+    : [['品牌',r[0]],['所属系列',r[1]],['分辨率 / 规格',r[3]],['帧率',r[4]],['AI 能力',r[5]]];
+  return rows.map(function(x){
+    return '<dt>'+escP(x[0])+'</dt><dd>'+escP(x[1]||'—')+'</dd>';
+  }).join('');
+}
+
+function renderPair(r,q,mk){
+  const adv=buildAdvantages(r);
+  let h='<div class="pair-wrap">';
+  h+='<div class="match-hint">🔎 '+escP(q||'')+' → '+escP(r[2])+'</div>';
+  h+='<div class="pair-grid">';
+  h+='<div class="pair-card pair-foreign"><div class="pair-card-tag">友商</div>'
+    +'<div class="pair-model">'+escP(r[2])+'</div>'
+    +'<div class="pair-sub">'+escP(r[0])+'</div>'
+    +'<dl class="pair-params">'+pairParamRows(r,'comp')+'</dl></div>';
+  h+='<div class="pair-vs">VS</div>';
+  h+='<div class="pair-card pair-hik"><div class="pair-card-tag">海康</div>'
+    +'<div class="pair-model">'+escP(r[7])+'</div>'
+    +'<div class="pair-sub">'+escP(r[6])+'</div>'
+    +'<dl class="pair-params">'+pairParamRows(r,'hik')+'</dl></div>';
+  h+='</div>';
+  h+='<div class="adv-box"><div class="adv-title">海康优势</div>';
+  adv.forEach(function(a,i){
+    h+='<div class="adv-row"><span class="adv-no">'+(i+1)+'</span><span class="adv-key">'+escP(a.k)+'</span><span class="adv-val">'+escP(a.v)+'</span></div>';
+  });
+  h+='</div></div>';
+  return h;
+}
+
+function doCompSearch(){
+  const rawQ=document.getElementById('comp-search').value.trim();
+  if(!rawQ)return;
+  document.getElementById('comp-empty').style.display='none';
+  const container=document.getElementById('comp-result');
+  const r=pickOnePair(rawQ);
+  if(!r){
+    container.innerHTML='<div class="empty-state">未找到匹配</div>';
+    return;
+  }
+  container.innerHTML=renderPair(r,rawQ,matchKind(r,rawQ));
+}
+
+function clearCompSearch(){
+  document.getElementById('comp-search').value='';
+  document.getElementById('comp-result').innerHTML='';
+  document.getElementById('comp-empty').style.display='';
+}
+
+/* ===== 模糊搜索提示（基于 pairData 136 组一对一数据，2026-11-04 重建） ===== */
+let _suggestIndex=null,_suggestActiveIdx=-1,_suggestCurrentList=[],_suggestTimer=null;
+const QUICK_WORDS=['500万','1200万','1600万','读码','晶圆','全局快门','近红外','IS3800','IS2800','VN4000','SC6500P','SC6000','SC3000','IV4'];
+
+function buildSuggestIndex(){
+  if(_suggestIndex)return _suggestIndex;
+  const list=[],seen={};
+  function push(kind,text,info,series,query){
+    text=String(text||'').trim();if(!text)return;
+    const key=kind+'|'+text;if(seen[key])return;seen[key]=1;
+    list.push({kind:kind,text:text,info:info||'',series:series||'',query:query||text,hay:pnorm(text+' '+(info||'')+' '+(series||''))});
+  }
+  pairData.forEach(function(r){
+    push('型号',r[2],String(r[3]||'').slice(0,40)+' · '+String(r[0]||'').split(' ')[0],(r[1]||'').replace(/系列.*/,'')+' → '+(r[7]||''),String(r[2]||''));
+    push('系列',String(r[1]||'').replace(/\(.*?\)/g,'').trim(),'友商系列关键词',String(r[0]||'').split(' ')[0],String(r[2]||''));
+    push('海康',String(r[7]||''),'海康型号 → 友商 '+(r[2]||''),String(r[6]||''),String(r[7]||''));
+    push('系列',String(r[6]||'').replace(/系列.*/,'').trim(),'海康系列关键词','',String(r[7]||''));
+  });
+  QUICK_WORDS.forEach(function(q){push('关键词',q,'模糊词（像素 / 场景 / 参数 / 系列）','');});
+  _suggestIndex=list;return list;
+}
+
+function suggestScore(item,qs){
+  const t=pnorm(item.text),h=item.hay;let best=0;
+  qs.forEach(function(x){
+    const nx=pnorm(x);if(!nx)return;
+    if(t===nx)best=Math.max(best,1000);
+    else if(t.indexOf(nx)===0)best=Math.max(best,850);
+    else if(t.indexOf(nx)>=0)best=Math.max(best,650);
+    else if(h.indexOf(nx)>=0)best=Math.max(best,300);
+  });
+  if(best<=0)return 0;
+  if(item.kind==='型号')best+=60;
+  if(item.kind==='关键词')best+=40;
+  return best;
+}
+
+function showSuggest(){
+  const input=document.getElementById('comp-search'),dd=document.getElementById('comp-suggest');
+  const raw=input.value.trim();
+  if(!raw){dd.classList.remove('show');dd.innerHTML='';_suggestCurrentList=[];return;}
+  const qs=expandPairQueries(raw),idx=buildSuggestIndex(),results=[];
+  idx.forEach(function(it){const sc=suggestScore(it,qs);if(sc>0)results.push({item:it,score:sc});});
+  results.sort(function(a,b){return b.score-a.score;});
+  const picks=[],seenText={};
+  results.forEach(function(x){
+    if(picks.length>=8)return;
+    if(seenText[x.item.text])return;seenText[x.item.text]=1;picks.push(x.item);
+  });
+  _suggestCurrentList=picks;_suggestActiveIdx=-1;
+  let html='<div class="suggest-head">🔎 提示</div>';
+  if(!picks.length){
+    html+='<div class="suggest-empty">无匹配提示</div>';
+  }else{
+    picks.forEach(function(it,i){
+      html+='<div class="suggest-item" data-idx="'+i+'" onmousedown="clickSuggest('+i+');return false">'
+        +'<span class="suggest-tag '+(it.kind==='海康'?'hik':'comp')+'">'+escP(it.kind)+'</span>'
+        +'<span class="suggest-model">'+escP(it.text)+'</span>'
+        +'<span class="suggest-info">'+escP(it.info)+'</span>'
+        +'<span class="suggest-series">'+escP(it.series)+'</span></div>';
+    });
+  }
+  dd.innerHTML=html;dd.classList.add('show');
+}
+
+function _debounceSuggest(){
+  clearTimeout(_suggestTimer);
+  _suggestTimer=setTimeout(function(){showSuggest();},120);
+}
+
+function clickSuggest(idx){
+  const item=_suggestCurrentList[idx];if(!item)return;
+  const input=document.getElementById('comp-search'),dd=document.getElementById('comp-suggest');
+  input.value=item.query||item.text;
+  dd.classList.remove('show');dd.innerHTML='';_suggestCurrentList=[];
+  doCompSearch();
+}
+
+function suggestKeydown(e){
+  const dd=document.getElementById('comp-suggest');
+  if(e.key==='Enter'){
+    if(dd.classList.contains('show')&&_suggestActiveIdx>=0&&_suggestCurrentList[_suggestActiveIdx]){e.preventDefault();clickSuggest(_suggestActiveIdx);}
+    else{e.preventDefault();dd.classList.remove('show');doCompSearch();}
+  }else if(e.key==='ArrowDown'){
+    e.preventDefault();
+    _suggestActiveIdx=Math.min(_suggestActiveIdx+1,_suggestCurrentList.length-1);
+    updateSuggestActive(dd);
+  }else if(e.key==='ArrowUp'){
+    e.preventDefault();
+    _suggestActiveIdx=Math.max(_suggestActiveIdx-1,0);
+    updateSuggestActive(dd);
+  }else if(e.key==='Escape'){
+    dd.classList.remove('show');dd.innerHTML='';_suggestCurrentList=[];_suggestActiveIdx=-1;
+  }
+}
+
+function updateSuggestActive(dd){
+  const items=dd.querySelectorAll('.suggest-item');
+  items.forEach(function(el,i){
+    if(i===_suggestActiveIdx)el.classList.add('active');else el.classList.remove('active');
+  });
+  const act=items[_suggestActiveIdx];if(act&&act.scrollIntoView)act.scrollIntoView({block:"nearest"});
+}
+
+// Close dropdown when clicking outside
+
+document.addEventListener('click', function(e){
+
+  if(!e.target.closest('.search-box')){
+
+    document.querySelectorAll('.suggest-dropdown').forEach(dd=>{
+
+      dd.classList.remove('show');
+
+      dd.innerHTML = '';
+
+    });
+
+    _suggestCurrentList = [];
+
+    _suggestActiveIdx = -1;
+
+  }
+
+});
+
+
+
+// ==================== INIT ====================
+
+// Competitor page — show empty state initially
+
+</script>
+
+</body>
+
+</html>
+
