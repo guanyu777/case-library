@@ -417,6 +417,19 @@ mark.search-mark{background:#fef08a;color:inherit;padding:0 2px;border-radius:2p
 }
 /* ===== 二次修订 2026-11-06：超宽屏版面利用 ===== */
 @media(min-width:1700px){.wrap{max-width:1600px}}
+
+/* ===== 2026-11-09 统一层：字体 / 焦点 / 隐藏文本 / 暗色跟随 ===== */
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
+.sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+:focus-visible{outline:2px solid #e8600a;outline-offset:1px}
+caption.sr-only{caption-side:top}
+html[data-theme="dark"] body{background:#111827;color:#e5e7eb}
+html[data-theme="dark"] .header,html[data-theme="dark"] .nav,html[data-theme="dark"] .bar,html[data-theme="dark"] .toolbar{background:#0f172a;color:#e5e7eb;border-color:#374151}
+html[data-theme="dark"] .page-panel,html[data-theme="dark"] .panel,html[data-theme="dark"] .card,html[data-theme="dark"] .wrap,html[data-theme="dark"] .sbox,html[data-theme="dark"] .search-box,html[data-theme="dark"] .stat{background:#1f2937;color:#e5e7eb;border-color:#374151}
+html[data-theme="dark"] table{background:#1f2937;color:#e5e7eb}
+html[data-theme="dark"] td,html[data-theme="dark"] th{border-color:#374151}
+html[data-theme="dark"] input,html[data-theme="dark"] select,html[data-theme="dark"] textarea{background:#111827;color:#e5e7eb;border-color:#374151}
+html[data-theme="dark"] a{color:#ff9a5a}
 </style>
 
 </head>
@@ -426,7 +439,7 @@ mark.search-mark{background:#fef08a;color:inherit;padding:0 2px;border-radius:2p
 <main class="wrap">
   <div class="intro">友商型号 → 海康型号 · 一对一参数对标</div>
   <div class="search-box">
-    <input type="text" id="comp-search" placeholder="搜索型号或关键词" onkeydown="suggestKeydown(event,'comp')" oninput="_debounceSuggest('comp')" autocomplete="off">
+    <input type="text" id="comp-search" placeholder="搜索型号或关键词" onkeydown="suggestKeydown(event,'comp')" oninput="_debounceSuggest('comp')" autocomplete="off" aria-label="搜索型号或关键词">
     <button class="btn-search" onclick="doCompSearch()">搜索</button>
     <div class="suggest-dropdown" id="comp-suggest"></div>
   </div>
@@ -2291,6 +2304,22 @@ document.addEventListener('click', function(e){
 
 </script>
 
+<script>
+/* 2026-11-09：跟随首页主题（默认亮色零影响） */
+(function(){
+  try{
+    var t=localStorage.getItem('sc-theme');
+    if(!t && window.matchMedia){ t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'; }
+    if(t){ document.documentElement.setAttribute('data-theme',t); }
+  }catch(e){}
+  window.addEventListener('message',function(ev){
+    var d=ev.data||{};
+    if(d && d.type==='theme' && (d.theme==='dark'||d.theme==='light')){
+      document.documentElement.setAttribute('data-theme',d.theme);
+    }
+  });
+})();
+</script>
 </body>
 
 </html>

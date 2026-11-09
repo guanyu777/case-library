@@ -90,6 +90,27 @@ details.adv .grid{margin-top:10px}
 [data-theme="dark"] .tbl td{border-bottom-color:var(--bd)}
 [data-theme="dark"] .btn-g{background:#16223a;color:var(--st)}
 [data-theme="dark"] details.adv{background:#0e1626}
+
+/* ===== 2026-11-09 统一层：字体 / 焦点 / 隐藏文本 / 暗色跟随 ===== */
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
+.sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+:focus-visible{outline:2px solid #e8600a;outline-offset:1px}
+caption.sr-only{caption-side:top}
+html[data-theme="dark"] body{background:#111827;color:#e5e7eb}
+html[data-theme="dark"] .header,html[data-theme="dark"] .nav,html[data-theme="dark"] .bar,html[data-theme="dark"] .toolbar{background:#0f172a;color:#e5e7eb;border-color:#374151}
+html[data-theme="dark"] .page-panel,html[data-theme="dark"] .panel,html[data-theme="dark"] .card,html[data-theme="dark"] .wrap,html[data-theme="dark"] .sbox,html[data-theme="dark"] .search-box,html[data-theme="dark"] .stat{background:#1f2937;color:#e5e7eb;border-color:#374151}
+html[data-theme="dark"] table{background:#1f2937;color:#e5e7eb}
+html[data-theme="dark"] td,html[data-theme="dark"] th{border-color:#374151}
+html[data-theme="dark"] input,html[data-theme="dark"] select,html[data-theme="dark"] textarea{background:#111827;color:#e5e7eb;border-color:#374151}
+html[data-theme="dark"] a{color:#ff9a5a}
+
+@media (max-width:400px){
+  .header{padding-left:10px;padding-right:10px}
+  .header-inner{gap:2px 6px}
+  .header h1,.header .sub{white-space:normal;word-break:break-word}
+  .page{padding-left:10px;padding-right:10px}
+  .tabs{overflow-x:auto;white-space:nowrap}
+}
 </style>
 </head>
 <body>
@@ -121,16 +142,16 @@ details.adv .grid{margin-top:10px}
 
   <div class="card"><div class="card-h">② 安装条件（选型核心三参数）</div><div class="card-b">
     <div class="grid">
-      <div class="fld"><label>工作距离 WD (mm)</label><input id="sel-wd" type="number" step="1" min="1" value="200"><span class="hint">镜头前端到工件的距离</span></div>
-      <div class="fld"><label>目标宽度 (mm)</label><input id="sel-fw" type="number" step="1" min="1" value="100"><span class="hint">被测区域横向长度 = 视野宽</span></div>
-      <div class="fld"><label>目标高度 (mm)</label><input id="sel-fh" type="number" step="1" min="1" value="80"><span class="hint">被测区域纵向长度 = 视野高</span></div>
+      <div class="fld"><label>工作距离 WD (mm)</label><input id="sel-wd" type="number" step="1" min="1" value="200" aria-label="sel-wd"><span class="hint">镜头前端到工件的距离</span></div>
+      <div class="fld"><label>目标宽度 (mm)</label><input id="sel-fw" type="number" step="1" min="1" value="100" aria-label="sel-fw"><span class="hint">被测区域横向长度 = 视野宽</span></div>
+      <div class="fld"><label>目标高度 (mm)</label><input id="sel-fh" type="number" step="1" min="1" value="80" aria-label="sel-fh"><span class="hint">被测区域纵向长度 = 视野高</span></div>
     </div>
 
     <details class="adv">
       <summary>高级选项（精度 / 帧率 / 色彩 / AI 约束，默认不限制）</summary>
       <div class="grid">
-        <div class="fld"><label>最小特征尺寸 (mm，可空)</label><input id="sel-minfeat" type="number" step="0.001" min="0" value="0"><span class="hint">需稳定识别的最小尺寸，如划痕宽 0.05、字符高 1.0；留 0 = 不校验精度</span></div>
-        <div class="fld"><label>帧率要求 (fps，可空)</label><input id="sel-fps" type="number" step="1" min="0" value="0"><span class="hint">留 0 = 不限制</span></div>
+        <div class="fld"><label>最小特征尺寸 (mm，可空)</label><input id="sel-minfeat" type="number" step="0.001" min="0" value="0" aria-label="sel-minfeat"><span class="hint">需稳定识别的最小尺寸，如划痕宽 0.05、字符高 1.0；留 0 = 不校验精度</span></div>
+        <div class="fld"><label>帧率要求 (fps，可空)</label><input id="sel-fps" type="number" step="1" min="0" value="0" aria-label="sel-fps"><span class="hint">留 0 = 不限制</span></div>
         <div class="fld"><label>色彩</label><select id="sel-color"><option value="any">不限</option><option value="C">彩色</option><option value="M">黑白</option></select></div>
         <div class="fld"><label>AI 相机</label><select id="sel-ai"><option value="auto">跟随检测需求</option><option value="yes">必须 AI</option><option value="no">不需要 AI</option></select></div>
         <div class="fld"><label>型号池</label><select id="sel-extend"><option value="0">官方口径（63 个型号，与官网 1:1）</option><option value="1">扩展库（+57 个官方未收录型号）</option></select><span class="hint">扩展库含 SC2000X / SC3020 / SC3060 / SC5060 / SC5100 等官网工具尚未收录的型号（SC6500 晶圆专用机按你的要求不收录）</span></div>
@@ -153,12 +174,12 @@ details.adv .grid{margin-top:10px}
     <div class="grid">
       <div class="fld"><label>型号</label><select id="ver-model" onchange="fillFocals()"></select></div>
       <div class="fld"><label>焦距 (mm)</label><select id="ver-focal"></select></div>
-      <div class="fld"><label>工作距离 (mm)</label><input id="ver-wd" type="number" step="1" min="1" value="200"></div>
-      <div class="fld"><label>最小特征尺寸 (mm)</label><input id="ver-minfeat" type="number" step="0.001" min="0.001" value="0.1"><span class="hint">需稳定识别的最小尺寸</span></div>
-      <div class="fld"><label>每特征所需像素 N</label><input id="ver-n" type="number" step="1" min="1" value="3"><span class="hint">常规 3；缺陷/OCR 取 4~5</span></div>
-      <div class="fld"><label>产线速度 (mm/s，可空)</label><input id="ver-speed" type="number" step="1" min="0" value="0"><span class="hint">0=静止，用于运动模糊曝光验算</span></div>
-      <div class="fld"><label>所需视野宽 (mm，可空)</label><input id="ver-reqfw" type="number" step="1" min="0" value="0"></div>
-      <div class="fld"><label>所需视野高 (mm，可空)</label><input id="ver-reqfh" type="number" step="1" min="0" value="0"></div>
+      <div class="fld"><label>工作距离 (mm)</label><input id="ver-wd" type="number" step="1" min="1" value="200" aria-label="ver-wd"></div>
+      <div class="fld"><label>最小特征尺寸 (mm)</label><input id="ver-minfeat" type="number" step="0.001" min="0.001" value="0.1" aria-label="ver-minfeat"><span class="hint">需稳定识别的最小尺寸</span></div>
+      <div class="fld"><label>每特征所需像素 N</label><input id="ver-n" type="number" step="1" min="1" value="3" aria-label="ver-n"><span class="hint">常规 3；缺陷/OCR 取 4~5</span></div>
+      <div class="fld"><label>产线速度 (mm/s，可空)</label><input id="ver-speed" type="number" step="1" min="0" value="0" aria-label="ver-speed"><span class="hint">0=静止，用于运动模糊曝光验算</span></div>
+      <div class="fld"><label>所需视野宽 (mm，可空)</label><input id="ver-reqfw" type="number" step="1" min="0" value="0" aria-label="ver-reqfw"></div>
+      <div class="fld"><label>所需视野高 (mm，可空)</label><input id="ver-reqfh" type="number" step="1" min="0" value="0" aria-label="ver-reqfh"></div>
     </div>
     <div class="row">
       <button class="btn btn-p" onclick="runVerify()">🔍 开始验算</button>
@@ -370,9 +391,9 @@ function renderSelection(list, ctx){
   }).join('');
 
   box.innerHTML = '<div class="card"><div class="card-h">📋 选型结果（'+list.length+' 个匹配，取最贴合的 '+shown.length+' 个 · 按视野富余升序）</div><div class="card-b">'
-    + '<div style="overflow-x:auto"><table class="tbl"><thead><tr><th>智能相机型号</th><th>分辨率</th><th>焦距</th><th>最大帧率</th><th>颜色</th><th>外形尺寸</th><th>目标宽×高@'+ctx.wd+'mm</th><th>视野富余</th></tr></thead>'
+    + '<div style="overflow-x:auto"><table class="tbl"><caption class="sr-only">智能相机选型器 · 海康官方对齐版 数据表</caption><thead><tr><th scope="col">智能相机型号</th><th scope="col">分辨率</th><th scope="col">焦距</th><th scope="col">最大帧率</th><th scope="col">颜色</th><th scope="col">外形尺寸</th><th scope="col">目标宽×高@'+ctx.wd+'mm</th><th scope="col">视野富余</th></tr></thead>'
     + '<tbody>'+rows+'</tbody></table></div>'
-    + (rest.length ? '<details style="margin-top:10px"><summary style="cursor:pointer;font-size:.9em;color:var(--pri)">展开其余 '+rest.length+' 个匹配型号</summary><div style="overflow-x:auto;margin-top:8px"><table class="tbl"><tbody>'+restRows+'</tbody></table></div></details>' : '')
+    + (rest.length ? '<details style="margin-top:10px"><summary style="cursor:pointer;font-size:.9em;color:var(--pri)">展开其余 '+rest.length+' 个匹配型号</summary><div style="overflow-x:auto;margin-top:8px"><table class="tbl"><caption class="sr-only">智能相机选型器 · 海康官方对齐版 数据表</caption><tbody>'+restRows+'</tbody></table></div></details>' : '')
     + '<div class="note">※ <b>口径与海康官方选型工具一致</b>：型号池 = '+(ctx.ext?'官方 63 个 + 扩展 '+ctx.total+' 个':'官方收录的 '+ctx.total+' 个型号')+'；按「检测需求 → 官方推荐系列」过滤（如缺陷检测仅 SC5000X/SC6000、深度学习仅 SC3000/SC5000X/SC6000）；按官方各型号最小/最大工作距离约束剔除不可用型号；同分辨率组内只留「刚好覆盖目标视野的最长焦距」，按视野富余升序（★为首选，≥180% 标红提示冗余）。'
     + '※ 标注（理论）的为 -00C- C口无镜头款：焦距=WD×传感器宽÷目标宽，理论计算值仅供参考。'
     + (minFeatMsg(ctx)) + '</div></div></div>';
@@ -430,7 +451,7 @@ function runVerify(){
   }
   const covRow = (reqFW>0&&reqFH>0) ? '<tr><td>视野覆盖</td><td>'+fmtNum(r.fw)+'×'+fmtNum(r.fh)+' mm</td><td>需求 '+reqFW+'×'+reqFH+' mm</td><td class="'+(covPass?'pass':'fail')+'">'+(covPass?'覆盖':'不足')+'</td></tr>' : '';
   box.innerHTML = '<div class="card"><div class="card-h">📊 '+model+' · '+focal+'mm · '+wd+'mm 验算</div><div class="card-b">'
-    + '<table class="tbl"><thead><tr><th>项目</th><th>计算</th><th>判定基准</th><th>结论</th></tr></thead><tbody>'
+    + '<table class="tbl"><caption class="sr-only">智能相机选型器 · 海康官方对齐版 数据表</caption><thead><tr><th scope="col">项目</th><th scope="col">计算</th><th scope="col">判定基准</th><th scope="col">结论</th></tr></thead><tbody>'
     + '<tr><td>单像素精度</td><td>'+fmtPx(r.px)+' mm/pixel</td><td>—</td><td>—</td></tr>'
     + '<tr><td>精度达标 (N='+N+')</td><td>可分辨最小 '+actualMin.toFixed(3)+' mm</td><td>≤ '+minFeat+' mm</td><td class="'+(precPass?'pass':'fail')+'">'+(precPass?'达标':'不达标')+'</td></tr>'
     + '<tr><td>实际视野</td><td>'+fmtNum(r.fw)+'×'+fmtNum(r.fh)+' mm</td><td>—</td><td>—</td></tr>'
@@ -462,6 +483,22 @@ window.addEventListener('message', function(e){
   try{if(window.parent&&window.parent!==window&&window.parent.document){var pt=window.parent.document.documentElement.getAttribute('data-theme');if(pt)apply(pt);}}catch(e){}
   if(window.matchMedia&&!document.documentElement.getAttribute('data-theme')){var mq=window.matchMedia('(prefers-color-scheme: dark)');if(mq.matches)apply('dark');}
   window.addEventListener('message',function(e){var d=e.data;if(d&&d.type==='theme')apply(d.value);});
+})();
+</script>
+<script>
+/* 2026-11-09：跟随首页主题（默认亮色零影响） */
+(function(){
+  try{
+    var t=localStorage.getItem('sc-theme');
+    if(!t && window.matchMedia){ t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'; }
+    if(t){ document.documentElement.setAttribute('data-theme',t); }
+  }catch(e){}
+  window.addEventListener('message',function(ev){
+    var d=ev.data||{};
+    if(d && d.type==='theme' && (d.theme==='dark'||d.theme==='light')){
+      document.documentElement.setAttribute('data-theme',d.theme);
+    }
+  });
 })();
 </script>
 </body>

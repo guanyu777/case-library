@@ -140,6 +140,26 @@ mark.search-mark{background:#fef08a;color:inherit;padding:0 2px;border-radius:2p
   .param-table{font-size:.66em}
   .model-list-table{font-size:.64em}
 }
+
+/* ===== 2026-11-09 统一层：字体 / 焦点 / 隐藏文本 / 暗色跟随 ===== */
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
+.sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+:focus-visible{outline:2px solid #e8600a;outline-offset:1px}
+caption.sr-only{caption-side:top}
+html[data-theme="dark"] body{background:#111827;color:#e5e7eb}
+html[data-theme="dark"] .header,html[data-theme="dark"] .nav,html[data-theme="dark"] .bar,html[data-theme="dark"] .toolbar{background:#0f172a;color:#e5e7eb;border-color:#374151}
+html[data-theme="dark"] .page-panel,html[data-theme="dark"] .panel,html[data-theme="dark"] .card,html[data-theme="dark"] .wrap,html[data-theme="dark"] .sbox,html[data-theme="dark"] .search-box,html[data-theme="dark"] .stat{background:#1f2937;color:#e5e7eb;border-color:#374151}
+html[data-theme="dark"] table{background:#1f2937;color:#e5e7eb}
+html[data-theme="dark"] td,html[data-theme="dark"] th{border-color:#374151}
+html[data-theme="dark"] input,html[data-theme="dark"] select,html[data-theme="dark"] textarea{background:#111827;color:#e5e7eb;border-color:#374151}
+html[data-theme="dark"] a{color:#ff9a5a}
+
+@media (max-width:900px){
+  .param-table thead th{position:sticky;top:0;z-index:2}
+  .param-table thead th:first-child{left:0;z-index:3}
+  .param-table tbody td:first-child{position:sticky;left:0;z-index:1;background:#fff;box-shadow:1px 0 0 #e5e7eb}
+}
+html[data-theme="dark"] .param-table tbody td:first-child{background:#1f2937;box-shadow:1px 0 0 #374151}
 </style>
 </head>
 <body>
@@ -160,7 +180,7 @@ mark.search-mark{background:#fef08a;color:inherit;padding:0 2px;border-radius:2p
 <div class="col-header">🔍 海康智能相机型号/参数检索</div>
 <div class="col-body">
   <div class="search-box">
-    <input type="text" id="hik-search" placeholder="输入型号(如 SC3030、5020、6016) 或关键词(全局快门、边缘学习、FINS)..." onkeydown="suggestKeydown(event,'hik')" oninput="showSuggest('hik')" autocomplete="off">
+    <input type="text" id="hik-search" placeholder="输入型号(如 SC3030、5020、6016) 或关键词(全局快门、边缘学习、FINS)..." onkeydown="suggestKeydown(event,'hik')" oninput="showSuggest('hik')" autocomplete="off" aria-label="输入型号(如 SC3030、5020、6016) 或关键词(全局快门、边缘学习、FINS)...">
     <button class="btn-search" onclick="doHikSearch()">🔍 搜索</button>
     <button class="btn-clear" onclick="clearHikSearch()">✕ 清除</button>
     <div class="suggest-dropdown" id="hik-suggest"></div>
@@ -188,7 +208,7 @@ mark.search-mark{background:#fef08a;color:inherit;padding:0 2px;border-radius:2p
 <div class="col-header">🔍 竞品型号/品牌检索</div>
 <div class="col-body">
   <div class="search-box">
-    <input type="text" id="comp-search" placeholder="输入竞品型号(如 IV4、VS、IS3805、VN4000、SS5016)..." onkeydown="suggestKeydown(event,'comp')" oninput="showSuggest('comp')" autocomplete="off">
+    <input type="text" id="comp-search" placeholder="输入竞品型号(如 IV4、VS、IS3805、VN4000、SS5016)..." onkeydown="suggestKeydown(event,'comp')" oninput="showSuggest('comp')" autocomplete="off" aria-label="输入竞品型号(如 IV4、VS、IS3805、VN4000、SS5016)...">
     <button class="btn-search" onclick="doCompSearch()">🔍 搜索</button>
     <button class="btn-clear" onclick="clearCompSearch()">✕ 清除</button>
     <div class="suggest-dropdown" id="comp-suggest"></div>
@@ -544,16 +564,16 @@ function showHikSeries(key){
 function renderHikSeries(key){
   const d=hikData[key];if(!d)return;
   const lks=hikLinks[key]||{};
-  let h=`<div class="table-scroll"><table class="param-table">
-  <thead><tr><th>参数项</th><th>值</th></tr></thead><tbody>`;
+  let h=`<div class="table-scroll"><table class="param-table"><caption class="sr-only">深分智能相机资料库 — 海康全系列 & 竞品对标 数据表</caption>
+  <thead><tr><th scope="col">参数项</th><th scope="col">值</th></tr></thead><tbody>`;
   for(const [k,v] of Object.entries(d.specs)){
     h+=`<tr${k.includes('AI')?' class="key-row"':''}><td>${k}</td><td>${v}</td></tr>`;
   }
   h+=`</tbody></table></div>`;
 
   // Model list table
-  h+=`<div class="table-scroll" style="margin-top:8px"><table class="model-list-table">
-  <thead><tr><th>型号</th><th>分辨率</th><th>像元</th><th>快门</th><th>帧率</th><th>彩色</th><th>镜头</th><th>AI/能力</th></tr></thead><tbody>`;
+  h+=`<div class="table-scroll" style="margin-top:8px"><table class="model-list-table"><caption class="sr-only">深分智能相机资料库 — 海康全系列 & 竞品对标 数据表</caption>
+  <thead><tr><th scope="col">型号</th><th scope="col">分辨率</th><th scope="col">像元</th><th scope="col">快门</th><th scope="col">帧率</th><th scope="col">彩色</th><th scope="col">镜头</th><th scope="col">AI/能力</th></tr></thead><tbody>`;
   d.models.forEach(m=>{
     h+=`<tr><td class="model-name">${m[0]}</td>`;
     for(let i=1;i<m.length;i++)h+=`<td>${m[i]||'-'}</td>`;
@@ -745,8 +765,8 @@ function doCompSearch(){
 
       // Series specs (if available)
       if(s.specs){
-        html+=`<div class="table-scroll" style="margin-bottom:6px"><table class="param-table" style="min-width:300px">
-        <thead><tr><th>参数项</th><th>值</th></tr></thead><tbody>`;
+        html+=`<div class="table-scroll" style="margin-bottom:6px"><table class="param-table" style="min-width:300px"><caption class="sr-only">深分智能相机资料库 — 海康全系列 & 竞品对标 数据表</caption>
+        <thead><tr><th scope="col">参数项</th><th scope="col">值</th></tr></thead><tbody>`;
         for(const [k,v] of Object.entries(s.specs)){
           html+=`<tr${k.includes('AI')||k.includes('核心')||k.includes('独有')?' class="key-row"':''}><td>${k}</td><td>${v}</td></tr>`;
         }
@@ -754,12 +774,12 @@ function doCompSearch(){
       }
 
       // Model table
-      html+=`<div class="table-scroll"><table class="model-list-table">
-      <thead><tr><th>型号</th>`;
+      html+=`<div class="table-scroll"><table class="model-list-table"><caption class="sr-only">深分智能相机资料库 — 海康全系列 & 竞品对标 数据表</caption>
+      <thead><tr><th scope="col">型号</th>`;
       // Dynamic headers based on model array length
       const numCols=s.models[0]?.length||0;
       const colNames=['型号','分辨率/规格','传感器/靶面','像元/快门','快门/帧率','帧率','镜头/变焦','工作距/光源','AI/能力','通讯/电源','防护','重量/备注'];
-      for(let i=1;i<numCols;i++)html+=`<th>${colNames[i]||'参数'+i}</th>`;
+      for(let i=1;i<numCols;i++)html+=`<th scope="col">${colNames[i]||'参数'+i}</th>`;
       html+=`</tr></thead><tbody>`;
       s.models.forEach(m=>{
         html+=`<tr><td class="model-name">${m[0]}</td>`;
@@ -783,7 +803,7 @@ function doCompSearch(){
         <span class="col-label hik-label">🔶 海康对标: ${hikD.name}</span>
         <div class="hik-counter">
           <div class="counter-title">🔶 ${hikD.name}</div>
-          <div class="table-scroll"><table>
+          <div class="table-scroll"><table><caption class="sr-only">深分智能相机资料库 — 海康全系列 & 竞品对标 数据表</caption>
           <tr><td>定位</td><td>${hikD.specs['定位']||'-'}</td></tr>
           <tr><td>分辨率范围</td><td>${hikD.specs['分辨率范围']||hikD.specs['分辨率']||'-'}</td></tr>
           <tr><td>传感器</td><td>${hikD.specs['传感器']||'-'}</td></tr>
@@ -1002,6 +1022,22 @@ document.addEventListener('click', function(e){
 
 // ==================== INIT ====================
 renderHikSeries('sc3000');
+</script>
+<script>
+/* 2026-11-09：跟随首页主题（默认亮色零影响） */
+(function(){
+  try{
+    var t=localStorage.getItem('sc-theme');
+    if(!t && window.matchMedia){ t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'; }
+    if(t){ document.documentElement.setAttribute('data-theme',t); }
+  }catch(e){}
+  window.addEventListener('message',function(ev){
+    var d=ev.data||{};
+    if(d && d.type==='theme' && (d.theme==='dark'||d.theme==='light')){
+      document.documentElement.setAttribute('data-theme',d.theme);
+    }
+  });
+})();
 </script>
 </body>
 </html>
